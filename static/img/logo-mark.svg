@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 108" fill="none">
+  <!-- Diagonal blade: main angular element, narrow at top tapering to wider base -->
+  <path d="M21 6 C23 2 31 4 32 8 L60 88 C62 94 58 100 53 98 C48 96 45 91 43 86 Z" fill="currentColor"/>
+
+  <!-- Curved hook element: second wrestler's body/arm wrapping -->
+  <path d="M46 68 C54 52 76 56 76 78 C76 98 62 108 50 105"
+        stroke="currentColor" stroke-width="12" stroke-linecap="round" fill="none"/>
+
+  <!-- Halftone dots — outer scatter on the hook curve -->
+  <circle cx="74" cy="57" r="2.8" fill="currentColor" opacity="0.78"/>
+  <circle cx="80" cy="66" r="2.3" fill="currentColor" opacity="0.65"/>
+  <circle cx="82" cy="76" r="2.7" fill="currentColor" opacity="0.72"/>
+  <circle cx="80" cy="87" r="2.3" fill="currentColor" opacity="0.60"/>
+  <circle cx="75" cy="96" r="2.1" fill="currentColor" opacity="0.52"/>
+  <circle cx="67" cy="104" r="1.9" fill="currentColor" opacity="0.45"/>
+  <circle cx="70" cy="54" r="1.8" fill="currentColor" opacity="0.55"/>
+  <circle cx="76" cy="51" r="1.4" fill="currentColor" opacity="0.42"/>
+  <circle cx="78" cy="62" r="1.6" fill="currentColor" opacity="0.50"/>
+  <circle cx="80" cy="72" r="1.7" fill="currentColor" opacity="0.52"/>
+  <circle cx="78" cy="82" r="1.5" fill="currentColor" opacity="0.44"/>
+  <circle cx="72" cy="101" r="1.4" fill="currentColor" opacity="0.38"/>
+  <circle cx="64" cy="108" r="1.2" fill="currentColor" opacity="0.32"/>
+
+  <!-- Base oval dots (feet / grip points) -->
+  <ellipse cx="29" cy="101" rx="5.5" ry="3.2" transform="rotate(-14 29 101)" fill="currentColor"/>
+  <ellipse cx="42" cy="107" rx="4.5" ry="2.8" transform="rotate(-7 42 107)" fill="currentColor"/>
+</svg>

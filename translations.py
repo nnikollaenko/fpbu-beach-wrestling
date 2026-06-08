@@ -1,0 +1,190 @@
+UK = {
+    'site.name':  'Федерація пляжної боротьби України',
+    'site.short': 'ФПБУ',
+
+    'nav.news': 'Новини', 'nav.calendar': 'Календар',
+    'nav.federation': 'Федерація', 'nav.athletes': 'Спортсмени',
+    'nav.champions': 'Зала чемпіонів', 'nav.documents': 'Документи',
+    'nav.gallery': 'Галерея', 'nav.contacts': 'Контакти',
+    'nav.about': 'Про нас', 'nav.home': 'Головна',
+    'nav.fed.about': 'Про нас', 'nav.fed.history': 'Історія',
+    'nav.fed.leadership': 'Керівництво', 'nav.fed.committees': 'Комітети та комісії',
+    'nav.fed.secretariat': 'Секретаріат', 'nav.fed.regions': 'Регіони',
+    'nav.docs.official': 'Офіційні документи', 'nav.docs.antidoping': 'Анти-допінг',
+
+    'footer.desc': "Офіційна організація, що розвиває пляжну боротьбу в Україні. Член United World Wrestling.",
+    'footer.nav': 'Навігація', 'footer.federation': 'Федерація', 'footer.contacts': 'Контакти',
+    'footer.rights': 'Усі права захищено.', 'footer.official': 'Офіційний сайт ФПБУ',
+
+    'home.hero.tag': 'Офіційний сайт ФПБУ',
+    'home.hero.title1': 'Федерація', 'home.hero.title2': 'Пляжної', 'home.hero.title3': 'Боротьби України',
+    'home.hero.desc': 'Офіційна організація, що розвиває пляжну боротьбу в Україні. Новини, календар змагань, збірна та результати.',
+    'home.hero.cta1': 'Останні новини', 'home.hero.cta2': 'Календар змагань',
+    'home.news.title': 'Останні новини', 'home.news.sub': 'Найактуальніші події та анонси',
+    'home.news.all': 'Всі новини',
+    'home.events.title': 'Найближчі змагання', 'home.events.sub': 'Актуальний календар подій',
+    'home.events.all': 'Повний календар',
+    'home.team.title': 'Збірна України', 'home.team.sub': 'Наші чемпіони та призери',
+    'home.team.all': 'Вся збірна',
+    'home.cta.title': 'Долучайся до пляжної боротьби',
+    'home.cta.desc': 'Знайди секцію у твоєму місті та почни тренування',
+    'home.cta.btn': "Зв'язатися з нами",
+
+    'news.tag': 'Актуально', 'news.title': 'Новини',
+    'news.desc': 'Останні події, анонси та результати змагань Федерації пляжної боротьби України',
+    'news.read': 'Читати', 'news.featured': 'Головне', 'news.back': 'Назад до новин',
+    'news.related': 'Також читайте', 'news.empty': "Новини скоро з'являться.",
+
+    'cal.tag': 'Актуально', 'cal.title': 'Календар змагань',
+    'cal.desc': 'Розклад офіційних змагань ФПБУ на поточний рік',
+    'cal.date': 'Дата', 'cal.event': 'Змагання', 'cal.location': 'Місце', 'cal.category': 'Категорія',
+    'cal.empty': 'Календар змагань скоро буде оприлюднено.',
+
+    'team.athletes.tag': 'Збірна України', 'team.athletes.title': 'Спортсмени',
+    'team.athletes.desc': 'Члени національної збірної України з пляжної боротьби',
+    'team.athletes.empty': 'Список спортсменів оновлюється.',
+    'team.coaches.tag': 'Тренерський штаб', 'team.coaches.title': 'Тренери збірної',
+    'team.coaches.desc': 'Тренерський штаб національної збірної України',
+    'team.coaches.empty': 'Інформація про тренерів оновлюється.',
+
+    'gallery.tag': 'Фото', 'gallery.title': 'Галерея',
+    'gallery.desc': 'Фотографії зі змагань та тренувань',
+    'gallery.all': 'Всі', 'gallery.empty': 'Фотографії скоро буде додано.',
+
+    'docs.tag': 'Офіційні документи', 'docs.title': 'Документи',
+    'docs.desc': 'Статути, правила, положення та регламенти Федерації',
+    'docs.download': 'Завантажити', 'docs.empty': 'Документи скоро буде додано.',
+
+    'about.tag': 'ФПБУ', 'about.title': 'Про федерацію',
+    'about.desc': "Федерація пляжної боротьби України — офіційна організація, що розвиває пляжну боротьбу в Україні",
+    'about.who': 'Хто ми',
+    'about.p1': 'Федерація пляжної боротьби України (ФПБУ) — офіційна організація, що керує розвитком пляжної боротьби в Україні.',
+    'about.p2': 'Ми є членом <strong>United World Wrestling (UWW)</strong> — міжнародної федерації боротьби, і підтримуємо розвиток цього виду спорту на всіх рівнях: від дитячих секцій до збірної команди.',
+    'about.p3': 'ФПБУ організовує офіційні змагання, присвоює спортивні звання, забезпечує участь збірної на міжнародних турнірах та популяризує пляжну боротьбу в Україні.',
+    'about.founded': 'Рік заснування', 'about.regions': 'Регіони України',
+    'about.athletes_count': 'Зареєстрованих спортсменів', 'about.medals': 'Медалей на міжнародних',
+    'about.mission_title': 'Наша місія',
+    'about.mission_text': "Розвивати пляжну боротьбу як доступний, захоплюючий та масовий вид спорту в Україні — від дитячих секцій до вищих спортивних досягнень на міжнародній арені.",
+    'about.contact_us': "Зв'язатися з нами", 'about.docs_link': 'Статут та документи',
+    'about.team_link': 'Збірна України',
+
+    'contacts.tag': "Зв'язок", 'contacts.title': 'Контакти',
+    'contacts.desc': "Зв'яжіться з нами з будь-яких питань",
+    'contacts.requisites': 'Реквізити федерації', 'contacts.address': 'Адреса',
+    'contacts.email': 'Email', 'contacts.phone': 'Телефон', 'contacts.social': 'Ми в соцмережах',
+    'contacts.form.title': 'Написати нам',
+    'contacts.form.desc': 'Відповідаємо впродовж 1–2 робочих днів',
+    'contacts.form.name': "Ваше ім'я", 'contacts.form.name_ph': 'Іван Іваненко',
+    'contacts.form.email_ph': 'ivan@example.com',
+    'contacts.form.msg': 'Повідомлення', 'contacts.form.msg_ph': 'Ваше повідомлення...',
+    'contacts.form.send': 'Надіслати повідомлення',
+
+    '404.title': 'Сторінку не знайдено',
+    '404.desc': 'Можливо, сторінку було переміщено або видалено.',
+    '404.btn': 'На головну',
+
+    'breadcrumb.home': 'Головна',
+    'common.no_events': 'Найближчі змагання буде оголошено.',
+    'common.age': 'р.',
+    'lang.other': 'EN',  'lang.other_code': 'en',
+}
+
+EN = {
+    'site.name':  'Ukrainian Beach Wrestling Federation',
+    'site.short': 'UBWF',
+
+    'nav.news': 'News', 'nav.calendar': 'Calendar',
+    'nav.federation': 'Federation', 'nav.athletes': 'Athletes',
+    'nav.champions': 'Hall of Champions', 'nav.documents': 'Documents',
+    'nav.gallery': 'Gallery', 'nav.contacts': 'Contacts',
+    'nav.about': 'About', 'nav.home': 'Home',
+    'nav.fed.about': 'About Us', 'nav.fed.history': 'History',
+    'nav.fed.leadership': 'Leadership', 'nav.fed.committees': 'Committees',
+    'nav.fed.secretariat': 'Secretariat', 'nav.fed.regions': 'Regions',
+    'nav.docs.official': 'Official Documents', 'nav.docs.antidoping': 'Anti-Doping',
+
+    'footer.desc': "Official organization developing beach wrestling in Ukraine. Member of United World Wrestling.",
+    'footer.nav': 'Navigation', 'footer.federation': 'Federation', 'footer.contacts': 'Contacts',
+    'footer.rights': 'All rights reserved.', 'footer.official': 'Official UBWF Website',
+
+    'home.hero.tag': 'Official UBWF Website',
+    'home.hero.title1': 'Ukrainian', 'home.hero.title2': 'Beach', 'home.hero.title3': 'Wrestling Federation',
+    'home.hero.desc': 'The official organization developing beach wrestling in Ukraine. News, competition calendar, national team and results.',
+    'home.hero.cta1': 'Latest News', 'home.hero.cta2': 'Competition Calendar',
+    'home.news.title': 'Latest News', 'home.news.sub': 'Most recent events and announcements',
+    'home.news.all': 'All news',
+    'home.events.title': 'Upcoming Competitions', 'home.events.sub': 'Current event calendar',
+    'home.events.all': 'Full calendar',
+    'home.team.title': 'Ukrainian National Team', 'home.team.sub': 'Our champions and medalists',
+    'home.team.all': 'Full team',
+    'home.cta.title': 'Join Beach Wrestling',
+    'home.cta.desc': 'Find a club in your city and start training',
+    'home.cta.btn': 'Contact us',
+
+    'news.tag': 'Latest', 'news.title': 'News',
+    'news.desc': 'Latest events, announcements and competition results from the Ukrainian Beach Wrestling Federation',
+    'news.read': 'Read more', 'news.featured': 'Featured', 'news.back': 'Back to news',
+    'news.related': 'Also read', 'news.empty': 'News will be published soon.',
+
+    'cal.tag': 'Schedule', 'cal.title': 'Competition Calendar',
+    'cal.desc': 'Official UBWF competition schedule for the current year',
+    'cal.date': 'Date', 'cal.event': 'Competition', 'cal.location': 'Location', 'cal.category': 'Category',
+    'cal.empty': 'The competition calendar will be published soon.',
+
+    'team.athletes.tag': 'Ukrainian National Team', 'team.athletes.title': 'Athletes',
+    'team.athletes.desc': 'Members of the Ukrainian national beach wrestling team',
+    'team.athletes.empty': 'Athlete roster is being updated.',
+    'team.coaches.tag': 'Coaching Staff', 'team.coaches.title': 'Coaches',
+    'team.coaches.desc': 'Coaching staff of the Ukrainian national team',
+    'team.coaches.empty': 'Coach information is being updated.',
+
+    'gallery.tag': 'Photos', 'gallery.title': 'Gallery',
+    'gallery.desc': 'Photos from competitions and training sessions',
+    'gallery.all': 'All', 'gallery.empty': 'Photos will be added soon.',
+
+    'docs.tag': 'Official Documents', 'docs.title': 'Documents',
+    'docs.desc': 'Statutes, rules, regulations and official documents of the Federation',
+    'docs.download': 'Download', 'docs.empty': 'Documents will be added soon.',
+
+    'about.tag': 'UBWF', 'about.title': 'About the Federation',
+    'about.desc': "Ukrainian Beach Wrestling Federation — the official organization developing beach wrestling in Ukraine",
+    'about.who': 'Who we are',
+    'about.p1': 'Ukrainian Beach Wrestling Federation (UBWF) is the official organization governing beach wrestling development in Ukraine.',
+    'about.p2': 'We are a member of <strong>United World Wrestling (UWW)</strong> — the international wrestling federation, and support the development of this sport at all levels: from youth clubs to the national team.',
+    'about.p3': 'UBWF organizes official competitions, awards sports titles, ensures national team participation in international tournaments, and promotes beach wrestling throughout Ukraine.',
+    'about.founded': 'Founded', 'about.regions': 'Ukrainian Regions',
+    'about.athletes_count': 'Registered Athletes', 'about.medals': 'International Medals',
+    'about.mission_title': 'Our Mission',
+    'about.mission_text': "To develop beach wrestling as an accessible, exciting and mass sport in Ukraine — from youth clubs to the highest sporting achievements on the international stage.",
+    'about.contact_us': 'Contact us', 'about.docs_link': 'Statutes & Documents',
+    'about.team_link': 'National Team',
+
+    'contacts.tag': 'Get in Touch', 'contacts.title': 'Contacts',
+    'contacts.desc': 'Contact us with any questions about beach wrestling in Ukraine',
+    'contacts.requisites': 'Federation Details', 'contacts.address': 'Address',
+    'contacts.email': 'Email', 'contacts.phone': 'Phone', 'contacts.social': 'Follow us',
+    'contacts.form.title': 'Send us a message',
+    'contacts.form.desc': 'We respond within 1–2 business days',
+    'contacts.form.name': 'Your name', 'contacts.form.name_ph': 'John Smith',
+    'contacts.form.email_ph': 'john@example.com',
+    'contacts.form.msg': 'Message', 'contacts.form.msg_ph': 'Your message...',
+    'contacts.form.send': 'Send message',
+
+    '404.title': 'Page Not Found',
+    '404.desc': 'The page may have been moved or deleted.',
+    '404.btn': 'Go Home',
+
+    'breadcrumb.home': 'Home',
+    'common.no_events': 'Upcoming competitions will be announced soon.',
+    'common.age': 'y.o.',
+    'lang.other': 'UA', 'lang.other_code': 'uk',
+}
+
+TRANSLATIONS = {'uk': UK, 'en': EN}
+
+
+def make_t(lang):
+    d = TRANSLATIONS.get(lang, UK)
+    def t(key):
+        return d.get(key, UK.get(key, key))
+    return t

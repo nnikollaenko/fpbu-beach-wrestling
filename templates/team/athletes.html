@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ t('team.athletes.title') }} — {{ t('site.name') }}{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a><span class="sep">›</span><span class="cur">{{ t('team.athletes.title') }}</span></nav>
+        <div class="page-hero-tag">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M5 1h6v4.5A3 3 0 0 1 8 8.5 3 3 0 0 1 5 5.5V1z"/><path d="M3 2H1v2a2.5 2.5 0 0 0 2 2.4M13 2h2v2a2.5 2.5 0 0 1-2 2.4M8 8.5V12M6 12h4M6 15h4"/></svg>
+            {{ t('team.athletes.tag') }}
+        </div>
+        <h1 class="page-hero-title">{{ t('team.athletes.title') }}</h1>
+        <p class="page-hero-desc">{{ t('team.athletes.desc') }}</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        {% if athletes %}
+        <div class="grid-4">
+            {% for a in athletes %}
+            <div class="athlete-card">
+                <div class="athlete-photo">
+                    {% if a.photo %}<img src="{{ url_for('static', filename='uploads/' + a.photo) }}" alt="{{ a.name }}" loading="lazy">
+                    {% else %}
+                    <div class="athlete-photo-placeholder">
+                        <svg viewBox="0 0 80 100" fill="none"><circle cx="40" cy="28" r="18" stroke="currentColor" stroke-width="4"/><path d="M10 90 C10 65 70 65 70 90" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="athlete-body">
+                    <div class="athlete-name">{{ a.name }}</div>
+                    {% if a.weight_class %}<div class="athlete-weight">{{ a.weight_class }}</div>{% endif %}
+                    {% if a.birth_year %}<div class="athlete-region">{{ current_year - a.birth_year }} {{ t('common.age') }}</div>{% endif %}
+                    {% if a.region %}<div class="athlete-region">{{ a.region }}</div>{% endif %}
+                    {% set ach = a | lf('achievements') %}
+                    {% if ach %}<div class="athlete-achievements" style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border-light);">{{ ach }}</div>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state"><p>{{ t('team.athletes.empty') }}</p></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

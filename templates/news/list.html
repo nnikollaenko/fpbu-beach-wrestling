@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ t('news.title') }} — {{ t('site.name') }}{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a>
+            <span class="sep">›</span><span class="cur">{{ t('news.title') }}</span>
+        </nav>
+        <div class="page-hero-tag">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><rect x="2" y="1.5" width="12" height="13" rx="1.5"/><path d="M5 5.5h6M5 8h6M5 10.5h4"/></svg>
+            {{ t('news.tag') }}
+        </div>
+        <h1 class="page-hero-title">{{ t('news.title') }}</h1>
+        <p class="page-hero-desc">{{ t('news.desc') }}</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        {% if news %}
+        <div class="grid-3">
+            {% for item in news %}
+            <a href="/news/{{ item.slug }}" class="card news-card nav-link">
+                <div class="news-card-img">
+                    {% if item.cover %}
+                    <img src="{{ url_for('static', filename='uploads/' + item.cover) }}" alt="{{ item | lf('title') }}" loading="lazy">
+                    {% else %}
+                    <div class="news-card-placeholder">
+                        <svg viewBox="0 0 120 130" fill="none"><path d="M18 12 C24 22 52 50 72 112" stroke="currentColor" stroke-width="20" stroke-linecap="round"/><path d="M38 72 C52 64 78 82 88 110" stroke="currentColor" stroke-width="15" stroke-linecap="round"/></svg>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="news-card-body">
+                    <div class="news-card-meta">
+                        <span>{{ item.published_at | date_long }}</span>
+                        {% if item.is_featured %}<span class="tag tag-brand">{{ t('news.featured') }}</span>{% endif %}
+                    </div>
+                    <div class="news-card-title">{{ item | lf('title') }}</div>
+                    <span class="news-card-link">
+                        {{ t('news.read') }}
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}<a href="/news?page={{ page-1 }}" class="page-btn nav-link">‹</a>{% endif %}
+            {% for p in range(1, total_pages + 1) %}
+            <a href="/news?page={{ p }}" class="page-btn nav-link {% if p == page %}active{% endif %}">{{ p }}</a>
+            {% endfor %}
+            {% if page < total_pages %}<a href="/news?page={{ page+1 }}" class="page-btn nav-link">›</a>{% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="6" width="32" height="36" rx="3" stroke="currentColor" stroke-width="2"/><path d="M14 14h20M14 20h20M14 26h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <p>{{ t('news.empty') }}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

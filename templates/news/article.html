@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% set title_loc = article | lf('title') %}
+{% block title %}{{ title_loc }} — {{ t('site.name') }}{% endblock %}
+{% block og_title %}{{ title_loc }}{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a><span class="sep">›</span>
+            <a href="/news" class="nav-link">{{ t('nav.news') }}</a><span class="sep">›</span>
+            <span class="cur">{{ title_loc | truncate(45) }}</span>
+        </nav>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="article-layout">
+
+            <!-- Article -->
+            <article>
+                <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+                    <span style="font-size:var(--fs-300);color:var(--muted);">{{ article.published_at | date_long }}</span>
+                    {% if article.is_featured %}<span class="tag tag-brand">{{ t('news.featured') }}</span>{% endif %}
+                </div>
+
+                <h1 style="font-size:var(--fs-800);margin-bottom:2rem;line-height:1.2;letter-spacing:-0.02em;">{{ title_loc }}</h1>
+
+                {% if article.cover %}
+                <div style="aspect-ratio:16/9;border-radius:var(--r-lg);overflow:hidden;margin-bottom:2rem;background:var(--accent-light);">
+                    <img src="{{ url_for('static', filename='uploads/' + article.cover) }}" alt="{{ title_loc }}" style="width:100%;height:100%;object-fit:cover;">
+                </div>
+                {% endif %}
+
+                <div class="article-body">
+                    {{ (article.content_en if lang == 'en' and article.content_en else article.content) | safe }}
+                </div>
+
+                <hr class="divider">
+                <a href="/news" class="btn btn-ghost nav-link">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6.5 3.5L3 7l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    {{ t('news.back') }}
+                </a>
+            </article>
+
+            <!-- Sidebar -->
+            <aside class="article-sidebar">
+                {% if related %}
+                <div class="sticky-sidebar">
+                    <div style="font-size:var(--fs-200);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:1rem;">{{ t('news.related') }}</div>
+                    {% for item in related %}
+                    <a href="/news/{{ item.slug }}" class="card nav-link" style="display:block;margin-bottom:0.625rem;padding:0.875rem;">
+                        <div style="font-size:var(--fs-200);color:var(--muted);margin-bottom:0.25rem;">{{ item.published_at | date_long }}</div>
+                        <div style="font-size:var(--fs-400);font-weight:700;color:var(--text);line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">{{ item | lf('title') }}</div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </aside>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

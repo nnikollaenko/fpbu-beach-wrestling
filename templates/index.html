@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% block title %}{{ t('site.name') }} — Офіційний сайт{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
+<section class="hero-fullbleed">
+
+    <!-- Background photo with slow zoom -->
+    <div class="hero-bg-wrap">
+        <img class="hero-bg-img"
+             src="{{ url_for('static', filename='uploads/gallery/IMG_9975.JPG') }}"
+             alt="">
+    </div>
+
+    <!-- Dark overlays -->
+    <div class="hero-overlay-bottom"></div>
+    <div class="hero-overlay-top"></div>
+
+    <!-- Ambient glow blob -->
+    <div class="hero-glow-blob"></div>
+
+    <!-- Content -->
+    <div class="hero-content-wrap">
+
+        <!-- Official site badge -->
+        <div class="hero-badge">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="#4ade80"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            {{ 'Official website' if lang == 'en' else 'Офіційний сайт' }}
+        </div>
+
+        <!-- Federation label -->
+        <div class="hero-fed-label">
+            <div class="hero-fed-bar"></div>
+            <span>{{ 'Ukrainian Beach Wrestling Federation' if lang == 'en' else 'Федерація пляжної боротьби України' }}</span>
+        </div>
+
+        <!-- Main title -->
+        <h1 class="hero-main-title">
+            {% if lang == 'en' %}
+            WE BUILD<br>
+            <span class="hero-title-gradient">CHAMPIONS</span>
+            {% else %}
+            МИ ВИХОВУЄМО<br>
+            <span class="hero-title-gradient">ЧЕМПІОНІВ</span>
+            {% endif %}
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+            {% if lang == 'en' %}
+            Developing <strong>beach wrestling</strong> across 24 regions of Ukraine — from the beach to the world podium.
+            {% else %}
+            Розвиваємо <strong>пляжну боротьбу</strong> у 24 регіонах України — від піску до світового п'єдесталу.
+            {% endif %}
+        </p>
+
+        <!-- CTA buttons -->
+        <div class="hero-btns">
+            <a href="/athletes" class="hero-btn-primary nav-link">
+                {{ 'Our Team' if lang == 'en' else 'Наша збірна' }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="/calendar" class="hero-btn-glass nav-link">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1.5" y="3" width="13" height="11.5" rx="2"/><path d="M5 1.5v3M11 1.5v3M1.5 7h13"/></svg>
+                {{ 'Competition Calendar' if lang == 'en' else 'Календар змагань' }}
+            </a>
+            <a href="/news" class="hero-btn-border nav-link">
+                {{ 'News' if lang == 'en' else 'Новини' }}
+            </a>
+        </div>
+
+        <!-- Stats row -->
+        <div class="hero-stats-row">
+            <div class="hero-stat-item">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="rgba(255,255,255,0.5)"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <span class="hero-stat-val">20+</span>
+                <span class="hero-stat-lbl">{{ 'Int. medals' if lang == 'en' else 'Міжнар. медалей' }}</span>
+            </div>
+            <div class="hero-stat-sep"></div>
+            <div class="hero-stat-item">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="rgba(255,255,255,0.5)"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
+                <span class="hero-stat-val">500+</span>
+                <span class="hero-stat-lbl">{{ 'Athletes' if lang == 'en' else 'Спортсменів' }}</span>
+            </div>
+            <div class="hero-stat-sep"></div>
+            <div class="hero-stat-item">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="rgba(255,255,255,0.5)"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                <span class="hero-stat-val">24</span>
+                <span class="hero-stat-lbl">{{ 'Regions' if lang == 'en' else 'Регіони' }}</span>
+            </div>
+            <div class="hero-stat-sep"></div>
+            <div class="hero-stat-item">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="rgba(255,255,255,0.5)"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+                <span class="hero-stat-val">2015</span>
+                <span class="hero-stat-lbl">{{ 'Founded' if lang == 'en' else 'Засновано' }}</span>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ══ ACHIEVEMENT MARQUEE ════════════════════════════════════════════════ -->
+<div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+        {% set items = [
+            ('trophy',   '2+ Чемпіони світу' if lang == 'uk' else '2+ World Champions'),
+            ('medal',    '20+ Медалей ЧС та ЧЄ' if lang == 'uk' else '20+ World & European Medals'),
+            ('globe',    '24 регіони України' if lang == 'uk' else '24 Ukrainian Regions'),
+            ('person',   '500+ Спортсменів' if lang == 'uk' else '500+ Athletes'),
+            ('calendar', 'Засновано 2015' if lang == 'uk' else 'Founded in 2015'),
+            ('wave',     'Член UWW' if lang == 'uk' else 'UWW Member'),
+        ] %}
+        {% macro marquee_icon(name) %}
+            {% if name == 'trophy' %}
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 1h6v4.5A3 3 0 0 1 8 8.5 3 3 0 0 1 5 5.5V1z"/><path d="M3 2H1v2a2.5 2.5 0 0 0 2 2.4M13 2h2v2a2.5 2.5 0 0 1-2 2.4M8 8.5V12M6 12h4M6 15h4"/></svg>
+            {% elif name == 'medal' %}
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="10.5" r="4"/><path d="M5.5 6.5 8 2l2.5 4.5"/></svg>
+            {% elif name == 'globe' %}
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5a9.5 9.5 0 0 1 2.5 6.5A9.5 9.5 0 0 1 8 14.5M8 1.5A9.5 9.5 0 0 0 5.5 8 9.5 9.5 0 0 0 8 14.5"/></svg>
+            {% elif name == 'person' %}
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="5" r="2.5"/><path d="M2.5 14c0-3.5 2.5-5.5 5.5-5.5s5.5 2 5.5 5.5"/></svg>
+            {% elif name == 'calendar' %}
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1.5" y="3" width="13" height="11.5" rx="2"/><path d="M5 1.5v3M11 1.5v3M1.5 7h13"/></svg>
+            {% elif name == 'wave' %}
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1 10c1.3-1.8 2.7-1.8 4 0s2.7 1.8 4 0 2.7-1.8 4 0M1 13c1.3-1.8 2.7-1.8 4 0s2.7 1.8 4 0 2.7-1.8 4 0"/><path d="M8 7V3M6 5l2-2 2 2"/></svg>
+            {% endif %}
+        {% endmacro %}
+        {% for icon, text in items * 3 %}
+        <div class="marquee-item">
+            {{ marquee_icon(icon) }}
+            <span>{{ text }}</span>
+            <span class="dot"></span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ══ ACHIEVEMENTS (photo grid + facts) ══════════════════════════════════ -->
+<section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+        <div class="section-head" style="margin-bottom:2rem;">
+            <div>
+                <div class="section-eyebrow">{{ 'Our Achievements' if lang == 'en' else 'Наші досягнення' }}</div>
+                <h2 class="section-title" style="font-size:var(--fs-700);">{{ 'Numbers that speak for themselves' if lang == 'en' else 'Цифри, які говорять самі за себе' }}</h2>
+            </div>
+            <a href="/champions" class="btn btn-ghost nav-link">{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }} →</a>
+        </div>
+
+        <!-- 2 col: photo grid left, facts right -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:stretch;">
+
+            <!-- Photos grid (2×2) — stretches to match facts column height -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0.625rem;border-radius:var(--r-xl);overflow:hidden;height:100%;">
+                {% set photos = gallery_photos[:4] %}
+                {% for p in photos %}
+                <div style="overflow:hidden;position:relative;min-height:140px;{% if loop.first %}border-radius:var(--r-lg) 0 0 0;{% elif loop.index == 2 %}border-radius:0 var(--r-lg) 0 0;{% elif loop.index == 3 %}border-radius:0 0 0 var(--r-lg);{% else %}border-radius:0 0 var(--r-lg) 0;{% endif %}">
+                    <img src="{{ url_for('static', filename='uploads/gallery/' + p) }}" alt=""
+                         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s ease;"
+                         onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Facts column -->
+            <div style="display:flex;flex-direction:column;gap:1.25rem;padding-left:0.5rem;">
+                {% set facts = [
+                    ('/champions', '20+', 'Міжнародних медалей' if lang != 'en' else 'International medals', 'Призові місця на ЧС та ЧЄ за всю історію федерації' if lang != 'en' else 'Podiums at World & European Championships'),
+                    ('/athletes',  '500+','Спортсменів у рейтингу' if lang != 'en' else 'Athletes in rankings', 'Від юніорів до чемпіонів серед дорослих, усі вагові категорії' if lang != 'en' else 'Juniors to seniors, all weight categories'),
+                    ('/federation/regions', '24', 'Регіони України' if lang != 'en' else 'Ukrainian regions', 'Секції та регіональні координатори в кожній області' if lang != 'en' else 'Clubs and regional coordinators in every oblast'),
+                    ('/calendar',  '10+', 'Років розвитку' if lang != 'en' else 'Years of development', 'Від гуртка до федерації з міжнародним визнанням' if lang != 'en' else 'From a small club to an internationally recognized federation'),
+                ] %}
+                {% for url, num, label, desc in facts %}
+                <a href="{{ url }}" class="fact-row nav-link">
+                    <div class="fact-row-num">{{ num }}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="fact-row-label">{{ label }}</div>
+                        <div class="fact-row-desc">{{ desc }}</div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" class="fact-arrow"><path d="M3 8h10M9 5l4 3-4 3"/></svg>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ HALL OF CHAMPIONS ══════════════════════════════════════════════════ -->
+<section class="champs-section">
+    <div class="container">
+        <div style="display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:1rem;margin-bottom:2.5rem;">
+            <div class="champs-header" style="margin-bottom:0;">
+                <div class="champs-eyebrow">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+                    {{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}
+                </div>
+                <h2 class="champs-title">
+                    {{ 'Kings &amp; Queens' if lang == 'en' else 'Королі та Королеви' }}<br>
+                    <span>{{ 'of the Sand' if lang == 'en' else 'піску' }}</span>
+                </h2>
+                <p class="champs-sub">{{ 'Our athletes who reached the top of the world — World and European champions of Ukraine.' if lang == 'en' else 'Спортсмени, які підкорили вершину світу — чемпіони та призери чемпіонатів світу й Європи.' }}</p>
+            </div>
+            <a href="/champions" class="btn btn-brand nav-link" style="flex-shrink:0;">
+                {{ 'All Champions' if lang == 'en' else 'Всі чемпіони' }}
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </div>
+        {% if champions %}
+        <div class="grid-3" style="position:relative;z-index:1;">
+            {% for c in champions %}
+            <div class="champion-card">
+                <div class="champion-photo">
+                    {% if c.photo %}<img src="{{ url_for('static', filename='uploads/' + c.photo) }}" alt="{{ c.name }}">
+                    {% else %}<svg viewBox="0 0 80 100" fill="none"><circle cx="40" cy="28" r="18" stroke="currentColor" stroke-width="4"/><path d="M10 90 C10 65 70 65 70 90" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>{% endif %}
+                    <div class="champion-medal medal-{{ c.medal }}">{{ '1' if c.medal == 'gold' else ('2' if c.medal == 'silver' else '3') }}</div>
+                </div>
+                <div class="champion-body">
+                    <div class="champion-name">{{ c.name }}</div>
+                    <div class="champion-comp">{{ c.competition }}</div>
+                    <div class="champion-year">{{ c.year }} · {{ c.weight_class or '' }}{{ ' · ' + c.age_group if c.age_group != 'Senior' else '' }}</div>
+                    {% if c.total_medals %}<div class="champion-medals">{{ c.total_medals }}</div>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color:rgba(255,255,255,0.4);text-align:center;padding:3rem 0;">{{ 'Champion archive coming soon.' if lang == 'en' else 'Архів чемпіонів скоро буде.' }}</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ══ UPCOMING EVENTS (calendar preview — before partners) ══════════════ -->
+{% if events %}
+<section class="section" style="background:var(--surface-2);border-top:1px solid var(--border);">
+    <div class="container">
+        <div class="section-head" style="margin-bottom:1.75rem;">
+            <div>
+                <div class="section-eyebrow">{{ 'Upcoming season' if lang == 'en' else 'Найближчі змагання' }}</div>
+                <h2 class="section-title" style="font-size:var(--fs-700);">{{ t('home.events.title') }}</h2>
+            </div>
+            <a href="/calendar" class="btn btn-brand nav-link" style="flex-shrink:0;">
+                {{ 'Full calendar' if lang == 'en' else 'Повний календар' }}
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.625rem;">
+            {% for ev in events %}
+            <div class="cal-card">
+                <div class="cal-date-pill">
+                    <span class="dd">{{ ev.start_date[8:10] }}</span>
+                    <span class="mm">{{ ev.start_date | month_full }}</span>
+                    <span class="yy">{{ ev.start_date[0:4] }}</span>
+                </div>
+                <div class="cal-card-info">
+                    <div class="cal-card-title">{{ ev | lf('title') }}</div>
+                    <div class="cal-card-meta">
+                        {% if ev.location %}<span><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a3.5 3.5 0 0 0-3.5 3.5C2.5 7.5 6 11 6 11s3.5-3.5 3.5-6.5A3.5 3.5 0 0 0 6 1Zm0 4.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" stroke="currentColor" stroke-width="1.1"/></svg>{{ ev.location }}</span>{% endif %}
+                        <span class="tag tag-brand" style="font-size:var(--fs-200);">{{ ev.category }}</span>
+                    </div>
+                </div>
+                <div class="cal-card-docs">
+                    {% if ev.pdf_regulations %}
+                    <a href="/documents/download/{{ ev.pdf_regulations }}" class="cal-dl-btn primary" target="_blank">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 14h8M8 2v8M5 7l3 3 3-3"/></svg>
+                        {{ 'Rules' if lang == 'en' else 'Регламент' }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ══ PARTNERS ═══════════════════════════════════════════════════════════ -->
+<section class="partners-section">
+    <div class="container">
+        <!-- Centered heading (no right button) -->
+        <div style="text-align:center;margin-bottom:2rem;">
+            <div class="section-eyebrow" style="margin-bottom:0.5rem;">{{ 'Our Partners' if lang == 'en' else 'Наші партнери' }}</div>
+            <h2 style="font-size:var(--fs-700);font-weight:800;letter-spacing:-0.02em;">
+                {{ 'Together we develop beach wrestling in Ukraine' if lang == 'en' else 'Разом розвиваємо пляжну боротьбу в Україні' }}
+            </h2>
+        </div>
+
+        <!-- Infinite partner logo ticker -->
+        <div class="partners-ticker-wrap" aria-hidden="true">
+            <div class="partners-ticker">
+                {% if partners %}
+                {% for item in (partners * 6) %}
+                <div class="partners-ticker-item">
+                    {% if item.logo %}<img src="{{ url_for('static', filename='uploads/partners/' + item.logo) }}" alt="{{ item.name }}">
+                    {% else %}<span>{{ item.name }}</span>{% endif %}
+                </div>
+                {% endfor %}
+                {% else %}
+                {% for p in ['Партнер A','Партнер B','Партнер C','Спонсор D','Партнер E','Спонсор F','Партнер G','Спонсор H'] * 3 %}
+                <div class="partners-ticker-item"><div class="partner-ticker-placeholder">{{ p }}</div></div>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2 buttons centered below ticker -->
+        <div style="display:flex;justify-content:center;gap:1rem;margin-top:2rem;">
+            <a href="/contacts" class="btn btn-brand nav-link">{{ 'Become a Partner' if lang == 'en' else 'Стати партнером' }}</a>
+            <a href="https://wayforpay.com" class="btn btn-ghost" target="_blank" rel="noopener">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 13.5s-6-4-6-8a3.5 3.5 0 0 1 6-2.45A3.5 3.5 0 0 1 14 5.5c0 4-6 8-6 8z"/></svg>
+                {{ 'Support the Federation' if lang == 'en' else 'Підтримати федерацію' }}
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ══ LATEST NEWS ════════════════════════════════════════════════════════ -->
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="section-eyebrow">{{ 'Latest updates' if lang == 'en' else 'Останні оновлення' }}</div>
+                <h2 class="section-title">{{ t('home.news.title') }}</h2>
+            </div>
+            <a href="/news" class="btn btn-ghost nav-link">
+                {{ t('home.news.all') }}
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </div>
+        {% if news %}
+        <div class="grid-3">
+            {% for item in news %}
+            <a href="/news/{{ item.slug }}" class="card news-card nav-link">
+                <div class="news-card-img">
+                    {% if item.cover %}<img src="{{ url_for('static', filename='uploads/' + item.cover) }}" alt="{{ item | lf('title') }}" loading="lazy">
+                    {% else %}<div class="news-card-placeholder"><svg viewBox="0 0 88 108" fill="none"><path d="M21 6 C23 2 31 4 32 8 L60 88 C62 94 58 100 53 98 C48 96 45 91 43 86 Z" fill="currentColor" opacity="0.12"/></svg></div>{% endif %}
+                </div>
+                <div class="news-card-body">
+                    <div class="news-card-meta">
+                        <span>{{ item.published_at | date_long }}</span>
+                        {% if item.is_featured %}<span class="tag tag-brand">{{ t('news.featured') }}</span>{% endif %}
+                    </div>
+                    <div class="news-card-title">{{ item | lf('title') }}</div>
+                    <span class="news-card-link">{{ t('news.read') }} <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ══ ABOUT FEDERATION (photo bg + compact stats) ════════════════════════ -->
+<section class="fed-about-section">
+    <!-- Photo background -->
+    <div class="fed-about-bg">
+        <img src="{{ url_for('static', filename='uploads/gallery/IMG_9462.JPG') }}" alt="" aria-hidden="true">
+    </div>
+    <div class="fed-about-overlay"></div>
+
+    <div class="container fed-about-content">
+        <div style="max-width:680px;">
+            <div class="fed-about-eyebrow">{{ 'About the Federation' if lang == 'en' else 'Про федерацію' }}</div>
+            <h2 class="fed-about-title">
+                {{ 'Beach wrestling —' if lang == 'en' else 'Пляжна боротьба —' }}<br>
+                <span>{{ 'this is a lifestyle' if lang == 'en' else 'це стиль життя' }}</span>
+            </h2>
+            <p class="fed-about-desc">
+                {% if lang == 'en' %}UBWF develops beach wrestling across Ukraine since 2015 — from first training sessions to World Championship podiums.
+                {% else %}ФПБУ розвиває пляжну боротьбу в Україні з 2015 року — від перших тренувань до п'єдесталів чемпіонатів світу.{% endif %}
+            </p>
+            <div class="fed-about-stats">
+                {% for num, lbl in [('10+','Років' if lang != 'en' else 'Years'), ('24','Регіони' if lang != 'en' else 'Regions'), ('500+','Спортсменів' if lang != 'en' else 'Athletes'), ('20+','Медалей' if lang != 'en' else 'Medals')] %}
+                <div class="fed-stat">
+                    <span class="fed-stat-n">{{ num }}</span>
+                    <span class="fed-stat-l">{{ lbl }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            <div style="display:flex;gap:0.875rem;flex-wrap:wrap;margin-top:2rem;">
+                <a href="/federation/about" class="hero-btn-primary nav-link" style="font-size:var(--fs-400);padding:0.65rem 1.375rem;">{{ 'More about us' if lang == 'en' else 'Детальніше' }}</a>
+                <a href="/federation/history" class="hero-btn-glass nav-link" style="font-size:var(--fs-400);padding:0.65rem 1.375rem;">{{ 'Our History' if lang == 'en' else 'Наша Історія' }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

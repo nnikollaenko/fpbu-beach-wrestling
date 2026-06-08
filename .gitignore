@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.db-shm
+*.db-wal
+.DS_Store
+*.log
+beach_wrestling_logo_all*/
+Фото beach wrestling/

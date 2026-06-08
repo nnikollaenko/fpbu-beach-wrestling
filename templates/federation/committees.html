@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav.fed.committees') }} — {{ t('site.name') }}{% endblock %}
+{% block content %}
+<div class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('nav.home') }}</a><span class="sep">›</span><a href="/federation/about" class="nav-link">{{ t('nav.federation') }}</a><span class="sep">›</span><span class="cur">{{ t('nav.fed.committees') }}</span></nav>
+        <div class="page-hero-tag">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.41 1.41M11.37 11.37l1.41 1.41M3.22 12.78l1.41-1.41M11.37 4.63l1.41-1.41"/></svg>
+            {{ t('nav.fed.committees') }}
+        </div>
+        <h1 class="page-hero-title">{{ t('nav.fed.committees') }}</h1>
+        <p class="page-hero-desc">{{ 'Committees and commissions of the Ukrainian Beach Wrestling Federation' if lang == 'en' else 'Комітети та комісії Федерації пляжної боротьби України' }}</p>
+    </div>
+</div>
+<section class="section"><div class="container">
+    {% if committees %}
+    <div class="grid-2">
+        {% for c in committees %}
+        <div class="committee-card">
+            <div class="committee-name">{{ c | lf('name') }}</div>
+            {% if c.head_name %}<div class="committee-head">{{ 'Head: ' if lang == 'en' else 'Голова: ' }}{{ c.head_name }}</div>{% endif %}
+            {% set desc = c | lf('description') %}{% if desc %}<div class="committee-desc">{{ desc }}</div>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>{{ 'Information coming soon.' if lang == 'en' else 'Інформація скоро буде додана.' }}</p></div>
+    {% endif %}
+</div></section>
+{% endblock %}

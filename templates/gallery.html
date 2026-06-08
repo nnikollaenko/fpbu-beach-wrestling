@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}{{ t('gallery.title') }} — {{ t('site.name') }}{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ═══════════════════════════════════════════════════════════════ -->
+<div class="page-hero page-hero--dark">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a>
+            <span class="sep">›</span>
+            {% if current_album %}
+            <a href="/gallery" class="nav-link">{{ t('gallery.title') }}</a>
+            <span class="sep">›</span>
+            <span class="cur">{{ current_album }}</span>
+            {% else %}
+            <span class="cur">{{ t('gallery.title') }}</span>
+            {% endif %}
+        </nav>
+        <div class="page-hero-tag">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="1" y="4" width="14" height="10" rx="2"/>
+                <circle cx="8" cy="9" r="2.5"/>
+                <path d="M5.5 4V3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1"/>
+            </svg>
+            {% if current_album %}{{ current_album }}{% else %}{{ t('gallery.tag') }}{% endif %}
+        </div>
+        <h1 class="page-hero-title">
+            {% if current_album %}{{ current_album }}{% else %}{{ t('gallery.title') }}{% endif %}
+        </h1>
+        <p class="page-hero-desc">
+            {% if current_album %}
+            {{ 'Photos from this competition — click any to view slideshow, or download all below.' if lang == 'en' else 'Фото з цих змагань — клацніть будь-яке для перегляду, або завантажте всі.' }}
+            {% else %}
+            {{ t('gallery.desc') }}
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- ══ CONTENT ════════════════════════════════════════════════════════════ -->
+<section class="section">
+    <div class="container">
+
+    {% if current_album %}
+
+        <!-- ── Album view: photo grid + download bar ────────────────────── -->
+        <div class="album-dl-bar">
+            <div>
+                <a href="/gallery" style="display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-300);font-weight:600;color:var(--muted);margin-bottom:0.5rem;text-decoration:none;transition:color var(--t-fast);" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--muted)'">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 3L5 8l5 5"/></svg>
+                    {{ 'All albums' if lang == 'en' else 'Всі альбоми' }}
+                </a>
+                <h1 style="font-size:var(--fs-700);font-weight:900;margin:0;">{{ current_album }}</h1>
+                <p style="font-size:var(--fs-300);color:var(--muted);margin-top:0.25rem;">{{ photos|length }} {{ 'photos' if lang == 'en' else 'фото' }}</p>
+            </div>
+            <a href="/gallery/download/{{ current_album | urlencode }}" class="album-dl-btn">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 14h10M8 2v8M5 7l3 3 3-3"/></svg>
+                {{ 'Download all' if lang == 'en' else 'Завантажити всі' }}
+            </a>
+        </div>
+
+        {% if photos %}
+        <div class="gallery-grid" id="photoGrid">
+            {% for photo in photos %}
+            <div class="gallery-item" onclick="openLightbox({{ loop.index0 }})" style="cursor:pointer;">
+                <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}"
+                     alt="{{ photo.caption or current_album }}" loading="lazy">
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="4" y="8" width="40" height="32" rx="4" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="20" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 34l10-10 8 8 6-6 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <p>{{ t('gallery.empty') }}</p>
+        </div>
+        {% endif %}
+
+    {% else %}
+
+        <!-- ── Album list view ──────────────────────────────────────────── -->
+        {% if album_info %}
+        <div class="album-grid">
+            {% for album in album_info %}
+            <a href="/gallery?album={{ album.name | urlencode }}" class="album-card nav-link">
+                <div class="album-cover">
+                    {% if album.cover %}
+                    <img src="{{ url_for('static', filename='uploads/' + album.cover) }}"
+                         alt="{{ album.name }}" loading="lazy">
+                    {% else %}
+                    <div style="width:100%;height:100%;background:linear-gradient(135deg,var(--brand-bg),var(--accent-light));display:flex;align-items:center;justify-content:center;">
+                        <svg width="40" height="40" viewBox="0 0 48 48" fill="none" stroke="var(--brand)" stroke-width="2" opacity="0.4"><rect x="4" y="8" width="40" height="32" rx="4"/><circle cx="16" cy="20" r="4"/><path d="M4 34l10-10 8 8 6-6 10 10" stroke-linecap="round"/></svg>
+                    </div>
+                    {% endif %}
+                    <span class="album-cover-count">{{ album.count }} {{ 'photos' if lang == 'en' else 'фото' }}</span>
+                </div>
+                <div class="album-body">
+                    <span class="album-name">{{ album.name }}</span>
+                    <svg class="album-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M9.5 5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="4" y="8" width="40" height="32" rx="4" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="20" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 34l10-10 8 8 6-6 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <p>{{ t('gallery.empty') }}</p>
+        </div>
+        {% endif %}
+
+    {% endif %}
+
+    </div>
+</section>
+
+{% if current_album and photos %}
+<!-- ══ LIGHTBOX ════════════════════════════════════════════════════════════ -->
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="{{ 'Photo viewer' if lang == 'en' else 'Перегляд фото' }}">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="{{ 'Close' if lang == 'en' else 'Закрити' }}">✕</button>
+    <div class="lightbox-img-wrap">
+        <img id="lightboxImg" src="" alt="">
+    </div>
+    <div class="lightbox-bar">
+        <button class="lightbox-btn" onclick="prevPhoto()" aria-label="Previous">&#8592;</button>
+        <span class="lightbox-counter" id="lightboxCounter"></span>
+        <button class="lightbox-btn" onclick="nextPhoto()" aria-label="Next">&#8594;</button>
+    </div>
+</div>
+
+<script>
+(function () {
+    var photos = [
+        {% for photo in photos %}
+        "{{ url_for('static', filename='uploads/' + photo.filename) }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    var current = 0;
+
+    window.openLightbox = function (idx) {
+        current = idx;
+        showPhoto();
+        document.getElementById('lightbox').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeLightbox = function () {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+    };
+
+    window.prevPhoto = function () {
+        current = (current - 1 + photos.length) % photos.length;
+        showPhoto();
+    };
+
+    window.nextPhoto = function () {
+        current = (current + 1) % photos.length;
+        showPhoto();
+    };
+
+    function showPhoto() {
+        document.getElementById('lightboxImg').src = photos[current];
+        document.getElementById('lightboxCounter').textContent = (current + 1) + ' / ' + photos.length;
+    }
+
+    document.getElementById('lightbox').addEventListener('click', function (e) {
+        if (e.target === this) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (!document.getElementById('lightbox').classList.contains('open')) return;
+        if (e.key === 'ArrowLeft')  prevPhoto();
+        if (e.key === 'ArrowRight') nextPhoto();
+        if (e.key === 'Escape')     closeLightbox();
+    });
+})();
+</script>
+{% endif %}
+
+{% endblock %}

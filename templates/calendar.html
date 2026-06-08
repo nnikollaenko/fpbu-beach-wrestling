@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}{{ t('cal.title') }} — {{ t('site.name') }}{% endblock %}
+
+{% block content %}
+
+<!-- ══ PAGE HERO ════════════════════════════════════════════════════════════ -->
+<div class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('nav.home') }}</a><span class="sep">›</span><span class="cur">{{ t('cal.title') }}</span></nav>
+        <div class="page-hero-tag">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1.5" y="3" width="13" height="11.5" rx="2"/><path d="M5 1.5v3M11 1.5v3M1.5 7h13"/></svg>
+            {{ selected_year }}
+        </div>
+        <h1 class="page-hero-title">{{ t('cal.title') }}</h1>
+        <p class="page-hero-desc">{{ t('cal.desc') }}</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+
+        <!-- Year tabs + category filter -->
+        <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem;">
+            {% if years %}
+            <div class="year-filter">
+                {% for y in years %}
+                <a href="/calendar?year={{ y }}{% if sel_category %}&category={{ sel_category | urlencode }}{% endif %}"
+                   class="year-pill nav-link {% if selected_year == y %}active{% endif %}">{{ y }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Category filter -->
+            {% if categories %}
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                <a href="/calendar?year={{ selected_year }}" class="cal-cat-pill {% if not sel_category %}active{% endif %} nav-link">
+                    {{ 'All types' if lang == 'en' else 'Всі типи' }}
+                </a>
+                {% for cat in categories %}
+                <a href="/calendar?year={{ selected_year }}&category={{ cat | urlencode }}"
+                   class="cal-cat-pill {% if sel_category == cat %}active{% endif %} nav-link">
+                   {{ cat }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Legend -->
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:0.5rem;font-size:var(--fs-200);color:var(--text-sec);">
+                <span style="display:inline-flex;width:12px;height:12px;background:var(--brand);border-radius:50%;"></span>
+                {{ 'Upcoming' if lang == 'en' else 'Заплановано' }}
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5rem;font-size:var(--fs-200);color:var(--muted);">
+                <span style="display:inline-flex;width:12px;height:12px;background:var(--border);border-radius:50%;"></span>
+                {{ 'Completed' if lang == 'en' else 'Завершено' }}
+            </div>
+            {% if events %}
+            <span style="margin-left:auto;font-size:var(--fs-200);color:var(--muted);">{{ events | length }} {{ 'events' if lang == 'en' else 'заходів' }}</span>
+            {% endif %}
+        </div>
+
+        {% if events %}
+        {% set today_str = now_date %}
+        {% for ev in events %}
+        {% set is_past = ev.start_date < today_str %}
+        <div class="cal-card {% if loop.first and not is_past %}is-featured{% endif %}">
+
+            <!-- Date pill -->
+            <div class="cal-date-pill {% if is_past %}past{% endif %}">
+                <span class="dd">{{ ev.start_date[8:10] }}</span>
+                <span class="mm">{{ ev.start_date | month_full }}</span>
+                <span class="yy">{{ ev.start_date[0:4] }}</span>
+            </div>
+
+            <!-- Event info -->
+            <div class="cal-card-info">
+                <div class="cal-card-title">{{ ev | lf('title') }}</div>
+                <div class="cal-card-meta">
+                    {% if ev.location %}
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a3.5 3.5 0 0 0-3.5 3.5C2.5 7.5 6 11 6 11s3.5-3.5 3.5-6.5A3.5 3.5 0 0 0 6 1Zm0 4.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" stroke="currentColor" stroke-width="1.1"/></svg>
+                        {{ ev.location }}
+                    </span>
+                    {% endif %}
+                    {% if ev.end_date and ev.end_date != ev.start_date %}
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M1 5h10M4 1v2M8 1v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+                        {{ ev.start_date[8:10] }} – {{ ev.end_date[8:10] }} {{ ev.start_date | month_full }} {{ ev.start_date[0:4] }}
+                    </span>
+                    {% endif %}
+                    <span class="tag {% if 'Між' in ev.category or 'Євро' in ev.category or 'Inter' in ev.category or 'Euro' in ev.category %}tag-blue{% elif 'Чемп' in ev.category or 'Champ' in ev.category or 'Кубок' in ev.category %}tag-brand{% else %}tag-accent{% endif %}" style="font-size:var(--fs-200);">
+                        {{ ev.category }}
+                    </span>
+                </div>
+                {% set desc = ev | lf('description') %}{% if desc %}
+                <div style="font-size:var(--fs-300);color:var(--muted);margin-top:3px;">{{ desc }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Documents -->
+            <div class="cal-card-docs">
+                {% if ev.pdf_regulations %}
+                <a href="/documents/download/{{ ev.pdf_regulations }}" class="cal-dl-btn primary" target="_blank">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 14h8M8 2v8M5 7l3 3 3-3"/></svg>
+                    {{ 'Rules' if lang == 'en' else 'Регламент' }}
+                </a>
+                {% endif %}
+                {% if ev.pdf_program %}
+                <a href="/documents/download/{{ ev.pdf_program }}" class="cal-dl-btn" target="_blank">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 14h8M8 2v8M5 7l3 3 3-3"/></svg>
+                    {{ 'Program' if lang == 'en' else 'Програма' }}
+                </a>
+                {% endif %}
+                {% if ev.pdf_protocols %}
+                <a href="/documents/download/{{ ev.pdf_protocols }}" class="cal-dl-btn" target="_blank">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 14h8M8 2v8M5 7l3 3 3-3"/></svg>
+                    {{ 'Protocols' if lang == 'en' else 'Протоколи' }}
+                </a>
+                {% endif %}
+                {% if not ev.pdf_regulations and not ev.pdf_program and not ev.pdf_protocols %}
+                <span style="font-size:var(--fs-200);color:var(--muted-light);white-space:nowrap;">{{ 'Soon' if lang == 'en' else 'Скоро' }}</span>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="34" rx="4" stroke="currentColor" stroke-width="2"/><path d="M6 18h36M16 6v4M32 6v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <p>{{ 'No events for ' + selected_year|string + ' yet.' if lang == 'en' else 'Змагань на ' + selected_year|string + ' рік поки немає.' }}</p>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

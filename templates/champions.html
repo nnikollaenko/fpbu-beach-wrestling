@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }} — {{ t('site.name') }}{% endblock %}
+
+{% block content %}
+<div class="champs-section" style="padding-bottom:0;">
+    <div class="container">
+        <nav class="breadcrumb" style="color:rgba(255,255,255,0.4);">
+            <a href="/" class="nav-link" style="color:rgba(255,255,255,0.4);">{{ t('nav.home') }}</a>
+            <span class="sep">›</span><span class="cur" style="color:rgba(255,255,255,0.7);">{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}</span>
+        </nav>
+        <div style="padding-top:1rem;padding-bottom:3rem;">
+            <div class="champs-eyebrow">🏆 {{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}</div>
+            <h1 class="champs-title" style="font-size:var(--fs-900);">
+                {{ 'Kings &amp; Queens' if lang == 'en' else 'Королі та Королеви' }}<br>
+                <span>{{ 'of the Sand' if lang == 'en' else 'піску' }}</span>
+            </h1>
+            <p class="champs-sub">{{ 'All World and European Champions from Ukraine' if lang == 'en' else 'Всі чемпіони та призери чемпіонатів світу й Європи від України' }}</p>
+        </div>
+    </div>
+</div>
+
+<section class="section" style="background:#111;">
+    <div class="container">
+        <!-- Year filter -->
+        {% if years %}
+        <div class="year-filter">
+            <a href="/champions" class="year-pill nav-link {% if not selected_year %}active{% endif %}">
+                {{ 'All years' if lang == 'en' else 'Всі роки' }}
+            </a>
+            {% for y in years %}
+            <a href="/champions?year={{ y }}" class="year-pill nav-link {% if selected_year == y %}active{% endif %}">{{ y }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if champions %}
+        <div class="grid-4">
+            {% for c in champions %}
+            <div class="champion-card">
+                <div class="champion-photo">
+                    {% if c.photo %}<img src="{{ url_for('static', filename='uploads/' + c.photo) }}" alt="{{ c.name }}">
+                    {% else %}
+                    <svg viewBox="0 0 80 100" fill="none"><circle cx="40" cy="28" r="18" stroke="currentColor" stroke-width="4"/><path d="M10 90 C10 65 70 65 70 90" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+                    {% endif %}
+                    <div class="champion-medal medal-{{ c.medal }}">
+                        {{ '🥇' if c.medal == 'gold' else ('🥈' if c.medal == 'silver' else '🥉') }}
+                    </div>
+                </div>
+                <div class="champion-body">
+                    <div class="champion-name">{{ c.name }}</div>
+                    <div class="champion-comp">{{ c.competition }}</div>
+                    <div class="champion-year">
+                        {{ c.year }}{% if c.weight_class %} · {{ c.weight_class }}{% endif %}
+                        {% if c.age_group and c.age_group != 'Senior' %} · {{ c.age_group }}{% endif %}
+                    </div>
+                    {% if c.total_medals %}<div class="champion-medals">{{ c.total_medals }}</div>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" style="color:rgba(255,255,255,0.3);">
+            <p>{{ 'No records for selected filters.' if lang == 'en' else 'Немає записів за обраними фільтрами.' }}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

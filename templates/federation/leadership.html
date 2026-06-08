@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav.fed.leadership') }} — {{ t('site.name') }}{% endblock %}
+{% block content %}
+<div class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('nav.home') }}</a><span class="sep">›</span><a href="/federation/about" class="nav-link">{{ t('nav.federation') }}</a><span class="sep">›</span><span class="cur">{{ t('nav.fed.leadership') }}</span></nav>
+        <div class="page-hero-tag">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="4.5" r="2"/><path d="M3 14c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="2.5" cy="6" r="1.5"/><path d="M1 12c0-2 .8-3 1.5-3.5"/><circle cx="13.5" cy="6" r="1.5"/><path d="M15 12c0-2-.8-3-1.5-3.5"/></svg>
+            {{ t('nav.fed.leadership') }}
+        </div>
+        <h1 class="page-hero-title">{{ t('nav.fed.leadership') }}</h1>
+        <p class="page-hero-desc">{{ 'Leadership of the Ukrainian Beach Wrestling Federation' if lang == 'en' else 'Керівництво Федерації пляжної боротьби України' }}</p>
+    </div>
+</div>
+<section class="section"><div class="container" style="max-width:860px;">
+    {% if leaders %}
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+        {% for l in leaders %}
+        <div class="leader-card">
+            <div class="leader-photo">
+                {% if l.photo %}<img src="{{ url_for('static', filename='uploads/' + l.photo) }}" alt="{{ l.name }}">
+                {% else %}
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="11" r="6" stroke="currentColor" stroke-width="2"/><path d="M4 28c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                {% endif %}
+            </div>
+            <div>
+                <div class="leader-name">{{ l.name }}</div>
+                <div class="leader-role">{{ l | lf('role') }}</div>
+                {% set bio = l | lf('bio') %}{% if bio %}<div class="leader-bio">{{ bio }}</div>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>{{ 'Leadership information coming soon.' if lang == 'en' else 'Інформація про керівництво скоро буде додана.' }}</p></div>
+    {% endif %}
+</div></section>
+{% endblock %}

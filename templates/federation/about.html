@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ t('nav.fed.about') }} — {{ t('site.name') }}{% endblock %}
+{% block content %}
+<div class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('nav.home') }}</a><span class="sep">›</span><a href="/federation/about" class="nav-link">{{ t('nav.federation') }}</a><span class="sep">›</span><span class="cur">{{ t('nav.fed.about') }}</span></nav>
+        <div class="page-hero-tag">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M1 11c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0M8 7V3M6 5l2-2 2 2"/></svg>
+            {{ t('site.short') }}
+        </div>
+        <h1 class="page-hero-title">{{ t('about.title') }}</h1>
+        <p class="page-hero-desc">{{ t('about.desc') }}</p>
+    </div>
+</div>
+<section class="section"><div class="container">
+    <div class="two-col" style="margin-bottom:var(--section-gap);">
+        <div>
+            <h2 style="font-size:var(--fs-800);margin-bottom:1rem;">{{ t('about.who') }}</h2>
+            <p style="margin-bottom:1rem;">{{ t('about.p1') }}</p>
+            <p style="margin-bottom:1rem;">{{ t('about.p2') | safe }}</p>
+            <p style="margin-bottom:2rem;">{{ t('about.p3') }}</p>
+            <div style="display:flex;gap:0.875rem;flex-wrap:wrap;">
+                <a href="/federation/leadership" class="btn btn-brand nav-link">{{ t('nav.fed.leadership') }}</a>
+                <a href="/federation/history"    class="btn btn-ghost nav-link">{{ t('nav.fed.history') }}</a>
+            </div>
+        </div>
+        <div style="background:linear-gradient(135deg,var(--brand-bg),var(--accent-light));border-radius:var(--r-2xl);aspect-ratio:1;display:flex;align-items:center;justify-content:center;">
+            <svg style="width:55%;color:var(--brand);opacity:0.45;" viewBox="0 0 120 130" fill="none"><path d="M18 12 C24 22 52 50 72 112" stroke="currentColor" stroke-width="20" stroke-linecap="round"/><path d="M38 72 C52 64 78 82 88 110" stroke="currentColor" stroke-width="15" stroke-linecap="round"/><circle cx="62" cy="68" r="5" fill="currentColor" opacity="0.45"/><circle cx="72" cy="76" r="4.2" fill="currentColor" opacity="0.38"/></svg>
+        </div>
+    </div>
+    <div class="stat-grid" style="margin-bottom:var(--section-gap);">
+        <div style="background:var(--brand);color:#fff;border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;">2015</div><div style="font-size:var(--fs-300);opacity:0.85;margin-top:0.25rem;">{{ t('about.founded') }}</div></div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;color:var(--brand);">24</div><div style="font-size:var(--fs-300);color:var(--muted);margin-top:0.25rem;">{{ t('about.regions') }}</div></div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;color:var(--brand);">500+</div><div style="font-size:var(--fs-300);color:var(--muted);margin-top:0.25rem;">{{ t('about.athletes_count') }}</div></div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;color:var(--brand);">20+</div><div style="font-size:var(--fs-300);color:var(--muted);margin-top:0.25rem;">{{ t('about.medals') }}</div></div>
+    </div>
+    <div style="background:var(--brand);color:#fff;border-radius:var(--r-2xl);padding:clamp(2rem,5vw,3rem);">
+        <h2 style="color:#fff;font-size:var(--fs-700);margin-bottom:0.875rem;">{{ t('about.mission_title') }}</h2>
+        <p style="color:rgba(255,255,255,0.85);font-size:var(--fs-600);line-height:1.7;max-width:680px;">{{ t('about.mission_text') }}</p>
+    </div>
+</div></section>
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Athletes' if lang == 'en' else 'Спортсмени' }} — {{ t('site.name') }}{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO (dark, photo bg) ════════════════════════════════════════════════ -->
+<section class="athletes-hero-page" style="position:relative;overflow:hidden;">
+    <!-- Background photo -->
+    <div style="position:absolute;inset:0;z-index:0;">
+        <img src="{{ url_for('static', filename='uploads/gallery/IMG_8829.JPG') }}"
+             alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 40%;opacity:0.18;">
+    </div>
+    <div class="container" style="position:relative;z-index:1;">
+        <nav class="breadcrumb" style="color:rgba(255,255,255,0.35);margin-bottom:1.25rem;">
+            <a href="/" class="nav-link" style="color:rgba(255,255,255,0.4);">{{ t('nav.home') }}</a>
+            <span class="sep" style="color:rgba(255,255,255,0.2);">›</span>
+            <span class="cur" style="color:rgba(255,255,255,0.6);">{{ 'Athletes' if lang == 'en' else 'Спортсмени' }}</span>
+        </nav>
+        <div class="athletes-hero-eyebrow">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+            {{ 'Ukrainian National Team' if lang == 'en' else 'Збірна України' }}
+        </div>
+        <h1 class="athletes-hero-title">
+            {% if lang == 'en' %}Athletes who represent<br><span>Ukraine on the world stage</span>
+            {% else %}Спортсмени, які представляють<br><span>Україну на світовій арені</span>{% endif %}
+        </h1>
+        <p class="athletes-hero-sub">
+            {% if lang == 'en' %}World & European champions, national medalists — the full roster of the Ukrainian beach wrestling team.
+            {% else %}Чемпіони та призери ЧС і ЧЄ, рекордсмени України — повний склад збірної ФПБУ.{% endif %}
+        </p>
+        <div class="athletes-stats-bar">
+            <div class="athletes-stat">
+                <span class="athletes-stat-n">{{ athletes | length }}</span>
+                <span class="athletes-stat-l">{{ 'Athletes' if lang == 'en' else 'Спортсменів' }}</span>
+            </div>
+            <div class="athletes-stat">
+                <span class="athletes-stat-n">{{ medal_map | length }}</span>
+                <span class="athletes-stat-l">{{ 'Int. medalists' if lang == 'en' else 'Міжнар. призерів' }}</span>
+            </div>
+            <div class="athletes-stat">
+                <span class="athletes-stat-n">{{ weights | length }}</span>
+                <span class="athletes-stat-l">{{ 'Weight classes' if lang == 'en' else 'Вагових категорій' }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ TABS + RANKING ════════════════════════════════════════════════════════ -->
+<section class="section">
+    <div class="container">
+
+        <!-- Tab row 1: Men / Women -->
+        <div class="athlete-tabs-row" style="margin-bottom:0.75rem;">
+            <a href="/athletes{% if sel_weight %}?weight={{ sel_weight | urlencode }}{% endif %}"
+               class="athlete-tab nav-link {% if not sel_gender %}active{% endif %}">
+               {{ 'All' if lang == 'en' else 'Всі' }}
+            </a>
+            <a href="/athletes?gender=M{% if sel_weight %}&weight={{ sel_weight | urlencode }}{% endif %}"
+               class="athlete-tab nav-link {% if sel_gender == 'M' %}active{% endif %}">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                {{ 'Men' if lang == 'en' else 'Чоловіки' }}
+            </a>
+            <a href="/athletes?gender=F{% if sel_weight %}&weight={{ sel_weight | urlencode }}{% endif %}"
+               class="athlete-tab nav-link {% if sel_gender == 'F' %}active{% endif %}">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                {{ 'Women' if lang == 'en' else 'Жінки' }}
+            </a>
+        </div>
+
+        <!-- Tab row 2: Weight categories -->
+        {% if weights %}
+        <div class="athlete-tabs-row athlete-tabs-row--sm" style="margin-bottom:1.75rem;">
+            <a href="/athletes{% if sel_gender %}?gender={{ sel_gender }}{% endif %}"
+               class="athlete-tab athlete-tab--sm nav-link {% if not sel_weight %}active{% endif %}">
+               {{ 'All weights' if lang == 'en' else 'Всі ваги' }}
+            </a>
+            {% for w in weights %}
+            <a href="/athletes?weight={{ w | urlencode }}{% if sel_gender %}&gender={{ sel_gender }}{% endif %}"
+               class="athlete-tab athlete-tab--sm nav-link {% if sel_weight == w %}active{% endif %}">{{ w }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if athletes %}
+        <div class="athlete-rank-list">
+            {% for a in athletes %}
+            {% set medals = medal_map.get(a['name'], {}) %}
+            <div class="athlete-rank-card">
+                <div class="rank-num {% if loop.index <= 3 %}top3{% endif %}">{{ loop.index }}</div>
+
+                <div class="rank-photo">
+                    {% if a['photo'] %}
+                    <img src="{{ url_for('static', filename='uploads/' + a['photo']) }}" alt="{{ a['name'] }}">
+                    {% else %}
+                    <svg viewBox="0 0 80 100" fill="none"><circle cx="40" cy="28" r="18" stroke="currentColor" stroke-width="3"/><path d="M10 90 C10 65 70 65 70 90" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+                    {% endif %}
+                </div>
+
+                <div class="rank-info">
+                    <div class="rank-name">{{ a['name'] }}</div>
+                    <div class="rank-meta">
+                        {% if a['weight_class'] %}<span class="tag tag-brand" style="font-size:0.7rem;">{{ a['weight_class'] }}</span>{% endif %}
+                        {% if a['region'] %}<span>{{ a['region'] }}</span>{% endif %}
+                        {% if a['birth_year'] %}
+                            {% set age = current_year - a['birth_year'] %}
+                            <span>{{ age }} {{ 'y.o.' if lang == 'en' else 'р.' }}</span>
+                            <span class="tag tag-accent" style="font-size:0.7rem;">{% if age >= 23 %}Senior{% elif age >= 20 %}U23{% else %}Junior{% endif %}</span>
+                        {% endif %}
+                    </div>
+                    {% set ach = a | lf('achievements') %}{% if ach %}
+                    <div style="font-size:var(--fs-200);color:var(--muted);margin-top:2px;">{{ ach }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Medal icons -->
+                <div class="rank-medals">
+                    {% if medals.get('gold', 0) > 0 %}
+                    <div class="medal-icon-wrap" title="{{ medals['gold'] }}× Золото">
+                        <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+                            <circle cx="11" cy="16" r="9" fill="#FFD700" stroke="#B8960C" stroke-width="1.5"/>
+                            <circle cx="11" cy="16" r="6.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                            <text x="11" y="20" text-anchor="middle" font-size="7" font-weight="900" fill="#7A5F00">{{ medals['gold'] }}</text>
+                            <path d="M7 8L11 1L15 8" stroke="#B8960C" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                            <path d="M9 7L11 4L13 7" fill="#FFD700"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    {% if medals.get('silver', 0) > 0 %}
+                    <div class="medal-icon-wrap" title="{{ medals['silver'] }}× Срібло">
+                        <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+                            <circle cx="11" cy="16" r="9" fill="#C0C0C0" stroke="#888" stroke-width="1.5"/>
+                            <circle cx="11" cy="16" r="6.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                            <text x="11" y="20" text-anchor="middle" font-size="7" font-weight="900" fill="#555">{{ medals['silver'] }}</text>
+                            <path d="M7 8L11 1L15 8" stroke="#888" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                            <path d="M9 7L11 4L13 7" fill="#C0C0C0"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    {% if medals.get('bronze', 0) > 0 %}
+                    <div class="medal-icon-wrap" title="{{ medals['bronze'] }}× Бронза">
+                        <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+                            <circle cx="11" cy="16" r="9" fill="#CD7F32" stroke="#8B5020" stroke-width="1.5"/>
+                            <circle cx="11" cy="16" r="6.5" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                            <text x="11" y="20" text-anchor="middle" font-size="7" font-weight="900" fill="#4A2000">{{ medals['bronze'] }}</text>
+                            <path d="M7 8L11 1L15 8" stroke="#8B5020" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                            <path d="M9 7L11 4L13 7" fill="#CD7F32"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    {% if not medals %}
+                    <span style="font-size:var(--fs-200);color:var(--muted-light);">—</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state"><p>{{ 'No athletes found.' if lang == 'en' else 'Спортсменів не знайдено.' }}</p></div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% if champions %}
+<section class="champs-section" style="padding-block:clamp(2.5rem,6vw,4rem);">
+    <div class="container">
+        <div style="display:grid;grid-template-columns:1fr auto;align-items:flex-end;gap:1rem;margin-bottom:2rem;">
+            <div>
+                <div class="champs-eyebrow"><svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}</div>
+                <h2 class="champs-title" style="font-size:var(--fs-700);">{{ 'International podiums' if lang == 'en' else 'Міжнародні п\'єдестали' }}</h2>
+            </div>
+            <a href="/champions" class="btn btn-brand nav-link">{{ 'All →' if lang == 'en' else 'Всі →' }}</a>
+        </div>
+        <div class="grid-4" style="position:relative;z-index:1;">
+            {% for c in champions %}
+            <div class="champion-card">
+                <div class="champion-photo">
+                    {% if c['photo'] %}<img src="{{ url_for('static', filename='uploads/' + c['photo']) }}" alt="{{ c['name'] }}">
+                    {% else %}<svg viewBox="0 0 80 100" fill="none"><circle cx="40" cy="28" r="18" stroke="currentColor" stroke-width="4"/><path d="M10 90 C10 65 70 65 70 90" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>{% endif %}
+                    <div class="champion-medal medal-{{ c['medal'] }}">{{ '1' if c['medal'] == 'gold' else ('2' if c['medal'] == 'silver' else '3') }}</div>
+                </div>
+                <div class="champion-body">
+                    <div class="champion-name">{{ c['name'] }}</div>
+                    <div class="champion-comp">{{ c['competition'] }}</div>
+                    <div class="champion-year">{{ c['year'] }} · {{ c['weight_class'] or '' }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
