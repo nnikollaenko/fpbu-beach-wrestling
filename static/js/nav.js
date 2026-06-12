@@ -19,6 +19,7 @@
             this.bindLinks();
             this.bindPopState();
             this.updateActiveNav(location.pathname);
+            this.updateLangSwitcher(location.pathname + location.search);
             this.main?.classList.add('content-entering');
         }
 
