@@ -114,7 +114,7 @@
         }
 
         updateActiveNav(path) {
-            const cleanPath = path.replace(/^\/(uk|en)(\/|$)/, '/');
+            const cleanPath = path.replace(/^\/en(\/|$)/, '/');
             document.querySelectorAll('[data-nav-page]').forEach(el => {
                 const pages = el.dataset.navPage.split(',').map(p => p.trim());
                 const match = pages.some(page =>

@@ -51,15 +51,13 @@ def _pull_lang(endpoint, values):
     g.lang = lang
     g.t    = make_t(lang)
 
-@pub.url_defaults
-def _inject_lang(endpoint, values):
-    if 'lang' not in values:
-        values['lang'] = getattr(g, 'lang', 'uk')
-
 # ── Language ──────────────────────────────────────────────────────────────────
 
 @app.before_request
 def set_language():
+    # Redirect bare root to /en/ for users with English preference
+    if request.path == '/' and request.cookies.get('lang') == 'en':
+        return redirect('/en/', 302)
     # url_value_preprocessor already set g.lang for pub routes; only fill in for admin/utility
     if not getattr(g, 'lang', None):
         lang = request.cookies.get('lang', 'uk')
@@ -201,14 +199,18 @@ def inject_globals():
     lang = getattr(g, 'lang', 'uk')
     path = request.path
     qs = ('?' + request.query_string.decode('utf-8', 'replace')) if request.query_string else ''
-    suffix = path[3:] if path[:3] in ('/uk', '/en') else path
+    # EN: /en/news → suffix /news; UK: /news → suffix /news
+    suffix = path[3:] if path.startswith('/en') else path
+    if not suffix:
+        suffix = '/'
+    lp = '/en' if lang == 'en' else ''
     return {
         'current_year': datetime.today().year,
         'lang': lang,
         't': getattr(g, 't', make_t('uk')),
         'icon': _icon,
-        'lp': f'/{lang}',
-        'lp_uk': '/uk' + suffix + qs,
+        'lp': lp,
+        'lp_uk': suffix + qs,
         'lp_en': '/en' + suffix + qs,
     }
 
@@ -255,15 +257,7 @@ def fix_typography(response):
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
-@app.route('/')
-def root():
-    lang = request.cookies.get('lang', 'uk')
-    if lang not in SUPPORTED_LANGS:
-        lang = 'uk'
-    return redirect(f'/{lang}/', 302)
-
-
-@pub.route('/<lang>/')
+@pub.route('/')
 def index():
     news      = db.get_news(limit=3)
     events    = db.get_upcoming_events(limit=5)
@@ -279,7 +273,7 @@ def index():
                            now_date=datetime.today().strftime('%Y-%m-%d'))
 
 
-@pub.route('/<lang>/news')
+@pub.route('/news')
 def news_list():
     page     = request.args.get('page', 1, type=int)
     per_page = 9
@@ -289,7 +283,7 @@ def news_list():
                            total=total, total_pages=total_pages)
 
 
-@pub.route('/<lang>/news/<slug>')
+@pub.route('/news/<slug>')
 def news_article(slug):
     article = db.get_news_by_slug(slug)
     if not article: abort(404)
@@ -297,7 +291,7 @@ def news_article(slug):
     return render_template('news/article.html', article=article, related=related)
 
 
-@pub.route('/<lang>/calendar')
+@pub.route('/calendar')
 def calendar():
     years = db.get_calendar_years()
     if not years:
@@ -327,7 +321,7 @@ def calendar():
                            now_date=datetime.today().strftime('%Y-%m-%d'))
 
 
-@pub.route('/<lang>/athletes')
+@pub.route('/athletes')
 def athletes():
     import sqlite3 as _sq
     weight   = request.args.get('weight')
@@ -410,7 +404,7 @@ def athletes():
                            per_page=PER_PAGE)
 
 
-@pub.route('/<lang>/champions')
+@pub.route('/champions')
 def champions():
     years      = db.get_champion_years()
     sel_year   = request.args.get('year', type=int)
@@ -420,43 +414,43 @@ def champions():
                            selected_year=sel_year, selected_age=age_group)
 
 
-@pub.route('/<lang>/about')
+@pub.route('/about')
 def fed_about():
     history = db.get_history()
     return render_template('federation/about.html', history=history)
 
 
-@pub.route('/<lang>/leadership')
+@pub.route('/leadership')
 def fed_leadership():
     leaders = db.get_leadership()
     return render_template('federation/leadership.html', leaders=leaders)
 
 
-@pub.route('/<lang>/committees')
+@pub.route('/committees')
 def fed_committees():
     committees = db.get_committees()
     return render_template('federation/committees.html', committees=committees)
 
 
-@pub.route('/<lang>/secretariat')
+@pub.route('/secretariat')
 def fed_secretariat():
     secretariat = db.get_secretariat()
     return render_template('federation/secretariat.html', secretariat=secretariat)
 
 
-@pub.route('/<lang>/regions')
+@pub.route('/regions')
 def fed_regions():
     regions = db.get_regions()
     return render_template('federation/regions.html', regions=regions)
 
 
-@pub.route('/<lang>/documents')
+@pub.route('/documents')
 def documents():
     docs = db.get_documents(category='Офіційні документи')
     return render_template('documents/index.html', docs=docs, category='official')
 
 
-@pub.route('/<lang>/documents/antidoping')
+@pub.route('/documents/antidoping')
 def documents_antidoping():
     docs = db.get_documents(category='Анти-допінг')
     return render_template('documents/index.html', docs=docs, category='antidoping')
@@ -468,7 +462,7 @@ def download_document(filename):
     return send_from_directory(docs_dir, filename, as_attachment=True)
 
 
-@pub.route('/<lang>/gallery')
+@pub.route('/gallery')
 def gallery():
     album      = request.args.get('album')
     sel_sort   = request.args.get('sort', 'date')
@@ -581,7 +575,7 @@ def _send_contact_email(name, phone, message):
         server.sendmail(mail_config.MAIL_SENDER, mail_config.MAIL_RECIPIENT, msg.as_string())
 
 
-@pub.route('/<lang>/contacts', methods=['GET', 'POST'])
+@pub.route('/contacts', methods=['GET', 'POST'])
 def contacts():
     if request.method == 'POST':
         # Honeypot — bots fill hidden fields, humans don't
@@ -610,7 +604,7 @@ def contacts():
     return render_template('contacts.html')
 
 
-@pub.route('/<lang>/privacy')
+@pub.route('/privacy')
 def privacy():
     return render_template('privacy.html')
 
@@ -622,49 +616,52 @@ def health():
 
 # ── Legacy redirects — old /federation/... URLs ───────────────────────────────
 @app.route('/federation/about')
-def _redir_fed_about():      return redirect('/uk/about', 301)
+def _redir_fed_about():       return redirect('/about', 301)
 @app.route('/federation/leadership')
-def _redir_fed_leadership(): return redirect('/uk/leadership', 301)
+def _redir_fed_leadership():  return redirect('/leadership', 301)
 @app.route('/federation/committees')
-def _redir_fed_committees(): return redirect('/uk/committees', 301)
+def _redir_fed_committees():  return redirect('/committees', 301)
 @app.route('/federation/secretariat')
-def _redir_fed_secretariat(): return redirect('/uk/secretariat', 301)
+def _redir_fed_secretariat(): return redirect('/secretariat', 301)
 @app.route('/federation/regions')
-def _redir_fed_regions():    return redirect('/uk/regions', 301)
+def _redir_fed_regions():     return redirect('/regions', 301)
 @app.route('/federation/history')
-def _redir_fed_history():    return redirect('/uk/about#history', 301)
+def _redir_fed_history():     return redirect('/about#history', 301)
 
-# ── Legacy redirects — old unprefixed URLs ────────────────────────────────────
-@app.route('/news')
-def _redir_news():           return redirect('/uk/news', 301)
-@app.route('/news/<slug>')
-def _redir_news_slug(slug):  return redirect(f'/uk/news/{slug}', 301)
-@app.route('/calendar')
-def _redir_calendar():       return redirect('/uk/calendar', 301)
-@app.route('/athletes')
-def _redir_athletes():       return redirect('/uk/athletes', 301)
-@app.route('/champions')
-def _redir_champions():      return redirect('/uk/champions', 301)
-@app.route('/about')
-def _redir_about():          return redirect('/uk/about', 301)
-@app.route('/leadership')
-def _redir_leadership():     return redirect('/uk/leadership', 301)
-@app.route('/committees')
-def _redir_committees():     return redirect('/uk/committees', 301)
-@app.route('/secretariat')
-def _redir_secretariat():    return redirect('/uk/secretariat', 301)
-@app.route('/regions')
-def _redir_regions():        return redirect('/uk/regions', 301)
-@app.route('/documents')
-def _redir_documents():      return redirect('/uk/documents', 301)
-@app.route('/documents/antidoping')
-def _redir_docs_anti():      return redirect('/uk/documents/antidoping', 301)
-@app.route('/gallery')
-def _redir_gallery():        return redirect('/uk/gallery', 301)
-@app.route('/contacts')
-def _redir_contacts():       return redirect('/uk/contacts', 301)
-@app.route('/privacy')
-def _redir_privacy():        return redirect('/uk/privacy', 301)
+# ── Legacy redirects — old /uk/... URLs → bare paths ─────────────────────────
+@app.route('/uk/')
+@app.route('/uk')
+def _redir_uk_root():         return redirect('/', 301)
+@app.route('/uk/news')
+def _redir_uk_news():         return redirect('/news', 301)
+@app.route('/uk/news/<slug>')
+def _redir_uk_news_slug(slug): return redirect(f'/news/{slug}', 301)
+@app.route('/uk/calendar')
+def _redir_uk_calendar():     return redirect('/calendar', 301)
+@app.route('/uk/athletes')
+def _redir_uk_athletes():     return redirect('/athletes', 301)
+@app.route('/uk/champions')
+def _redir_uk_champions():    return redirect('/champions', 301)
+@app.route('/uk/about')
+def _redir_uk_about():        return redirect('/about', 301)
+@app.route('/uk/leadership')
+def _redir_uk_leadership():   return redirect('/leadership', 301)
+@app.route('/uk/committees')
+def _redir_uk_committees():   return redirect('/committees', 301)
+@app.route('/uk/secretariat')
+def _redir_uk_secretariat():  return redirect('/secretariat', 301)
+@app.route('/uk/regions')
+def _redir_uk_regions():      return redirect('/regions', 301)
+@app.route('/uk/documents')
+def _redir_uk_documents():    return redirect('/documents', 301)
+@app.route('/uk/documents/antidoping')
+def _redir_uk_docs_anti():    return redirect('/documents/antidoping', 301)
+@app.route('/uk/gallery')
+def _redir_uk_gallery():      return redirect('/gallery', 301)
+@app.route('/uk/contacts')
+def _redir_uk_contacts():     return redirect('/contacts', 301)
+@app.route('/uk/privacy')
+def _redir_uk_privacy():      return redirect('/privacy', 301)
 
 
 @app.errorhandler(404)
@@ -676,7 +673,8 @@ def server_error(e):
     return render_template('404.html'), 500
 
 
-app.register_blueprint(pub)
+app.register_blueprint(pub, url_defaults={'lang': 'uk'})
+app.register_blueprint(pub, url_prefix='/en', url_defaults={'lang': 'en'}, name='pub_en')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
