@@ -1168,10 +1168,10 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
 }
 .about-stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1.25rem;
 }
-@media (max-width: 860px) { .about-stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 860px) { .about-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .about-stat-card {
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.1);
@@ -1194,6 +1194,7 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
     font-size: var(--fs-300);
     color: rgba(255,255,255,0.55);
     line-height: 1.4;
+    overflow-wrap: break-word;
 }
 
 /* ── About page: mission grid ───────────────────────────────────────────── */
@@ -3840,5 +3841,19 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
     }
     .mob-menu-btn {
         margin-left: auto;
+    }
+
+    /* ── About page: stats grid — tighter spacing on mobile ──────────────── */
+    .about-stats-section {
+        padding-block: 2rem;
+    }
+    .about-stats-grid {
+        gap: 0.625rem;
+    }
+    .about-stat-card {
+        padding: 1.25rem 0.875rem;
+    }
+    .about-stat-num {
+        font-size: clamp(1.75rem, 8vw, 2.5rem);
     }
 }
