@@ -755,7 +755,7 @@ def get_partners():
 
 def get_history():
     conn = get_db()
-    rows = conn.execute("SELECT * FROM history_items ORDER BY year DESC, sort_order").fetchall()
+    rows = conn.execute("SELECT * FROM history_items ORDER BY year ASC, sort_order, id ASC").fetchall()
     conn.close()
     return rows
 

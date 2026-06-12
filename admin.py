@@ -124,6 +124,9 @@ _L = {
         'edit_secretariat': 'Редагувати',
         'new_region': 'Новий регіон',
         'edit_region': 'Редагувати',
+        'history': 'Історія',
+        'new_history': 'Новий запис',
+        'edit_history': 'Редагувати запис',
         'pdf_regulations': 'PDF — Положення',
         'pdf_program': 'PDF — Програма',
         'pdf_protocols': 'PDF — Протоколи',
@@ -239,6 +242,9 @@ _L = {
         'edit_secretariat': 'Edit',
         'new_region': 'New region',
         'edit_region': 'Edit',
+        'history': 'History',
+        'new_history': 'New record',
+        'edit_history': 'Edit record',
         'pdf_regulations': 'PDF — Regulations',
         'pdf_program': 'PDF — Program',
         'pdf_protocols': 'PDF — Protocols',
@@ -993,6 +999,76 @@ def gallery_delete(pid):
 
 
 # ── Leadership ────────────────────────────────────────────────────────────────
+
+@admin_bp.route('/history')
+@require_admin
+def history_list():
+    rows = db.get_history()
+    return render_template('admin/history.html', items=rows)
+
+
+@admin_bp.route('/history/new', methods=['POST'])
+@require_admin
+def history_new():
+    conn  = db.get_db()
+    title = request.form.get('title', '')
+    desc  = request.form.get('description', '')
+    en = auto_fill_en(
+        {'title': title, 'description': desc},
+        {'title': request.form.get('title_en', ''),
+         'description': request.form.get('description_en', '')}
+    )
+    conn.execute(
+        "INSERT INTO history_items (year,title,title_en,description,description_en,sort_order) VALUES (?,?,?,?,?,?)",
+        (request.form.get('year', 2015, type=int),
+         title, en.get('title', ''),
+         desc, en.get('description', ''),
+         request.form.get('sort_order', 0, type=int))
+    )
+    conn.commit(); conn.close()
+    flash(_L[_lang()]['saved'])
+    return redirect(url_for('admin.history_list'))
+
+
+@admin_bp.route('/history/<int:hid>/edit', methods=['GET', 'POST'])
+@require_admin
+def history_edit(hid):
+    conn = db.get_db()
+    item = conn.execute("SELECT * FROM history_items WHERE id=?", (hid,)).fetchone()
+    if not item:
+        conn.close(); return redirect(url_for('admin.history_list'))
+    if request.method == 'POST':
+        title = request.form.get('title', '')
+        desc  = request.form.get('description', '')
+        en = auto_fill_en(
+            {'title': title, 'description': desc},
+            {'title': request.form.get('title_en', ''),
+             'description': request.form.get('description_en', '')}
+        )
+        conn.execute(
+            "UPDATE history_items SET year=?,title=?,title_en=?,description=?,description_en=?,sort_order=? WHERE id=?",
+            (request.form.get('year', 2015, type=int),
+             title, en.get('title', ''),
+             desc, en.get('description', ''),
+             request.form.get('sort_order', 0, type=int),
+             hid)
+        )
+        conn.commit(); conn.close()
+        flash(_L[_lang()]['saved'])
+        return redirect(url_for('admin.history_list'))
+    conn.close()
+    return render_template('admin/history.html', items=db.get_history(), edit_item=item)
+
+
+@admin_bp.route('/history/<int:hid>/delete', methods=['POST'])
+@require_admin
+def history_delete(hid):
+    conn = db.get_db()
+    conn.execute("DELETE FROM history_items WHERE id=?", (hid,))
+    conn.commit(); conn.close()
+    flash(_L[_lang()]['deleted'])
+    return redirect(url_for('admin.history_list'))
+
 
 @admin_bp.route('/leadership')
 @require_admin

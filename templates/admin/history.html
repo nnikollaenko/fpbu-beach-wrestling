@@ -1,0 +1,126 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.history }}{% endblock %}
+{% block page_title %}{{ L.history }}{% endblock %}
+
+{% block content %}
+{% set editing = edit_item is defined and edit_item %}
+
+<!-- Add / Edit form -->
+<div class="a-card" style="margin-bottom:1.25rem;">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.edit_history if editing else L.new_history }}</div>
+  </div>
+  <div class="a-card-body">
+    <form method="post"
+          action="{{ '/admin/history/' ~ edit_item.id ~ '/edit' if editing else '/admin/history/new' }}">
+      <div class="a-form-grid cols-2">
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.year }} <span>*</span></label>
+          <input class="a-input" name="year" type="number" required min="1900" max="2099"
+                 value="{{ edit_item.year if editing else '' }}"
+                 placeholder="2015">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.sort_order }}
+            <small class="muted" style="font-weight:400;"> — {{ '0 = за роком' if admin_lang == 'uk' else '0 = by year' }}</small>
+          </label>
+          <input class="a-input" name="sort_order" type="number" min="0"
+                 value="{{ edit_item.sort_order if editing else 0 }}">
+        </div>
+
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.title_uk }} <span>*</span></label>
+          <input class="a-input" name="title" type="text" required
+                 value="{{ edit_item.title if editing else '' }}"
+                 placeholder="{{ 'Перші медалі Чемпіонату Європи' if admin_lang == 'uk' else 'First European Championship medals' }}">
+        </div>
+        <div class="a-form-group full">
+          <label class="a-form-label">
+            {{ L.title_en }}
+            <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small>
+          </label>
+          <input class="a-input" name="title_en" type="text"
+                 value="{{ edit_item.title_en if editing else '' }}">
+        </div>
+
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.description_uk }}</label>
+          <textarea class="a-textarea" name="description" rows="3">{{ edit_item.description if editing else '' }}</textarea>
+        </div>
+        <div class="a-form-group full">
+          <label class="a-form-label">
+            {{ L.description_en }}
+            <small class="muted">{{ 'авто, можна редагувати' if admin_lang == 'uk' else 'auto, editable' }}</small>
+          </label>
+          <textarea class="a-textarea" name="description_en" rows="3">{{ edit_item.description_en if editing else '' }}</textarea>
+        </div>
+
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          {% if editing %}
+          <a class="btn btn-ghost" href="/admin/history">{{ L.cancel }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- List -->
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">
+      {{ L.history }} ({{ items|length }})
+      <small class="muted" style="font-weight:400;font-size:11px;margin-left:.5rem;">
+        {{ '↑ відсортовано за роком — визначає позицію ліво/право на сайті' if admin_lang == 'uk' else '↑ sorted by year — determines left/right position on site' }}
+      </small>
+    </div>
+  </div>
+  {% if items %}
+  <table class="a-table">
+    <thead>
+      <tr>
+        <th style="width:56px;">{{ L.year }}</th>
+        <th>{{ L.title_uk }}</th>
+        <th style="width:72px;">{{ 'Позиція' if admin_lang == 'uk' else 'Position' }}</th>
+        <th>{{ L.actions }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td><strong style="color:var(--brand);">{{ item.year }}</strong></td>
+        <td>
+          <strong>{{ item.title }}</strong>
+          {% if item.description %}<div class="muted" style="font-size:11px;margin-top:2px;">{{ item.description[:80] }}{% if item.description|length > 80 %}…{% endif %}</div>{% endif %}
+        </td>
+        <td class="muted" style="text-align:center;">
+          {% set pos = loop.index %}
+          <span title="{{ 'позиція ' ~ pos if admin_lang == 'uk' else 'position ' ~ pos }}"
+                style="display:inline-flex;align-items:center;gap:4px;font-size:11px;">
+            {% if pos % 2 == 1 %}
+            ← {{ 'ліво' if admin_lang == 'uk' else 'left' }}
+            {% else %}
+            {{ 'право' if admin_lang == 'uk' else 'right' }} →
+            {% endif %}
+          </span>
+        </td>
+        <td>
+          <div class="a-actions">
+            <a class="btn btn-ghost btn-sm" href="/admin/history/{{ item.id }}/edit">{{ L.edit }}</a>
+            <form method="post" action="/admin/history/{{ item.id }}/delete" style="display:inline;"
+                  onsubmit="return confirm('{{ L.confirm_delete }}')">
+              <button class="btn btn-sm" style="color:var(--danger);border-color:currentColor;background:transparent;" type="submit">{{ L.delete }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="a-empty">{{ 'Записів ще немає' if admin_lang == 'uk' else 'No records yet' }}</div>
+  {% endif %}
+</div>
+{% endblock %}
