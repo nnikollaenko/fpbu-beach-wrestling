@@ -705,7 +705,7 @@ def get_champions(year=None, gender=None, age_group=None):
     if gender:    conds.append("gender = ?");     params.append(gender)
     if age_group: conds.append("age_group = ?");  params.append(age_group)
     if conds: q += " WHERE " + " AND ".join(conds)
-    q += " ORDER BY year DESC, sort_order"
+    q += " ORDER BY CASE WHEN sort_order = 0 THEN 1 ELSE 0 END, sort_order, id DESC"
     rows = conn.execute(q, params).fetchall()
     conn.close()
     return rows

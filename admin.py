@@ -730,7 +730,7 @@ def athlete_delete(aid):
 @require_admin
 def champions_list():
     conn = db.get_db()
-    items = conn.execute("SELECT * FROM champions ORDER BY year DESC, sort_order").fetchall()
+    items = conn.execute("SELECT * FROM champions ORDER BY CASE WHEN sort_order = 0 THEN 1 ELSE 0 END, sort_order, id DESC").fetchall()
     conn.close()
     return render_template('admin/champions_list.html', items=items)
 
@@ -749,11 +749,13 @@ def champion_new():
              'competition': request.form.get('competition_en', '')}
         )
         conn.execute(
-            "INSERT INTO champions (name,name_en,year,competition,competition_en,medal,age_group,weight_class,gender,photo,total_medals,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO champions (name,name_en,year,competition,competition_en,gold_count,silver_count,bronze_count,age_group,weight_class,gender,photo,total_medals,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (name, en.get('name', ''),
              request.form.get('year', datetime.today().year, type=int),
              comp, en.get('competition', ''),
-             request.form.get('medal', 'gold'),
+             request.form.get('gold_count', 0, type=int),
+             request.form.get('silver_count', 0, type=int),
+             request.form.get('bronze_count', 0, type=int),
              request.form.get('age_group', 'Senior'),
              request.form.get('weight_class', ''),
              request.form.get('gender', 'M'),
@@ -784,11 +786,13 @@ def champion_edit(cid):
              'competition': request.form.get('competition_en', '')}
         )
         conn.execute(
-            "UPDATE champions SET name=?,name_en=?,year=?,competition=?,competition_en=?,medal=?,age_group=?,weight_class=?,gender=?,photo=?,total_medals=?,sort_order=? WHERE id=?",
+            "UPDATE champions SET name=?,name_en=?,year=?,competition=?,competition_en=?,gold_count=?,silver_count=?,bronze_count=?,age_group=?,weight_class=?,gender=?,photo=?,total_medals=?,sort_order=? WHERE id=?",
             (name, en.get('name', ''),
              request.form.get('year', datetime.today().year, type=int),
              comp, en.get('competition', ''),
-             request.form.get('medal', 'gold'),
+             request.form.get('gold_count', 0, type=int),
+             request.form.get('silver_count', 0, type=int),
+             request.form.get('bronze_count', 0, type=int),
              request.form.get('age_group', 'Senior'),
              request.form.get('weight_class', ''),
              request.form.get('gender', 'M'),

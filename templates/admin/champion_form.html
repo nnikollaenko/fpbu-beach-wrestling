@@ -41,12 +41,25 @@
                  value="{{ item.year if is_edit else '' }}">
         </div>
         <div class="a-form-group">
-          <label class="a-form-label">{{ L.medal }}</label>
-          <select class="a-select" name="medal">
-            <option value="gold"   {{ 'selected' if is_edit and item.medal == 'gold' }}>🥇 {{ 'Золото' if admin_lang == 'uk' else 'Gold' }}</option>
-            <option value="silver" {{ 'selected' if is_edit and item.medal == 'silver' }}>🥈 {{ 'Срібло' if admin_lang == 'uk' else 'Silver' }}</option>
-            <option value="bronze" {{ 'selected' if is_edit and item.medal == 'bronze' }}>🥉 {{ 'Бронза' if admin_lang == 'uk' else 'Bronze' }}</option>
-          </select>
+          <!-- medals row -->
+          <label class="a-form-label">{{ 'Медалі (кількість)' if admin_lang == 'uk' else 'Medals (count)' }}</label>
+          <div style="display:flex;gap:.625rem;align-items:center;">
+            <label style="display:flex;align-items:center;gap:.375rem;font-size:var(--fs-300,13px);white-space:nowrap;">
+              🥇
+              <input class="a-input" name="gold_count" type="number" min="0" max="99" style="width:64px;text-align:center;"
+                     value="{{ item.gold_count if is_edit else 1 }}">
+            </label>
+            <label style="display:flex;align-items:center;gap:.375rem;font-size:var(--fs-300,13px);white-space:nowrap;">
+              🥈
+              <input class="a-input" name="silver_count" type="number" min="0" max="99" style="width:64px;text-align:center;"
+                     value="{{ item.silver_count if is_edit else 0 }}">
+            </label>
+            <label style="display:flex;align-items:center;gap:.375rem;font-size:var(--fs-300,13px);white-space:nowrap;">
+              🥉
+              <input class="a-input" name="bronze_count" type="number" min="0" max="99" style="width:64px;text-align:center;"
+                     value="{{ item.bronze_count if is_edit else 0 }}">
+            </label>
+          </div>
         </div>
 
         <div class="a-form-group">
@@ -71,7 +84,9 @@
                  value="{{ item.weight_class if is_edit else '' }}">
         </div>
         <div class="a-form-group">
-          <label class="a-form-label">{{ L.sort_order }}</label>
+          <label class="a-form-label">
+            {{ 'Порядок (0 = авто, новіші зверху)' if admin_lang == 'uk' else 'Order (0 = auto, newest first)' }}
+          </label>
           <input class="a-input" name="sort_order" type="number" min="0"
                  value="{{ item.sort_order if is_edit else 0 }}">
         </div>
