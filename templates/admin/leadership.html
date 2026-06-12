@@ -41,12 +41,20 @@
                  value="{{ edit_item.sort_order if editing else 0 }}">
         </div>
         <div class="a-form-group full">
-          <label class="a-form-label">{{ L.bio_uk }}</label>
-          <textarea class="a-textarea" name="bio">{{ edit_item.bio if editing else '' }}</textarea>
+          <label class="a-form-label">
+            {{ 'Коротка біографія (УКР)' if admin_lang == 'uk' else 'Short bio (UK)' }}
+            <small class="muted" style="font-weight:400;"> — {{ 'до 300 символів' if admin_lang == 'uk' else 'up to 300 chars' }}</small>
+          </label>
+          <textarea class="a-textarea" name="bio" id="lead_bio_uk">{{ edit_item.bio if editing else '' }}</textarea>
+          <div id="lead_bio_uk_ctr" style="font-size:11px;margin-top:.25rem;color:var(--a-muted,#888);"></div>
         </div>
         <div class="a-form-group full">
-          <label class="a-form-label">{{ L.bio_en }}</label>
-          <textarea class="a-textarea" name="bio_en">{{ edit_item.bio_en if editing else '' }}</textarea>
+          <label class="a-form-label">
+            {{ 'Коротка біографія (EN)' if admin_lang == 'uk' else 'Short bio (EN)' }}
+            <small class="muted" style="font-weight:400;"> — {{ 'авто, можна редагувати' if admin_lang == 'uk' else 'auto, editable' }}</small>
+          </label>
+          <textarea class="a-textarea" name="bio_en" id="lead_bio_en">{{ edit_item.bio_en if editing else '' }}</textarea>
+          <div id="lead_bio_en_ctr" style="font-size:11px;margin-top:.25rem;color:var(--a-muted,#888);"></div>
         </div>
         <div class="a-form-group full">
           <label class="a-form-label">{{ L.photo }}</label>
@@ -59,7 +67,7 @@
           <input class="a-input" name="photo" type="file" accept="image/*" style="margin-top:.375rem;">
         </div>
         <div class="a-form-actions full">
-          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          <button class="btn btn-primary" type="submit" id="lead_submit">{{ L.save }}</button>
           {% if editing %}
           <a class="btn btn-ghost" href="/admin/leadership">{{ L.cancel }}</a>
           {% endif %}
@@ -68,6 +76,44 @@
     </form>
   </div>
 </div>
+<script>
+(function () {
+  var MAX = 300;
+  var fields = [
+    { ta: 'lead_bio_uk', ctr: 'lead_bio_uk_ctr' },
+    { ta: 'lead_bio_en', ctr: 'lead_bio_en_ctr' }
+  ];
+  var submit = document.getElementById('lead_submit');
+  function checkAll() {
+    var ok = fields.every(function (f) {
+      var ta = document.getElementById(f.ta);
+      return !ta || ta.value.length <= MAX;
+    });
+    if (submit) submit.disabled = !ok;
+  }
+  fields.forEach(function (f) {
+    var ta = document.getElementById(f.ta);
+    var ctr = document.getElementById(f.ctr);
+    if (!ta || !ctr) return;
+    function update() {
+      var len = ta.value.length;
+      var left = MAX - len;
+      if (left >= 0) {
+        ctr.textContent = left + (left === 1 ? ' символ залишився' : ' символів залишилось');
+        ctr.style.color = left < 40 ? '#f59e0b' : 'var(--a-muted,#888)';
+        ta.style.outline = '';
+      } else {
+        ctr.textContent = 'Перевищено на ' + Math.abs(left) + ' симв. — скоротіть текст';
+        ctr.style.color = 'var(--danger,#f87171)';
+        ta.style.outline = '2px solid var(--danger,#f87171)';
+      }
+      checkAll();
+    }
+    ta.addEventListener('input', update);
+    update();
+  });
+})();
+</script>
 
 <!-- List -->
 <div class="a-card">
