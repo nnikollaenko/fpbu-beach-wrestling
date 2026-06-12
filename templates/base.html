@@ -19,10 +19,10 @@
 
     <meta name="theme-color" content="#FF3B00">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v=73">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v=74">
     {% block extra_css %}{% endblock %}
     <style>
-    #preloader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0a0a0a;transition:opacity .25s ease}
+    #preloader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0a0a0a;transition:transform .4s cubic-bezier(.4,0,.2,1)}
     .pre-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem;user-select:none;transition:opacity .35s ease}
     .pre-logo-wrap{position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center}
     .pre-logo{width:158px;height:158px;position:relative;z-index:1}
@@ -266,12 +266,11 @@
         var inner=pre.querySelector('.pre-inner');
         if(inner)inner.style.opacity='0';
         setTimeout(function(){
-            pre.style.opacity='0';
+            pre.style.transform='translateY(-100%)';
             setTimeout(function(){
-                pre.style.visibility='hidden';
                 if(pre.parentNode)pre.parentNode.removeChild(pre);
-            },280);
-        },350);
+            },420);
+        },300);
     }
     function finish(){
         var wait=Math.max(0,1000-(Date.now()-startTime));
