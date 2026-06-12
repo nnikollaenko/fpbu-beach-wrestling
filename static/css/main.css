@@ -3468,33 +3468,34 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
 @media (max-width: 640px) {
 
     /* Stack: photo on top, content below.
-       min-height fills viewport; height: auto lets content grow so nothing is clipped. */
+       No *1.1 — exact viewport fill so buttons stay above fold and no brown overflow on load.
+       Marquee below is dark (#0D0D0C), so showing 44px of it when chrome collapses is fine. */
     .hero-fullbleed {
         display: flex;
         flex-direction: column;
-        min-height: calc((100svh - env(safe-area-inset-top) - 81px) * 1.1);
+        min-height: calc(100svh - env(safe-area-inset-top) - 81px);
         height: auto;
         align-items: stretch;
     }
 
-    /* Photo: fixed height (not % of auto parent — that would collapse) */
+    /* Photo: taller to give more visible image above the gradient */
     .hero-fullbleed .hero-bg-wrap {
         position: relative;
         inset: auto;
         width: 100%;
-        flex: 0 0 190px;
+        flex: 0 0 220px;
         overflow: hidden;
         z-index: 0;
     }
 
-    /* Gradient over the bottom of the photo fading to solid black */
+    /* Gradient: starts late so more of the photo is clear */
     .hero-fullbleed .hero-bg-wrap::after {
         content: '';
         position: absolute;
         inset: 0;
         background: linear-gradient(to bottom,
-            transparent 15%,
-            rgba(26,7,0,0.45) 55%,
+            transparent 45%,
+            rgba(26,7,0,0.4) 78%,
             #1a0700 100%);
         pointer-events: none;
     }
@@ -3512,18 +3513,23 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
         display: none;
     }
 
-    /* Content: grows freely — no clipping, respects iOS safe area at bottom.
-       flex column + justify-end pulls title/buttons towards the marquee. */
+    /* Content: flex-end pulls content towards marquee.
+       padding-bottom clears iOS home indicator + gives breathing room above browser bar. */
     .hero-content-wrap {
         position: relative;
         background: #1a0700;
         padding-top: 1rem;
-        padding-bottom: max(1.25rem, env(safe-area-inset-bottom) + 0.75rem);
+        padding-bottom: max(2rem, env(safe-area-inset-bottom) + 1.5rem);
         flex: 1 1 auto;
         margin-top: -1px;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
+    }
+
+    /* Badge: auto width only — don't stretch to full column width */
+    .hero-content-wrap .hero-badge {
+        align-self: flex-start;
     }
 
     /* Slightly smaller title on mobile */
