@@ -10,3 +10,5 @@ __pycache__/
 *.log
 beach_wrestling_logo_all*/
 Фото beach wrestling/
+*.db
+translate_existing.py
