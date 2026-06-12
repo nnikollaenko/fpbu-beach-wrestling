@@ -43,8 +43,8 @@ _L = {
         'actions': 'Дії',
         'title_uk': 'Заголовок (УКР)',
         'title_en': 'Заголовок (EN)',
-        'content_uk': 'Контент (УКР) — HTML',
-        'content_en': 'Контент (EN) — HTML',
+        'content_uk': 'Контент (УКР)',
+        'content_en': 'Контент (EN)',
         'name_uk': "Ім'я / Назва (УКР)",
         'name_en': "Ім'я / Назва (EN)",
         'role_uk': 'Посада (УКР)',
@@ -158,8 +158,8 @@ _L = {
         'actions': 'Actions',
         'title_uk': 'Title (UK)',
         'title_en': 'Title (EN)',
-        'content_uk': 'Content (UK) — HTML',
-        'content_en': 'Content (EN) — HTML',
+        'content_uk': 'Content (UK)',
+        'content_en': 'Content (EN)',
         'name_uk': 'Name (UK)',
         'name_en': 'Name (EN)',
         'role_uk': 'Role (UK)',
@@ -273,6 +273,36 @@ def _save_upload(file, subfolder, allowed):
     name = uuid.uuid4().hex[:16] + '.' + ext
     file.save(os.path.join(folder, name))
     return subfolder + '/' + name
+
+
+def _plain_to_html(text: str) -> str:
+    """Convert plain text (blank-line paragraphs) to <p> HTML. Leaves existing HTML unchanged."""
+    if not text:
+        return ''
+    text = text.strip()
+    if not text:
+        return ''
+    if re.search(r'<[a-z][^>]*>', text, re.I):
+        return text  # already HTML
+    paragraphs = re.split(r'\n\s*\n', text)
+    parts = []
+    for p in paragraphs:
+        p = p.strip()
+        if p:
+            p = p.replace('\n', '<br>')
+            parts.append(f'<p>{p}</p>')
+    return '\n'.join(parts)
+
+
+def _html_to_plain(html: str) -> str:
+    """Convert simple <p>/<br> HTML back to plain text for textarea editing."""
+    if not html:
+        return ''
+    text = re.sub(r'</p\s*>', '\n\n', html, flags=re.I)
+    text = re.sub(r'<br\s*/?>', '\n', text, flags=re.I)
+    text = re.sub(r'<[^>]+>', '', text)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
 
 
 def _slugify(text):
@@ -392,29 +422,32 @@ def news_list():
 @require_admin
 def news_new():
     if request.method == 'POST':
-        title = request.form.get('title', '').strip()
-        slug  = request.form.get('slug', '').strip() or _slugify(title)
-        conn  = db.get_db()
-        # Make slug unique
+        title   = request.form.get('title', '').strip()
+        slug    = request.form.get('slug', '').strip() or _slugify(title)
+        content = _plain_to_html(request.form.get('content', ''))
+        conn    = db.get_db()
         base, i = slug, 1
         while conn.execute("SELECT id FROM news WHERE slug=?", (slug,)).fetchone():
             slug = f'{base}-{i}'; i += 1
         cover = _save_upload(request.files.get('cover'), 'news', ALLOWED_IMG)
-        en = auto_fill_en({'title': title}, {'title': request.form.get('title_en', '')})
+        en = auto_fill_en(
+            {'title': title, 'content': content},
+            {'title': request.form.get('title_en', ''),
+             'content': _plain_to_html(request.form.get('content_en', ''))},
+            html_fields={'content'},
+        )
         conn.execute(
             "INSERT INTO news (slug,title,content,cover,published_at,is_featured,title_en,content_en) VALUES (?,?,?,?,?,?,?,?)",
-            (slug, title,
-             request.form.get('content', ''),
-             cover,
+            (slug, title, content, cover,
              request.form.get('published_at') or datetime.today().strftime('%Y-%m-%d'),
              1 if request.form.get('is_featured') else 0,
              en.get('title', ''),
-             request.form.get('content_en', ''))
+             en.get('content', ''))
         )
         conn.commit(); conn.close()
         flash(_L[_lang()]['saved'])
         return redirect(url_for('admin.news_list'))
-    return render_template('admin/news_form.html', item=None)
+    return render_template('admin/news_form.html', item=None, content_edit='', content_en_edit='')
 
 
 @admin_bp.route('/news/<int:nid>/edit', methods=['GET', 'POST'])
@@ -425,30 +458,35 @@ def news_edit(nid):
     if not item:
         conn.close(); return redirect(url_for('admin.news_list'))
     if request.method == 'POST':
-        title = request.form.get('title', '').strip()
-        slug  = request.form.get('slug', '').strip() or _slugify(title)
-        # Allow same slug for this record, but not for others
+        title   = request.form.get('title', '').strip()
+        slug    = request.form.get('slug', '').strip() or _slugify(title)
+        content = _plain_to_html(request.form.get('content', ''))
         existing = conn.execute("SELECT id FROM news WHERE slug=? AND id!=?", (slug, nid)).fetchone()
         if existing:
             slug = slug + '-' + str(nid)
         cover = _save_upload(request.files.get('cover'), 'news', ALLOWED_IMG) or item['cover']
-        en = auto_fill_en({'title': title}, {'title': request.form.get('title_en', '')})
+        en = auto_fill_en(
+            {'title': title, 'content': content},
+            {'title': request.form.get('title_en', ''),
+             'content': _plain_to_html(request.form.get('content_en', ''))},
+            html_fields={'content'},
+        )
         conn.execute(
             "UPDATE news SET title=?,slug=?,content=?,cover=?,published_at=?,is_featured=?,title_en=?,content_en=? WHERE id=?",
-            (title, slug,
-             request.form.get('content', ''),
-             cover,
+            (title, slug, content, cover,
              request.form.get('published_at') or item['published_at'],
              1 if request.form.get('is_featured') else 0,
              en.get('title', ''),
-             request.form.get('content_en', ''),
+             en.get('content', ''),
              nid)
         )
         conn.commit(); conn.close()
         flash(_L[_lang()]['saved'])
         return redirect(url_for('admin.news_list'))
     conn.close()
-    return render_template('admin/news_form.html', item=item)
+    return render_template('admin/news_form.html', item=item,
+                           content_edit=_html_to_plain(item['content'] or ''),
+                           content_en_edit=_html_to_plain(item['content_en'] or ''))
 
 
 @admin_bp.route('/news/<int:nid>/delete', methods=['POST'])

@@ -1,4 +1,5 @@
 import json
+import re
 import urllib.request
 import urllib.parse
 
@@ -32,10 +33,32 @@ def _translate(text: str) -> str:
     return text
 
 
-def auto_fill_en(uk: dict, en: dict) -> dict:
+def _translate_html(html: str) -> str:
+    """Translate HTML with <p>/<br> tags paragraph-by-paragraph."""
+    if not html or not html.strip():
+        return ''
+    result = []
+    last_end = 0
+    for m in re.finditer(r'<p>(.*?)</p>', html, re.I | re.S):
+        before = html[last_end:m.start()].strip()
+        if before:
+            result.append(_translate(re.sub(r'<[^>]+>', '', before)))
+        inner_plain = re.sub(r'<br\s*/?>', ' ', m.group(1), flags=re.I).strip()
+        inner_plain = re.sub(r'<[^>]+>', '', inner_plain)
+        translated = _translate(inner_plain) if inner_plain else ''
+        result.append(f'<p>{translated}</p>')
+        last_end = m.end()
+    remaining = html[last_end:].strip()
+    if remaining:
+        result.append(_translate(re.sub(r'<[^>]+>', '', remaining)))
+    return '\n'.join(result) if result else _translate(html)
+
+
+def auto_fill_en(uk: dict, en: dict, html_fields: set = None) -> dict:
     """
-    uk:  {field: ukrainian_text}
+    uk:  {field: ukrainian_text_or_html}
     en:  {field: admin_override}  — keeps admin value if non-empty, otherwise auto-translates
+    html_fields: set of field names whose values are HTML (translated paragraph-by-paragraph)
     """
     result = {}
     for field, en_val in en.items():
@@ -45,5 +68,10 @@ def auto_fill_en(uk: dict, en: dict) -> dict:
             result[field] = _CATEGORY_MAP.get(uk.get(field, ''), uk.get(field, ''))
         else:
             uk_val = uk.get(field, '')
-            result[field] = _translate(uk_val) if uk_val and uk_val.strip() else ''
+            if not uk_val or not uk_val.strip():
+                result[field] = ''
+            elif html_fields and field in html_fields:
+                result[field] = _translate_html(uk_val)
+            else:
+                result[field] = _translate(uk_val)
     return result

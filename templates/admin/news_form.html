@@ -66,16 +66,20 @@
 
         <!-- Ukrainian content -->
         <div class="a-form-group full">
-          <label class="a-form-label" for="content">{{ L.content_uk }} <span>*</span></label>
+          <label class="a-form-label" for="content">{{ L.content_uk }} <span>*</span>
+            <small class="muted">{{ 'абзаци — порожній рядок між ними' if admin_lang == 'uk' else 'separate paragraphs with a blank line' }}</small>
+          </label>
           <textarea class="a-textarea tall" id="content" name="content" required
-                    placeholder="<p>Текст новини...</p>">{{ item.content if is_edit else '' }}</textarea>
+                    placeholder="{{ 'Перший абзац новини...\n\nДругий абзац...' if admin_lang == 'uk' else 'First paragraph...\n\nSecond paragraph...' }}">{{ content_edit }}</textarea>
         </div>
 
         <!-- English content -->
         <div class="a-form-group full">
-          <label class="a-form-label" for="content_en">{{ L.content_en }}</label>
+          <label class="a-form-label" for="content_en">{{ L.content_en }}
+            <small class="muted">{{ 'авто — перекладається при збереженні, якщо порожнє' if admin_lang == 'uk' else 'auto-translated on save when empty' }}</small>
+          </label>
           <textarea class="a-textarea tall" id="content_en" name="content_en"
-                    placeholder="<p>News content...</p>">{{ item.content_en if is_edit else '' }}</textarea>
+                    placeholder="{{ 'First paragraph...\n\nSecond paragraph...' }}">{{ content_en_edit }}</textarea>
         </div>
 
         <!-- Actions -->
