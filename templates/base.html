@@ -10,6 +10,10 @@
     <meta name="author" content="{{ t('site.name') }}">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ request.url }}">
+    {% set _hk = request.path[3:] %}
+    <link rel="alternate" hreflang="uk" href="/uk{{ _hk }}">
+    <link rel="alternate" hreflang="en" href="/en{{ _hk }}">
+    <link rel="alternate" hreflang="x-default" href="/uk{{ _hk }}">
 
     <meta property="og:type"        content="website">
     <meta property="og:title"       content="{% block og_title %}{{ t('site.name') }}{% endblock %}">
@@ -54,7 +58,7 @@
     <div class="container">
         <div class="hdr-inner">
 
-            <a href="/" class="hdr-logo nav-link" data-nav-page="" aria-label="{{ t('site.name') }}">
+            <a href="{{ lp }}/" class="hdr-logo nav-link" data-nav-page="" aria-label="{{ t('site.name') }}">
                 <img class="hdr-logo-mark" src="{{ url_for('static', filename='img/logo-badge.svg') }}" alt="" aria-hidden="true">
                 <div class="hdr-logo-text">
                     <span class="ln1">{{ 'Federation' if lang == 'en' else 'Федерація' }}</span>
@@ -64,35 +68,35 @@
 
             <!-- Desktop nav -->
             <nav class="hdr-nav" aria-label="Main navigation">
-                <a href="/news"     class="hdr-pill nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
-                <a href="/calendar" class="hdr-pill nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
+                <a href="{{ lp }}/news"     class="hdr-pill nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
+                <a href="{{ lp }}/calendar" class="hdr-pill nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
 
                 <div class="hdr-dropdown">
-                    <a href="/about" class="hdr-pill nav-link" data-nav-page="about,leadership,committees,secretariat,regions,contacts">
+                    <a href="{{ lp }}/about" class="hdr-pill nav-link" data-nav-page="about,leadership,committees,secretariat,regions,contacts">
                         {{ t('nav.federation') }}
                         {{ icon('chevron-down', size=11) }}
                     </a>
                     <div class="hdr-dropdown-menu">
                         <div class="hdr-dropdown-menu-inner">
-                        <a href="/about"       class="hdr-dropdown-link nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
-                        <a href="/leadership"  class="hdr-dropdown-link nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
-                        <a href="/committees"  class="hdr-dropdown-link nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
-                        <a href="/secretariat" class="hdr-dropdown-link nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
-                        <a href="/regions"     class="hdr-dropdown-link nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
-                        <a href="/contacts"    class="hdr-dropdown-link nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
+                        <a href="{{ lp }}/about"       class="hdr-dropdown-link nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
+                        <a href="{{ lp }}/leadership"  class="hdr-dropdown-link nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
+                        <a href="{{ lp }}/committees"  class="hdr-dropdown-link nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
+                        <a href="{{ lp }}/secretariat" class="hdr-dropdown-link nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
+                        <a href="{{ lp }}/regions"     class="hdr-dropdown-link nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
+                        <a href="{{ lp }}/contacts"    class="hdr-dropdown-link nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="hdr-dropdown">
-                    <a href="/athletes" class="hdr-pill nav-link" data-nav-page="athletes,champions">
+                    <a href="{{ lp }}/athletes" class="hdr-pill nav-link" data-nav-page="athletes,champions">
                         {{ t('nav.athletes') }}
                         {{ icon('chevron-down', size=11) }}
                     </a>
                     <div class="hdr-dropdown-menu">
                         <div class="hdr-dropdown-menu-inner">
-                        <a href="/athletes"  class="hdr-dropdown-link nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
-                        <a href="/champions" class="hdr-dropdown-link nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
+                        <a href="{{ lp }}/athletes"  class="hdr-dropdown-link nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
+                        <a href="{{ lp }}/champions" class="hdr-dropdown-link nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
                         </div>
                     </div>
                 </div>
@@ -104,9 +108,9 @@
                     </button>
                     <div class="hdr-dropdown-menu">
                         <div class="hdr-dropdown-menu-inner">
-                        <a href="/gallery"              class="hdr-dropdown-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
-                        <a href="/documents"            class="hdr-dropdown-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
-                        <a href="/documents/antidoping" class="hdr-dropdown-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                        <a href="{{ lp }}/gallery"              class="hdr-dropdown-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
+                        <a href="{{ lp }}/documents"            class="hdr-dropdown-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
+                        <a href="{{ lp }}/documents/antidoping" class="hdr-dropdown-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
                         </div>
                     </div>
                 </div>
@@ -115,8 +119,8 @@
 
             <!-- Language switcher -->
             <div class="lang-switcher" aria-label="Language">
-                <a href="/set-lang/uk" class="lang-btn {% if lang == 'uk' %}active{% endif %}">UA</a>
-                <a href="/set-lang/en" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+                <a href="{{ lp_uk }}" class="lang-btn {% if lang == 'uk' %}active{% endif %}">UA</a>
+                <a href="{{ lp_en }}" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
             </div>
 
             <!-- Mobile menu button -->
@@ -133,9 +137,9 @@
 <nav class="mob-nav" id="mobNav" aria-label="Mobile navigation" aria-hidden="true">
 
     <div class="mob-nav-body">
-        <a href="/"        class="mob-nav-link nav-link" data-nav-page="">{{ t('nav.home') }}</a>
-        <a href="/news"    class="mob-nav-link nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
-        <a href="/calendar" class="mob-nav-link nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
+        <a href="{{ lp }}/"        class="mob-nav-link nav-link" data-nav-page="">{{ t('nav.home') }}</a>
+        <a href="{{ lp }}/news"    class="mob-nav-link nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
+        <a href="{{ lp }}/calendar" class="mob-nav-link nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
 
         <div class="mob-acc">
             <button class="mob-acc-btn" type="button" aria-expanded="false" data-nav-page="about,leadership,committees,secretariat,regions,contacts">
@@ -143,12 +147,12 @@
                 <svg class="mob-acc-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="mob-acc-panel">
-                <a href="/about"       class="mob-nav-sub nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
-                <a href="/leadership"  class="mob-nav-sub nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
-                <a href="/committees"  class="mob-nav-sub nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
-                <a href="/secretariat" class="mob-nav-sub nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
-                <a href="/regions"     class="mob-nav-sub nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
-                <a href="/contacts"    class="mob-nav-sub nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
+                <a href="{{ lp }}/about"       class="mob-nav-sub nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
+                <a href="{{ lp }}/leadership"  class="mob-nav-sub nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
+                <a href="{{ lp }}/committees"  class="mob-nav-sub nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
+                <a href="{{ lp }}/secretariat" class="mob-nav-sub nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
+                <a href="{{ lp }}/regions"     class="mob-nav-sub nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
+                <a href="{{ lp }}/contacts"    class="mob-nav-sub nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
             </div>
         </div>
 
@@ -158,8 +162,8 @@
                 <svg class="mob-acc-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="mob-acc-panel">
-                <a href="/athletes"  class="mob-nav-sub nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
-                <a href="/champions" class="mob-nav-sub nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
+                <a href="{{ lp }}/athletes"  class="mob-nav-sub nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
+                <a href="{{ lp }}/champions" class="mob-nav-sub nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
             </div>
         </div>
 
@@ -169,16 +173,16 @@
                 <svg class="mob-acc-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="mob-acc-panel">
-                <a href="/gallery"               class="mob-nav-sub nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
-                <a href="/documents"             class="mob-nav-sub nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
-                <a href="/documents/antidoping"  class="mob-nav-sub nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                <a href="{{ lp }}/gallery"               class="mob-nav-sub nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
+                <a href="{{ lp }}/documents"             class="mob-nav-sub nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
+                <a href="{{ lp }}/documents/antidoping"  class="mob-nav-sub nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
             </div>
         </div>
     </div>
 
     <div class="mob-lang">
-        <a href="/set-lang/uk" class="{% if lang == 'uk' %}active{% endif %}">Українська</a>
-        <a href="/set-lang/en" class="{% if lang == 'en' %}active{% endif %}">English</a>
+        <a href="{{ lp_uk }}" class="{% if lang == 'uk' %}active{% endif %}">Українська</a>
+        <a href="{{ lp_en }}" class="{% if lang == 'en' %}active{% endif %}">English</a>
     </div>
 </nav>
 
@@ -222,28 +226,28 @@
 
             <div>
                 <div class="footer-col-title">{{ t('footer.federation') }}</div>
-                <a href="/about"       class="footer-link nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
-                <a href="/leadership"  class="footer-link nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
-                <a href="/committees"  class="footer-link nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
-                <a href="/secretariat" class="footer-link nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
-                <a href="/regions"     class="footer-link nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
-                <a href="/contacts"    class="footer-link nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
+                <a href="{{ lp }}/about"       class="footer-link nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
+                <a href="{{ lp }}/leadership"  class="footer-link nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
+                <a href="{{ lp }}/committees"  class="footer-link nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
+                <a href="{{ lp }}/secretariat" class="footer-link nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
+                <a href="{{ lp }}/regions"     class="footer-link nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
+                <a href="{{ lp }}/contacts"    class="footer-link nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
             </div>
 
             <div>
                 <div class="footer-col-title">{{ t('footer.national_team') }}</div>
-                <a href="/athletes"  class="footer-link nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
-                <a href="/champions" class="footer-link nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
-                <a href="/calendar"  class="footer-link nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
+                <a href="{{ lp }}/athletes"  class="footer-link nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
+                <a href="{{ lp }}/champions" class="footer-link nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
+                <a href="{{ lp }}/calendar"  class="footer-link nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
             </div>
 
             <div>
                 <div class="footer-col-title">{{ t('footer.materials') }}</div>
-                <a href="/news"                 class="footer-link nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
-                <a href="/gallery"              class="footer-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
-                <a href="/documents"            class="footer-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
-                <a href="/documents/antidoping" class="footer-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
-                <a href="/privacy"              class="footer-link nav-link" data-nav-page="privacy">{{ t('footer.privacy') }}</a>
+                <a href="{{ lp }}/news"                 class="footer-link nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
+                <a href="{{ lp }}/gallery"              class="footer-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
+                <a href="{{ lp }}/documents"            class="footer-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
+                <a href="{{ lp }}/documents/antidoping" class="footer-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                <a href="{{ lp }}/privacy"              class="footer-link nav-link" data-nav-page="privacy">{{ t('footer.privacy') }}</a>
             </div>
 
         </div>

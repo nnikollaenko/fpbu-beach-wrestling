@@ -11,7 +11,7 @@
     </div>
     <div class="container" style="position:relative;z-index:1;">
         <nav class="breadcrumb" style="color:rgba(255,255,255,0.35);margin-bottom:1.25rem;">
-            <a href="/" class="nav-link" style="color:rgba(255,255,255,0.4);">{{ t('nav.home') }}</a>
+            <a href="{{ lp }}/" class="nav-link" style="color:rgba(255,255,255,0.4);">{{ t('nav.home') }}</a>
             <span class="sep" style="color:rgba(255,255,255,0.2);">›</span>
             <span class="cur" style="color:rgba(255,255,255,0.6);">{{ 'Athletes' if lang == 'en' else 'Спортсмени' }}</span>
         </nav>
@@ -73,11 +73,11 @@
             ] %}
             <div class="athlete-filter-row" style="justify-content:space-between;flex-wrap:nowrap;gap:0.75rem;">
                 <div style="display:flex;gap:0.5rem;flex-shrink:0;">
-                    <a href="{{ url_for('athletes', gender='M', sort=sel_sort) }}"
+                    <a href="{{ url_for('pub.athletes', gender='M', sort=sel_sort) }}"
                        class="athlete-tab nav-link {% if sel_gender == 'M' %}active{% endif %}">
                         {{ 'Men' if lang == 'en' else 'Чоловіки' }}
                     </a>
-                    <a href="{{ url_for('athletes', gender='F', sort=sel_sort) }}"
+                    <a href="{{ url_for('pub.athletes', gender='F', sort=sel_sort) }}"
                        class="athlete-tab nav-link {% if sel_gender == 'F' %}active{% endif %}">
                         {{ 'Women' if lang == 'en' else 'Жінки' }}
                     </a>
@@ -90,7 +90,7 @@
                         {{ icon('chevron-down', size=13) }}
                     </button>
                     <div class="sort-dd-panel" id="sortDdPanel" role="listbox">
-                        <form method="get" action="{{ url_for('athletes') }}">
+                        <form method="get" action="{{ url_for('pub.athletes') }}">
                             <input type="hidden" name="gender" value="{{ sel_gender }}">
                             {% if sel_weight %}<input type="hidden" name="weight" value="{{ sel_weight }}">{% endif %}
                             {% for val, lbl, desc, dir in sort_options %}
@@ -118,12 +118,12 @@
             <!-- Row 2: Weight pills -->
             {% if weights %}
             <div class="athlete-filter-row">
-                <a href="{{ url_for('athletes', gender=sel_gender, sort=sel_sort) }}"
+                <a href="{{ url_for('pub.athletes', gender=sel_gender, sort=sel_sort) }}"
                    class="athlete-tab nav-link {% if not sel_weight %}active{% endif %}">
                    {{ 'All weights' if lang == 'en' else 'Всі ваги' }}
                 </a>
                 {% for w in weights %}
-                <a href="{{ url_for('athletes', weight=w, gender=sel_gender, sort=sel_sort) }}"
+                <a href="{{ url_for('pub.athletes', weight=w, gender=sel_gender, sort=sel_sort) }}"
                    class="athlete-tab nav-link {% if sel_weight == w %}active{% endif %}">{{ w }}</a>
                 {% endfor %}
             </div>
@@ -192,7 +192,7 @@
         {% if total_pages > 1 %}
         <nav class="pagination" aria-label="{{ 'Pagination' if lang == 'en' else 'Навігація сторінками' }}">
             {% if page > 1 %}
-            <a href="{{ url_for('athletes', page=page-1, sort=sel_sort, gender=sel_gender, weight=sel_weight) }}"
+            <a href="{{ url_for('pub.athletes', page=page-1, sort=sel_sort, gender=sel_gender, weight=sel_weight) }}"
                class="pag-btn pag-arrow nav-link" aria-label="{{ 'Previous' if lang == 'en' else 'Попередня' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
             </a>
@@ -206,7 +206,7 @@
                 {% if p == page %}
                 <span class="pag-btn pag-current" aria-current="page">{{ p }}</span>
                 {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
-                <a href="{{ url_for('athletes', page=p, sort=sel_sort, gender=sel_gender, weight=sel_weight) }}"
+                <a href="{{ url_for('pub.athletes', page=p, sort=sel_sort, gender=sel_gender, weight=sel_weight) }}"
                    class="pag-btn nav-link">{{ p }}</a>
                 {% elif p == page - 3 or p == page + 3 %}
                 <span class="pag-dots">…</span>
@@ -214,7 +214,7 @@
             {% endfor %}
 
             {% if page < total_pages %}
-            <a href="{{ url_for('athletes', page=page+1, sort=sel_sort, gender=sel_gender, weight=sel_weight) }}"
+            <a href="{{ url_for('pub.athletes', page=page+1, sort=sel_sort, gender=sel_gender, weight=sel_weight) }}"
                class="pag-btn pag-arrow nav-link" aria-label="{{ 'Next' if lang == 'en' else 'Наступна' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
             </a>
@@ -249,7 +249,7 @@
                     {% else %}Знайди свій регіон, вступи до федерації та розпочни шлях до збірної і міжнародних п'єдесталів.{% endif %}
                 </p>
                 <div>
-                    <a href="/regions" class="btn btn-brand nav-link">
+                    <a href="{{ lp }}/regions" class="btn btn-brand nav-link">
                         {{ icon('users', size=14) }}
                         {{ 'Choose a Regional Federation' if lang == 'en' else 'Обрати регіональну федерацію' }}
                     </a>

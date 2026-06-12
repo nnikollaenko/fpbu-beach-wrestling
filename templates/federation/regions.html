@@ -6,7 +6,7 @@
 <div class="page-hero page-hero--dark page-hero--regions">
     <div class="container">
         <nav class="breadcrumb">
-            <a href="/" class="nav-link">{{ t('nav.home') }}</a>
+            <a href="{{ lp }}/" class="nav-link">{{ t('nav.home') }}</a>
             <span class="sep">›</span>
             <span class="cur">{{ t('nav.fed.regions') }}</span>
         </nav>
@@ -42,7 +42,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                     <a href="mailto:info@ubwf.com.ua">info@ubwf.com.ua</a>
                 </div>
-                <a href="/contacts" class="btn btn-brand nav-link" style="margin-top:0.625rem;">
+                <a href="{{ lp }}/contacts" class="btn btn-brand nav-link" style="margin-top:0.625rem;">
                     {{ 'Contact us' if lang == 'en' else "Зв'язатися з нами" }}
                 </a>
             </div>
@@ -121,7 +121,7 @@
                 {% if lang == 'en' %}Even if there's no official association in your area yet — we'll help. Write to us and we'll find the nearest club, tell you how to get started and guide you every step of the way to becoming part of the beach wrestling family.
                 {% else %}Навіть якщо у вашому регіоні ще немає офіційної асоціації — ми обов'язково допоможемо. Напишіть нам, і ми знайдемо найближчий клуб, розкажемо, як розпочати тренування, і пройдемо цей шлях разом — аж до першого п'єдесталу.{% endif %}
             </p>
-            <a href="/contacts" class="btn btn-brand nav-link">
+            <a href="{{ lp }}/contacts" class="btn btn-brand nav-link">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 {{ 'Write to us' if lang == 'en' else 'Написати нам' }}
             </a>

@@ -42,11 +42,11 @@
         </p>
 
         <div class="hero-btns">
-            <a href="/calendar" class="hero-btn-primary nav-link">
+            <a href="{{ lp }}/calendar" class="hero-btn-primary nav-link">
                 {{ 'Competition Calendar' if lang == 'en' else 'Переглянути календар' }}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
-            <a href="/news" class="hero-btn-glass nav-link">
+            <a href="{{ lp }}/news" class="hero-btn-glass nav-link">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1.5" y="3" width="13" height="10" rx="2"/><path d="M4 7.5h8M4 10.5h5"/></svg>
                 {{ 'News' if lang == 'en' else 'Читати новини' }}
             </a>
@@ -123,7 +123,7 @@
                     {% if lang == 'en' %}The federation unites talents from across Ukraine. We develop strong regional representations, forming a powerful reserve and a world-class national team.
                     {% else %}Федерація об'єднує таланти з усієї України. Ми розвиваємо потужні регіональні представництва, формуючи сильний резерв та національну збірну найвищого класу.{% endif %}
                 </p>
-                <a href="/athletes" class="benefit-card-link nav-link">{{ 'Meet our team →' if lang == 'en' else 'Познайомитися з командою →' }}</a>
+                <a href="{{ lp }}/athletes" class="benefit-card-link nav-link">{{ 'Meet our team →' if lang == 'en' else 'Познайомитися з командою →' }}</a>
             </div>
 
             <div class="benefit-card">
@@ -135,7 +135,7 @@
                     {% if lang == 'en' %}Our athletes are recognized "Kings and Queens of the Sand". Victories at World and European Championships, cup trophies and real international achievements.
                     {% else %}Наші спортсмени — визнані «Королі та Королеви піску». В нашому активі перемоги на чемпіонатах Світу та Європи, кубкові трофеї та реальні міжнародні досягнення.{% endif %}
                 </p>
-                <a href="/champions" class="benefit-card-link nav-link">{{ 'View our achievements →' if lang == 'en' else 'Переглянути досягнення →' }}</a>
+                <a href="{{ lp }}/champions" class="benefit-card-link nav-link">{{ 'View our achievements →' if lang == 'en' else 'Переглянути досягнення →' }}</a>
             </div>
 
             <div class="benefit-card">
@@ -174,7 +174,7 @@
                 </h2>
                 <p class="champs-sub">{{ 'Our athletes who reached the top of the world — World and European champions of Ukraine.' if lang == 'en' else 'Спортсмени, які підкорили вершину світу — чемпіони та призери чемпіонатів світу й Європи.' }}</p>
             </div>
-            <a href="/champions" class="btn btn-brand nav-link" style="flex-shrink:0;">
+            <a href="{{ lp }}/champions" class="btn btn-brand nav-link" style="flex-shrink:0;">
                 {{ 'All Champions' if lang == 'en' else 'Всі чемпіони' }}
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
@@ -225,7 +225,7 @@
                 <div class="section-eyebrow">{{ 'Upcoming season' if lang == 'en' else 'Найближчі змагання' }}</div>
                 <h2 class="section-title" style="font-size:var(--fs-700);">{{ t('home.events.title') }}</h2>
             </div>
-            <a href="/calendar" class="btn btn-brand nav-link" style="flex-shrink:0;">
+            <a href="{{ lp }}/calendar" class="btn btn-brand nav-link" style="flex-shrink:0;">
                 {{ 'Full calendar' if lang == 'en' else 'Повний календар' }}
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </a>
@@ -325,7 +325,7 @@
         </div>
 
         <div class="partners-cta-btns" style="display:flex;justify-content:center;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
-            <a href="/contacts" class="btn btn-brand nav-link">{{ 'Become a Partner' if lang == 'en' else 'Стати партнером' }}</a>
+            <a href="{{ lp }}/contacts" class="btn btn-brand nav-link">{{ 'Become a Partner' if lang == 'en' else 'Стати партнером' }}</a>
             <a href="https://wayforpay.com" class="btn btn-ghost" target="_blank" rel="noopener">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 13.5s-6-4-6-8a3.5 3.5 0 0 1 6-2.45A3.5 3.5 0 0 1 14 5.5c0 4-6 8-6 8z"/></svg>
                 {{ 'Support the Federation' if lang == 'en' else 'Підтримати федерацію' }}
@@ -341,7 +341,7 @@
             <div>
                 <h2 class="section-title">{{ t('home.news.title') }}</h2>
             </div>
-            <a href="/news" class="btn btn-ghost nav-link">
+            <a href="{{ lp }}/news" class="btn btn-ghost nav-link">
                 {{ t('home.news.all') }}
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
@@ -350,7 +350,7 @@
             {% if news|length >= 5 %}
             <div class="news-asymmetric">
                 <!-- Left: big featured card -->
-                <a href="/news/{{ news[0].slug }}" class="news-card-big nav-link">
+                <a href="{{ lp }}/news/{{ news[0].slug }}" class="news-card-big nav-link">
                     <div class="news-card-big-img">
                         {% if news[0].cover %}<img src="{{ url_for('static', filename='uploads/' + news[0].cover) }}" alt="{{ news[0] | lf('title') }}" loading="lazy">
                         {% else %}<div class="news-card-placeholder"><svg viewBox="0 0 88 108" fill="none"><path d="M21 6 C23 2 31 4 32 8 L60 88 C62 94 58 100 53 98 C48 96 45 91 43 86 Z" fill="currentColor" opacity="0.12"/></svg></div>{% endif %}
@@ -367,7 +367,7 @@
                 <!-- Right: 2×2 grid -->
                 <div class="news-small-grid">
                     {% for item in news[1:5] %}
-                    <a href="/news/{{ item.slug }}" class="card news-card nav-link">
+                    <a href="{{ lp }}/news/{{ item.slug }}" class="card news-card nav-link">
                         <div class="news-card-img">
                             {% if item.cover %}<img src="{{ url_for('static', filename='uploads/' + item.cover) }}" alt="{{ item | lf('title') }}" loading="lazy">
                             {% else %}<div class="news-card-placeholder"><svg viewBox="0 0 88 108" fill="none"><path d="M21 6 C23 2 31 4 32 8 L60 88 C62 94 58 100 53 98 C48 96 45 91 43 86 Z" fill="currentColor" opacity="0.12"/></svg></div>{% endif %}
@@ -386,7 +386,7 @@
             {% else %}
             <div class="grid-3">
                 {% for item in news %}
-                <a href="/news/{{ item.slug }}" class="card news-card nav-link">
+                <a href="{{ lp }}/news/{{ item.slug }}" class="card news-card nav-link">
                     <div class="news-card-img">
                         {% if item.cover %}<img src="{{ url_for('static', filename='uploads/' + item.cover) }}" alt="{{ item | lf('title') }}" loading="lazy">
                         {% else %}<div class="news-card-placeholder"><svg viewBox="0 0 88 108" fill="none"><path d="M21 6 C23 2 31 4 32 8 L60 88 C62 94 58 100 53 98 C48 96 45 91 43 86 Z" fill="currentColor" opacity="0.12"/></svg></div>{% endif %}
@@ -433,7 +433,7 @@
                     {% endif %}
                 </p>
                 <div style="display:flex;gap:0.875rem;flex-wrap:wrap;margin-top:auto;padding-top:2rem;">
-                    <a href="/about" class="btn btn-brand nav-link">{{ 'More about us' if lang == 'en' else 'Детальніше про нас' }}</a>
+                    <a href="{{ lp }}/about" class="btn btn-brand nav-link">{{ 'More about us' if lang == 'en' else 'Детальніше про нас' }}</a>
                 </div>
             </div>
             <!-- Right: logo + stats -->
@@ -524,7 +524,7 @@
                     {% else %}Знайди свій регіон, вступи до федерації та розпочни шлях до збірної і міжнародних п'єдесталів.{% endif %}
                 </p>
                 <div>
-                    <a href="/regions" class="btn btn-brand nav-link">
+                    <a href="{{ lp }}/regions" class="btn btn-brand nav-link">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         {{ 'Choose a Regional Federation' if lang == 'en' else 'Обрати регіональну федерацію' }}
                     </a>

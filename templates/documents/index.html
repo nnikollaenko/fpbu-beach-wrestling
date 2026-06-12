@@ -5,7 +5,7 @@
 <div class="page-hero page-hero--dark {% if category == 'antidoping' %}page-hero--antidoping{% else %}page-hero--documents{% endif %}">
     <div class="container">
         <nav class="breadcrumb">
-            <a href="/" class="nav-link">{{ t('nav.home') }}</a><span class="sep">›</span>
+            <a href="{{ lp }}/" class="nav-link">{{ t('nav.home') }}</a><span class="sep">›</span>
             {% if category == 'antidoping' %}
             <span class="cur">{{ t('nav.docs.antidoping') }}</span>
             {% else %}

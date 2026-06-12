@@ -5,7 +5,7 @@
 <div class="page-hero page-hero--dark page-hero--news">
     <div class="container">
         <nav class="breadcrumb">
-            <a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a>
+            <a href="{{ lp }}/" class="nav-link">{{ t('breadcrumb.home') }}</a>
             <span class="sep">›</span><span class="cur">{{ t('news.title') }}</span>
         </nav>
         <div class="page-hero-tag">
@@ -22,7 +22,7 @@
         {% if news %}
         <div class="grid-3">
             {% for item in news %}
-            <a href="/news/{{ item.slug }}" class="card news-card nav-link">
+            <a href="{{ lp }}/news/{{ item.slug }}" class="card news-card nav-link">
                 <div class="news-card-img">
                     {% if item.cover %}
                     <img src="{{ url_for('static', filename='uploads/' + item.cover) }}" alt="{{ item | lf('title') }}" loading="lazy">
@@ -50,7 +50,7 @@
         {% if total_pages > 1 %}
         <nav class="pagination" aria-label="{{ 'Pagination' if lang == 'en' else 'Навігація сторінками' }}">
             {% if page > 1 %}
-            <a href="/news?page={{ page-1 }}" class="pag-btn pag-arrow nav-link" aria-label="{{ 'Previous' if lang == 'en' else 'Попередня' }}">
+            <a href="{{ lp }}/news?page={{ page-1 }}" class="pag-btn pag-arrow nav-link" aria-label="{{ 'Previous' if lang == 'en' else 'Попередня' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
             </a>
             {% else %}
@@ -63,14 +63,14 @@
                 {% if p == page %}
                 <span class="pag-btn pag-current" aria-current="page">{{ p }}</span>
                 {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
-                <a href="/news?page={{ p }}" class="pag-btn nav-link">{{ p }}</a>
+                <a href="{{ lp }}/news?page={{ p }}" class="pag-btn nav-link">{{ p }}</a>
                 {% elif p == page - 3 or p == page + 3 %}
                 <span class="pag-dots">…</span>
                 {% endif %}
             {% endfor %}
 
             {% if page < total_pages %}
-            <a href="/news?page={{ page+1 }}" class="pag-btn pag-arrow nav-link" aria-label="{{ 'Next' if lang == 'en' else 'Наступна' }}">
+            <a href="{{ lp }}/news?page={{ page+1 }}" class="pag-btn pag-arrow nav-link" aria-label="{{ 'Next' if lang == 'en' else 'Наступна' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
             </a>
             {% else %}

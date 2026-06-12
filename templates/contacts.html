@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-hero page-hero--dark page-hero--contacts">
     <div class="container">
-        <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a><span class="sep">›</span><span class="cur">{{ t('contacts.title') }}</span></nav>
+        <nav class="breadcrumb"><a href="{{ lp }}/" class="nav-link">{{ t('breadcrumb.home') }}</a><span class="sep">›</span><span class="cur">{{ t('contacts.title') }}</span></nav>
         <h1 class="page-hero-title">{{ t('contacts.title') }}</h1>
         <p class="page-hero-desc">{{ t('contacts.desc') }}</p>
     </div>
@@ -142,10 +142,10 @@
                                 <span>
                                     {% if lang == 'en' %}
                                     I agree to the processing of my personal data in accordance with the
-                                    <a href="/privacy" class="nav-link cf-consent-link">Privacy Policy</a>
+                                    <a href="{{ lp }}/privacy" class="nav-link cf-consent-link">Privacy Policy</a>
                                     {% else %}
                                     Погоджуюсь на обробку персональних даних відповідно до
-                                    <a href="/privacy" class="nav-link cf-consent-link">Політики конфіденційності</a>
+                                    <a href="{{ lp }}/privacy" class="nav-link cf-consent-link">Політики конфіденційності</a>
                                     {% endif %}
                                     <span class="cf-req">*</span>
                                 </span>

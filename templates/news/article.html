@@ -8,8 +8,8 @@
     <div class="container">
 
         <nav class="breadcrumb" style="margin-bottom:2rem;">
-            <a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a><span class="sep">›</span>
-            <a href="/news" class="nav-link">{{ t('nav.news') }}</a><span class="sep">›</span>
+            <a href="{{ lp }}/" class="nav-link">{{ t('breadcrumb.home') }}</a><span class="sep">›</span>
+            <a href="{{ lp }}/news" class="nav-link">{{ t('nav.news') }}</a><span class="sep">›</span>
             <span class="cur">{{ title_loc | truncate(45) }}</span>
         </nav>
 
@@ -38,7 +38,7 @@
 
                 <!-- Back + Share row -->
                 <div class="article-footer-row">
-                    <a href="/news" class="btn btn-ghost nav-link article-back-btn">
+                    <a href="{{ lp }}/news" class="btn btn-ghost nav-link article-back-btn">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6.5 3.5L3 7l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         {{ t('news.back') }}
                     </a>
@@ -76,7 +76,7 @@
                 <div class="sticky-sidebar">
                     <div style="font-size:var(--fs-200);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:1rem;">{{ t('news.related') }}</div>
                     {% for item in related %}
-                    <a href="/news/{{ item.slug }}" class="card nav-link" style="display:block;margin-bottom:0.625rem;padding:0.875rem;">
+                    <a href="{{ lp }}/news/{{ item.slug }}" class="card nav-link" style="display:block;margin-bottom:0.625rem;padding:0.875rem;">
                         <div style="font-size:var(--fs-200);color:var(--muted);margin-bottom:0.25rem;">{{ item.published_at | date_long }}</div>
                         <div style="font-size:var(--fs-400);font-weight:700;color:var(--text);line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">{{ item | lf('title') }}</div>
                     </a>

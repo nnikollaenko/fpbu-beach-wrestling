@@ -114,10 +114,11 @@
         }
 
         updateActiveNav(path) {
+            const cleanPath = path.replace(/^\/(uk|en)(\/|$)/, '/');
             document.querySelectorAll('[data-nav-page]').forEach(el => {
                 const pages = el.dataset.navPage.split(',').map(p => p.trim());
                 const match = pages.some(page =>
-                    path === '/' ? page === '' : path.startsWith('/' + page)
+                    cleanPath === '/' ? page === '' : cleanPath.startsWith('/' + page)
                 );
                 el.classList.toggle('active', match);
             });

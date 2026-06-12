@@ -7,7 +7,7 @@
 <div class="page-hero page-hero--dark page-hero--champions">
     <div class="container">
         <nav class="breadcrumb">
-            <a href="/" class="nav-link">{{ t('nav.home') }}</a>
+            <a href="{{ lp }}/" class="nav-link">{{ t('nav.home') }}</a>
             <span class="sep">›</span>
             <span class="cur">{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}</span>
         </nav>
@@ -22,11 +22,11 @@
         <!-- Year filter -->
         {% if years %}
         <div class="year-filter" id="champions-filter">
-            <a href="/champions" class="year-pill nav-link {% if not selected_year %}active{% endif %}">
+            <a href="{{ lp }}/champions" class="year-pill nav-link {% if not selected_year %}active{% endif %}">
                 {{ 'All years' if lang == 'en' else 'Всі роки' }}
             </a>
             {% for y in years %}
-            <a href="/champions?year={{ y }}" class="year-pill nav-link {% if selected_year == y %}active{% endif %}">{{ y }}</a>
+            <a href="{{ lp }}/champions?year={{ y }}" class="year-pill nav-link {% if selected_year == y %}active{% endif %}">{{ y }}</a>
             {% endfor %}
         </div>
         {% endif %}
@@ -103,7 +103,7 @@
                     {% else %}Знайди свій регіон, вступи до федерації та розпочни шлях до збірної і міжнародних п'єдесталів.{% endif %}
                 </p>
                 <div>
-                    <a href="/regions" class="btn btn-brand nav-link">
+                    <a href="{{ lp }}/regions" class="btn btn-brand nav-link">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         {{ 'Choose a Regional Federation' if lang == 'en' else 'Обрати регіональну федерацію' }}
                     </a>
