@@ -305,6 +305,32 @@ def _html_to_plain(html: str) -> str:
     return text.strip()
 
 
+def _compute_status(start_date: str, end_date: str) -> str:
+    """Auto-determine event status from dates (Ukraine timezone UTC+3)."""
+    from datetime import timedelta
+    today = (datetime.utcnow() + timedelta(hours=3)).strftime('%Y-%m-%d')
+    end = (end_date or start_date)[:10]
+    s   = start_date[:10]
+    if end < today:
+        return 'past'
+    if s <= today <= end:
+        return 'current'
+    return 'upcoming'
+
+
+def _save_extra_docs(conn, event_id, req):
+    """Parse extra_label_N / extra_file_N from request and insert into event_documents."""
+    for i in range(30):
+        label = req.form.get(f'extra_label_{i}', '').strip()
+        if not label:
+            continue
+        file_path = _save_upload(req.files.get(f'extra_file_{i}'), 'docs', ALLOWED_DOC)
+        conn.execute(
+            "INSERT INTO event_documents (event_id, label, file_path, sort_order) VALUES (?,?,?,?)",
+            (event_id, label, file_path, i)
+        )
+
+
 def _slugify(text):
     """Transliterate Ukrainian → Latin for URL slugs."""
     TR = {
@@ -514,16 +540,18 @@ def events_list():
 @require_admin
 def event_new():
     if request.method == 'POST':
-        conn = db.get_db()
+        conn     = db.get_db()
         pdf_reg  = _save_upload(request.files.get('pdf_regulations'), 'docs', ALLOWED_DOC)
-        pdf_prog = _save_upload(request.files.get('pdf_program'), 'docs', ALLOWED_DOC)
-        pdf_prot = _save_upload(request.files.get('pdf_protocols'), 'docs', ALLOWED_DOC)
+        pdf_prog = _save_upload(request.files.get('pdf_program'),     'docs', ALLOWED_DOC)
+        pdf_prot = _save_upload(request.files.get('pdf_protocols'),   'docs', ALLOWED_DOC)
         start    = request.form.get('start_date', '')
+        end      = request.form.get('end_date', '') or None
         year     = int(start[:4]) if start and len(start) >= 4 else datetime.today().year
         title    = request.form.get('title', '')
         location = request.form.get('location', '')
         category = request.form.get('category', 'Змагання')
         desc     = request.form.get('description', '')
+        status   = _compute_status(start, end or start)
         en = auto_fill_en(
             {'title': title, 'location': location, 'category': category, 'description': desc},
             {'title': request.form.get('title_en', ''),
@@ -531,21 +559,20 @@ def event_new():
              'category': request.form.get('category_en', ''),
              'description': request.form.get('description_en', '')}
         )
-        conn.execute(
+        cur = conn.execute(
             "INSERT INTO events (title,location,start_date,end_date,category,status,description,"
             "title_en,location_en,category_en,description_en,year,pdf_regulations,pdf_program,pdf_protocols)"
             " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            (title, location, start,
-             request.form.get('end_date', '') or None,
-             category, request.form.get('status', 'upcoming'), desc,
+            (title, location, start, end, category, status, desc,
              en.get('title', ''), en.get('location', ''), en.get('category', ''), en.get('description', ''),
-             request.form.get('year', year, type=int) or year,
-             pdf_reg, pdf_prog, pdf_prot)
+             year, pdf_reg, pdf_prog, pdf_prot)
         )
+        eid = cur.lastrowid
+        _save_extra_docs(conn, eid, request)
         conn.commit(); conn.close()
         flash(_L[_lang()]['saved'])
         return redirect(url_for('admin.events_list'))
-    return render_template('admin/event_form.html', item=None)
+    return render_template('admin/event_form.html', item=None, extra_docs=[])
 
 
 @admin_bp.route('/events/<int:eid>/edit', methods=['GET', 'POST'])
@@ -557,14 +584,16 @@ def event_edit(eid):
         conn.close(); return redirect(url_for('admin.events_list'))
     if request.method == 'POST':
         start    = request.form.get('start_date', item['start_date'])
+        end      = request.form.get('end_date', '') or None
         year     = int(start[:4]) if start and len(start) >= 4 else (item['year'] or datetime.today().year)
         pdf_reg  = _save_upload(request.files.get('pdf_regulations'), 'docs', ALLOWED_DOC) or item['pdf_regulations']
-        pdf_prog = _save_upload(request.files.get('pdf_program'), 'docs', ALLOWED_DOC) or item['pdf_program']
-        pdf_prot = _save_upload(request.files.get('pdf_protocols'), 'docs', ALLOWED_DOC) or item['pdf_protocols']
+        pdf_prog = _save_upload(request.files.get('pdf_program'),     'docs', ALLOWED_DOC) or item['pdf_program']
+        pdf_prot = _save_upload(request.files.get('pdf_protocols'),   'docs', ALLOWED_DOC) or item['pdf_protocols']
         title    = request.form.get('title', '')
         location = request.form.get('location', '')
         category = request.form.get('category', 'Змагання')
         desc     = request.form.get('description', '')
+        status   = _compute_status(start, end or start)
         en = auto_fill_en(
             {'title': title, 'location': location, 'category': category, 'description': desc},
             {'title': request.form.get('title_en', ''),
@@ -576,19 +605,23 @@ def event_edit(eid):
             "UPDATE events SET title=?,location=?,start_date=?,end_date=?,category=?,status=?,description=?,"
             "title_en=?,location_en=?,category_en=?,description_en=?,year=?,pdf_regulations=?,pdf_program=?,pdf_protocols=?"
             " WHERE id=?",
-            (title, location, start,
-             request.form.get('end_date', '') or None,
-             category, request.form.get('status', 'upcoming'), desc,
+            (title, location, start, end, category, status, desc,
              en.get('title', ''), en.get('location', ''), en.get('category', ''), en.get('description', ''),
-             request.form.get('year', year, type=int) or year,
-             pdf_reg, pdf_prog, pdf_prot,
-             eid)
+             year, pdf_reg, pdf_prog, pdf_prot, eid)
         )
+        # Delete checked extra docs
+        for key in request.form:
+            if key.startswith('delete_extra_'):
+                doc_id = key.replace('delete_extra_', '')
+                if doc_id.isdigit():
+                    conn.execute("DELETE FROM event_documents WHERE id=? AND event_id=?", (int(doc_id), eid))
+        _save_extra_docs(conn, eid, request)
         conn.commit(); conn.close()
         flash(_L[_lang()]['saved'])
         return redirect(url_for('admin.events_list'))
     conn.close()
-    return render_template('admin/event_form.html', item=item)
+    extra_docs = db.get_extra_docs_for_event(eid)
+    return render_template('admin/event_form.html', item=item, extra_docs=extra_docs)
 
 
 @admin_bp.route('/events/<int:eid>/delete', methods=['POST'])

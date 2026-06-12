@@ -50,6 +50,14 @@ def migrate_db():
 
     # New tables
     conn.executescript("""
+    CREATE TABLE IF NOT EXISTS event_documents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_id INTEGER NOT NULL,
+        label TEXT NOT NULL,
+        file_path TEXT,
+        sort_order INTEGER DEFAULT 0
+    );
+
     CREATE TABLE IF NOT EXISTS champions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -645,6 +653,32 @@ def get_events_by_year_paginated(year, page=1, per_page=10, category=None):
 def get_all_events():
     conn = get_db()
     rows = conn.execute("SELECT * FROM events ORDER BY start_date DESC").fetchall()
+    conn.close()
+    return rows
+
+
+def get_extra_docs_for_events(event_ids):
+    """Return {event_id: [row, ...]} for a list of event IDs."""
+    if not event_ids:
+        return {}
+    conn = get_db()
+    placeholders = ','.join('?' * len(event_ids))
+    rows = conn.execute(
+        f"SELECT * FROM event_documents WHERE event_id IN ({placeholders}) ORDER BY event_id, sort_order",
+        list(event_ids)
+    ).fetchall()
+    conn.close()
+    result = {}
+    for row in rows:
+        result.setdefault(row['event_id'], []).append(row)
+    return result
+
+
+def get_extra_docs_for_event(event_id):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT * FROM event_documents WHERE event_id=? ORDER BY sort_order", (event_id,)
+    ).fetchall()
     conn.close()
     return rows
 

@@ -18,7 +18,7 @@
           <input class="a-input" name="title" type="text" required value="{{ item.title if is_edit else '' }}">
         </div>
         <div class="a-form-group">
-          <label class="a-form-label">{{ L.title_en }}</label>
+          <label class="a-form-label">{{ L.title_en }} <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
           <input class="a-input" name="title_en" type="text" value="{{ item.title_en if is_edit else '' }}">
         </div>
 
@@ -32,14 +32,8 @@
         </div>
 
         <div class="a-form-group">
-          <label class="a-form-label">{{ L.year }}</label>
-          <input class="a-input" name="year" type="number" min="2015" max="2099"
-                 value="{{ item.year if is_edit else '' }}">
-        </div>
-
-        <div class="a-form-group">
           <label class="a-form-label">{{ L.start_date }} <span>*</span></label>
-          <input class="a-input" name="start_date" type="date" required
+          <input class="a-input" name="start_date" id="start_date" type="date" required
                  value="{{ item.start_date[:10] if is_edit else '' }}">
         </div>
         <div class="a-form-group">
@@ -60,23 +54,17 @@
           <label class="a-form-label">{{ L.category }} (EN) <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
           <input class="a-input" name="category_en" type="text" placeholder="Tournament" value="{{ item.category_en if is_edit else '' }}">
         </div>
-        <div class="a-form-group">
-          <label class="a-form-label">{{ L.status }}</label>
-          <select class="a-select" name="status">
-            <option value="upcoming" {{ 'selected' if not is_edit or item.status == 'upcoming' }}>{{ 'Майбутній' if admin_lang == 'uk' else 'Upcoming' }}</option>
-            <option value="past" {{ 'selected' if is_edit and item.status == 'past' }}>{{ 'Минулий' if admin_lang == 'uk' else 'Past' }}</option>
-          </select>
-        </div>
 
         <div class="a-form-group full">
           <label class="a-form-label">{{ L.description_uk }}</label>
           <textarea class="a-textarea" name="description">{{ item.description if is_edit else '' }}</textarea>
         </div>
         <div class="a-form-group full">
-          <label class="a-form-label">{{ L.description_en }}</label>
+          <label class="a-form-label">{{ L.description_en }} <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
           <textarea class="a-textarea" name="description_en">{{ item.description_en if is_edit else '' }}</textarea>
         </div>
 
+        <!-- ── Fixed PDF documents ─────────────────────────────────── -->
         <div class="a-form-section-label">PDF {{ 'документи' if admin_lang == 'uk' else 'documents' }}</div>
 
         <div class="a-form-group">
@@ -95,12 +83,67 @@
           <input class="a-input" name="pdf_protocols" type="file" accept=".pdf">
         </div>
 
+        <!-- ── Extra (custom) document categories ─────────────────── -->
+        <div class="a-form-section-label" style="margin-top:.5rem;">
+          {{ 'Додаткові документи' if admin_lang == 'uk' else 'Extra documents' }}
+        </div>
+
+        <!-- Existing extra docs (edit mode) -->
+        {% if extra_docs %}
+        <div class="a-form-group full" style="display:flex;flex-direction:column;gap:.5rem;">
+          {% for doc in extra_docs %}
+          <div class="extra-doc-existing" style="display:flex;align-items:center;gap:.75rem;padding:.625rem .75rem;background:var(--a-bg-raised,#1e1e1e);border-radius:8px;border:1px solid var(--a-border,#2a2a2a);">
+            <span style="flex:1;font-size:var(--fs-300,13px);">
+              <strong>{{ doc.label }}</strong>
+              {% if doc.file_path %}
+              <span class="muted" style="margin-left:.5rem;">{{ doc.file_path.split('/')[-1] }}</span>
+              {% else %}
+              <span class="muted" style="margin-left:.5rem;">{{ '(без файлу)' if admin_lang == 'uk' else '(no file)' }}</span>
+              {% endif %}
+            </span>
+            <label style="display:flex;align-items:center;gap:.375rem;font-size:var(--fs-300,13px);color:#f87171;cursor:pointer;white-space:nowrap;">
+              <input type="checkbox" name="delete_extra_{{ doc.id }}" value="1">
+              {{ 'Видалити' if admin_lang == 'uk' else 'Delete' }}
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- New extra doc rows (added dynamically) -->
+        <div class="a-form-group full" id="extra-docs-new" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+
+        <div class="a-form-group full">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="addExtraDoc()">
+            + {{ 'Додати документ' if admin_lang == 'uk' else 'Add document' }}
+          </button>
+        </div>
+
+        <!-- ── Actions ─────────────────────────────────────────────── -->
         <div class="a-form-actions full">
           <button class="btn btn-primary" type="submit">{{ L.save }}</button>
           <a class="btn btn-ghost" href="/admin/events">{{ L.cancel }}</a>
         </div>
+
       </div>
     </form>
   </div>
 </div>
+
+<script>
+var _extraCount = 0;
+function addExtraDoc() {
+    var container = document.getElementById('extra-docs-new');
+    var idx = _extraCount++;
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:.5rem;padding:.625rem .75rem;background:var(--a-bg-raised,#1e1e1e);border-radius:8px;border:1px solid var(--a-border,#2a2a2a);';
+    row.innerHTML =
+        '<div style="flex:1;display:flex;flex-direction:column;gap:.375rem;">' +
+            '<input class="a-input" type="text" name="extra_label_' + idx + '" placeholder="{{ 'Назва документа (напр. Довідка, Заявка...)' if admin_lang == 'uk' else 'Document name (e.g. Entry form, Reference...)' }}" style="width:100%;">' +
+            '<input class="a-input" type="file" name="extra_file_' + idx + '" accept=".pdf,.doc,.docx,.xls,.xlsx" style="width:100%;">' +
+        '</div>' +
+        '<button type="button" onclick="this.parentElement.remove()" style="flex:0 0 auto;margin-top:2px;background:none;border:none;cursor:pointer;color:#f87171;font-size:18px;line-height:1;padding:4px;">×</button>';
+    container.appendChild(row);
+}
+</script>
 {% endblock %}

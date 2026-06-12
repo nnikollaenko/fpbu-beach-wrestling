@@ -277,10 +277,12 @@ def calendar():
     # Paginated, filtered events
     events, total = db.get_events_by_year_paginated(sel_year, page=page, per_page=per_page, category=sel_category or None)
     total_pages  = math.ceil(total / per_page) if total else 1
+    extra_docs   = db.get_extra_docs_for_events([ev['id'] for ev in events])
     return render_template('calendar.html', events=events, years=years, selected_year=sel_year,
                            categories=categories, categories_en=categories_en,
                            sel_category=sel_category,
                            page=page, total_pages=total_pages, total=total,
+                           extra_docs=extra_docs,
                            now_date=datetime.today().strftime('%Y-%m-%d'))
 
 

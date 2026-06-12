@@ -68,7 +68,9 @@
         {% if events %}
         {% set today_str = now_date %}
         {% for ev in events %}
-        {% set is_past = ev.start_date < today_str %}
+        {% set ev_end = ev.end_date if ev.end_date else ev.start_date %}
+        {% set is_past = ev_end < today_str %}
+        {% set is_current = ev.start_date <= today_str and ev_end >= today_str %}
         <div class="cal-card {% if loop.first and not is_past %}is-featured{% endif %}">
 
             <!-- Date pill -->
@@ -106,12 +108,11 @@
                 {% endif %}
             </div>
 
-            <!-- Documents (max 2: regulations/results + program/protocols) -->
-            {% set has_doc1 = ev.pdf_regulations %}
-            {% set has_doc2 = ev.pdf_program if not is_past else ev.pdf_protocols %}
-            {% set has_any = has_doc1 or ev.pdf_program or ev.pdf_protocols %}
+            <!-- Documents -->
+            {% set ev_extra = extra_docs.get(ev.id, []) %}
+            {% set has_any = ev.pdf_regulations or ev.pdf_program or ev.pdf_protocols or ev_extra %}
             <div class="cal-card-docs">
-                {% if has_doc1 %}
+                {% if ev.pdf_regulations %}
                 <a href="/documents/download/{{ ev.pdf_regulations }}" class="cal-dl-btn primary" target="_blank">
                     <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 14h8M8 2v8M5 7l3 3 3-3"/></svg>
                     {{ 'Rules' if lang == 'en' else 'Регламент' }}
@@ -128,6 +129,14 @@
                     {{ 'Program' if lang == 'en' else 'Програма' }}
                 </a>
                 {% endif %}
+                {% for doc in ev_extra %}
+                {% if doc.file_path %}
+                <a href="/documents/download/{{ doc.file_path }}" class="cal-dl-btn" target="_blank">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 14h8M8 2v8M5 7l3 3 3-3"/></svg>
+                    {{ doc.label }}
+                </a>
+                {% endif %}
+                {% endfor %}
                 {% if not has_any %}
                 <div class="cal-docs-soon">
                     <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4l2.5 1.5"/></svg>
