@@ -109,6 +109,7 @@
             void this.main.offsetWidth; // reflow
             this.main.classList.add('content-entering');
             this.updateActiveNav(path);
+            this.updateLangSwitcher(path);
 
             window.dispatchEvent(new CustomEvent('navigationComplete', { detail: { path } }));
         }
@@ -121,6 +122,15 @@
                     cleanPath === '/' ? page === '' : cleanPath.startsWith('/' + page)
                 );
                 el.classList.toggle('active', match);
+            });
+        }
+
+        updateLangSwitcher(path) {
+            const isEn = path === '/en' || path.startsWith('/en/');
+            const suffix = isEn ? (path.slice(3) || '/') : path;
+            const urls = { uk: suffix || '/', en: '/en' + (suffix || '/') };
+            document.querySelectorAll('[data-lang]').forEach(a => {
+                a.href = urls[a.dataset.lang];
             });
         }
     }

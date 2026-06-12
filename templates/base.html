@@ -109,7 +109,7 @@
                         <div class="hdr-dropdown-menu-inner">
                         <a href="{{ lp }}/gallery"              class="hdr-dropdown-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
                         <a href="{{ lp }}/documents"            class="hdr-dropdown-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
-                        <a href="{{ lp }}/documents/antidoping" class="hdr-dropdown-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                        <a href="{{ lp }}/antidoping" class="hdr-dropdown-link nav-link" data-nav-page="antidoping">{{ t('nav.docs.antidoping') }}</a>
                         </div>
                     </div>
                 </div>
@@ -118,8 +118,8 @@
 
             <!-- Language switcher -->
             <div class="lang-switcher" aria-label="Language">
-                <a href="{{ lp_uk }}" class="lang-btn {% if lang == 'uk' %}active{% endif %}">UA</a>
-                <a href="{{ lp_en }}" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+                <a href="{{ lp_uk }}" class="lang-btn {% if lang == 'uk' %}active{% endif %}" data-lang="uk">UA</a>
+                <a href="{{ lp_en }}" class="lang-btn {% if lang == 'en' %}active{% endif %}" data-lang="en">EN</a>
             </div>
 
             <!-- Mobile menu button -->
@@ -174,14 +174,14 @@
             <div class="mob-acc-panel">
                 <a href="{{ lp }}/gallery"               class="mob-nav-sub nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
                 <a href="{{ lp }}/documents"             class="mob-nav-sub nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
-                <a href="{{ lp }}/documents/antidoping"  class="mob-nav-sub nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                <a href="{{ lp }}/antidoping"  class="mob-nav-sub nav-link" data-nav-page="antidoping">{{ t('nav.docs.antidoping') }}</a>
             </div>
         </div>
     </div>
 
     <div class="mob-lang">
-        <a href="{{ lp_uk }}" class="{% if lang == 'uk' %}active{% endif %}">Українська</a>
-        <a href="{{ lp_en }}" class="{% if lang == 'en' %}active{% endif %}">English</a>
+        <a href="{{ lp_uk }}" class="{% if lang == 'uk' %}active{% endif %}" data-lang="uk">Українська</a>
+        <a href="{{ lp_en }}" class="{% if lang == 'en' %}active{% endif %}" data-lang="en">English</a>
     </div>
 </nav>
 
@@ -245,7 +245,7 @@
                 <a href="{{ lp }}/news"                 class="footer-link nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
                 <a href="{{ lp }}/gallery"              class="footer-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
                 <a href="{{ lp }}/documents"            class="footer-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
-                <a href="{{ lp }}/documents/antidoping" class="footer-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                <a href="{{ lp }}/antidoping" class="footer-link nav-link" data-nav-page="antidoping">{{ t('nav.docs.antidoping') }}</a>
                 <a href="{{ lp }}/privacy"              class="footer-link nav-link" data-nav-page="privacy">{{ t('footer.privacy') }}</a>
             </div>
 

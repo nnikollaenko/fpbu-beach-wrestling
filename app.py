@@ -450,7 +450,7 @@ def documents():
     return render_template('documents/index.html', docs=docs, category='official')
 
 
-@pub.route('/documents/antidoping')
+@pub.route('/antidoping')
 def documents_antidoping():
     docs = db.get_documents(category='Анти-допінг')
     return render_template('documents/index.html', docs=docs, category='antidoping')
@@ -654,8 +654,10 @@ def _redir_uk_secretariat():  return redirect('/secretariat', 301)
 def _redir_uk_regions():      return redirect('/regions', 301)
 @app.route('/uk/documents')
 def _redir_uk_documents():    return redirect('/documents', 301)
+@app.route('/documents/antidoping')
+def _redir_docs_anti():       return redirect('/antidoping', 301)
 @app.route('/uk/documents/antidoping')
-def _redir_uk_docs_anti():    return redirect('/documents/antidoping', 301)
+def _redir_uk_docs_anti():    return redirect('/antidoping', 301)
 @app.route('/uk/gallery')
 def _redir_uk_gallery():      return redirect('/gallery', 301)
 @app.route('/uk/contacts')
