@@ -25,7 +25,7 @@
         <div class="a-form-group">
           <label class="a-form-label">{{ L.category }}</label>
           <select class="a-select" name="category">
-            {% for cat in ['Офіційні документи', 'Анти-допінг', 'Положення', 'Протоколи', 'Інше'] %}
+            {% for cat in ['Офіційні документи', 'Анти-допінг'] %}
             <option value="{{ cat }}" {{ 'selected' if is_edit and item.category == cat }}>{{ cat }}</option>
             {% endfor %}
           </select>
