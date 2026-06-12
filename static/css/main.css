@@ -2195,6 +2195,7 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
 
 .hero-fullbleed {
     position: relative;
+    z-index: 1; /* paint above .marquee-wrap on scroll overlap */
     height: calc(100dvh - 68px);
     min-height: 520px;
     display: flex;
@@ -3465,14 +3466,15 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
 /* ══ Hero — mobile layout ═════════════════════════════════════════════════ */
 @media (max-width: 640px) {
 
-    /* Stack: photo on top, content below — fills exactly the space under the header */
+    /* Stack: photo on top, content below — fills exactly the space under the header.
+       svh = small viewport height (all browser chrome visible) → guaranteed to fit on iOS Safari */
     .hero-fullbleed {
         display: flex;
         flex-direction: column;
-        /* header = env(safe-area-inset-top) + 80px hdr-inner + 1px border */
-        height: calc(100dvh - env(safe-area-inset-top) - 81px);
+        height: calc(100svh - env(safe-area-inset-top) - 81px);
         min-height: 0;
         align-items: stretch;
+        overflow: hidden;
     }
 
     /* Photo: always 40% of hero height, image fills with object-fit: cover */
