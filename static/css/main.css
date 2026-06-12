@@ -3511,14 +3511,18 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
         display: none;
     }
 
-    /* Content: grows freely — no clipping, respects iOS safe area at bottom */
+    /* Content: grows freely — no clipping, respects iOS safe area at bottom.
+       flex column + justify-end pulls title/buttons towards the marquee. */
     .hero-content-wrap {
         position: relative;
         background: #1a0700;
         padding-top: 1rem;
         padding-bottom: max(1.25rem, env(safe-area-inset-bottom) + 0.75rem);
         flex: 1 1 auto;
-        margin-top: -1px; /* prevent 1px gap between photo and content */
+        margin-top: -1px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
     }
 
     /* Slightly smaller title on mobile */
