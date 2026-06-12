@@ -3466,23 +3466,22 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
 /* ══ Hero — mobile layout ═════════════════════════════════════════════════ */
 @media (max-width: 640px) {
 
-    /* Stack: photo on top, content below — fills exactly the space under the header.
-       svh = small viewport height (all browser chrome visible) → guaranteed to fit on iOS Safari */
+    /* Stack: photo on top, content below.
+       min-height fills viewport; height: auto lets content grow so nothing is clipped. */
     .hero-fullbleed {
         display: flex;
         flex-direction: column;
-        height: calc(100svh - env(safe-area-inset-top) - 81px);
-        min-height: 0;
+        min-height: calc(100svh - env(safe-area-inset-top) - 81px);
+        height: auto;
         align-items: stretch;
-        overflow: hidden;
     }
 
-    /* Photo: always 40% of hero height, image fills with object-fit: cover */
+    /* Photo: fixed height (not % of auto parent — that would collapse) */
     .hero-fullbleed .hero-bg-wrap {
         position: relative;
         inset: auto;
         width: 100%;
-        flex: 0 0 40%;
+        flex: 0 0 190px;
         overflow: hidden;
         z-index: 0;
     }
@@ -3512,15 +3511,13 @@ button.hdr-pill { background: none; border: none; cursor: pointer; font-family: 
         display: none;
     }
 
-    /* Content: solid dark background, flush below the photo */
+    /* Content: grows freely — no clipping, respects iOS safe area at bottom */
     .hero-content-wrap {
         position: relative;
         background: #1a0700;
         padding-top: 1rem;
-        padding-bottom: 1rem;
-        flex: 1;
-        min-height: 0;
-        overflow: hidden; /* clip if content somehow still overflows */
+        padding-bottom: max(1.25rem, env(safe-area-inset-bottom) + 0.75rem);
+        flex: 1 1 auto;
         margin-top: -1px; /* prevent 1px gap between photo and content */
     }
 
