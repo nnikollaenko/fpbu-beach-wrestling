@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+{% set is_edit = item is not none %}
+{% block title %}{{ L.edit_document if is_edit else L.new_document }}{% endblock %}
+{% block page_title %}{{ L.edit_document if is_edit else L.new_document }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a class="btn btn-ghost btn-sm" href="/admin/documents">{{ L.back }}</a>
+</div>
+
+<div class="a-card">
+  <div class="a-card-body">
+    <form method="post" enctype="multipart/form-data">
+      <div class="a-form-grid cols-2">
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.title_uk }} <span>*</span></label>
+          <input class="a-input" name="title" type="text" required value="{{ item.title if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.title_en }} <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="title_en" type="text" value="{{ item.title_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.category }}</label>
+          <select class="a-select" name="category">
+            {% for cat in ['Офіційні документи', 'Анти-допінг', 'Положення', 'Протоколи', 'Інше'] %}
+            <option value="{{ cat }}" {{ 'selected' if is_edit and item.category == cat }}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="a-form-group">
+          <!-- placeholder for grid alignment -->
+        </div>
+
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.filename }} {% if not is_edit %}<span>*</span>{% endif %}</label>
+          {% if is_edit %}
+          <div class="muted" style="font-size:12px;margin-bottom:.375rem;">
+            {{ 'Поточний файл' if admin_lang == 'uk' else 'Current file' }}: <strong>{{ item.filename }}</strong>
+            ({{ L.keep_current_file }})
+          </div>
+          {% endif %}
+          <input class="a-input" name="file" type="file"
+                 accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip"
+                 {{ 'required' if not is_edit }}>
+          <div class="a-file-hint">PDF, DOC, DOCX, XLS, XLSX, PPT, ZIP</div>
+        </div>
+
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          <a class="btn btn-ghost" href="/admin/documents">{{ L.cancel }}</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,42 +1,194 @@
 {% extends "base.html" %}
 {% block title %}{{ t('nav.fed.about') }} — {{ t('site.name') }}{% endblock %}
 {% block content %}
-<div class="page-hero">
-    <div class="container">
-        <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('nav.home') }}</a><span class="sep">›</span><a href="/federation/about" class="nav-link">{{ t('nav.federation') }}</a><span class="sep">›</span><span class="cur">{{ t('nav.fed.about') }}</span></nav>
-        <div class="page-hero-tag">
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════════════ -->
+<div class="about-hero-section">
+    <div class="hero-bg-wrap">
+        <img class="hero-bg-img"
+             src="{{ url_for('static', filename='uploads/gallery/IMG_9980.JPG') }}"
+             alt="{{ 'Ukrainian beach wrestling team' if lang == 'en' else 'Команда України з пляжної боротьби' }}"
+             loading="eager">
+    </div>
+    <div class="hero-overlay-bottom"></div>
+    <div class="hero-overlay-top"></div>
+    <div class="about-hero-glow"></div>
+    <div class="about-hero-content-wrap">
+        <nav class="breadcrumb about-hero-breadcrumb">
+            <a href="/" class="nav-link">{{ t('nav.home') }}</a>
+            <span class="sep">›</span>
+            <span class="cur">{{ t('nav.fed.about') }}</span>
+        </nav>
+        <div class="page-hero-tag about-hero-tag">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M1 11c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0M8 7V3M6 5l2-2 2 2"/></svg>
             {{ t('site.short') }}
         </div>
-        <h1 class="page-hero-title">{{ t('about.title') }}</h1>
-        <p class="page-hero-desc">{{ t('about.desc') }}</p>
+        <h1 class="about-hero-title">{{ t('about.title') }}</h1>
+        <p class="about-hero-desc">{{ t('about.desc') }}</p>
     </div>
 </div>
-<section class="section"><div class="container">
-    <div class="two-col" style="margin-bottom:var(--section-gap);">
-        <div>
-            <h2 style="font-size:var(--fs-800);margin-bottom:1rem;">{{ t('about.who') }}</h2>
-            <p style="margin-bottom:1rem;">{{ t('about.p1') }}</p>
-            <p style="margin-bottom:1rem;">{{ t('about.p2') | safe }}</p>
-            <p style="margin-bottom:2rem;">{{ t('about.p3') }}</p>
-            <div style="display:flex;gap:0.875rem;flex-wrap:wrap;">
-                <a href="/federation/leadership" class="btn btn-brand nav-link">{{ t('nav.fed.leadership') }}</a>
-                <a href="/federation/history"    class="btn btn-ghost nav-link">{{ t('nav.fed.history') }}</a>
+
+<!-- ══ ХТО МИ ════════════════════════════════════════════════════════════════ -->
+<section class="section">
+    <div class="container">
+        <div class="about-who-grid">
+            <!-- Left: text -->
+            <div style="display:flex;flex-direction:column;">
+                <h2 style="font-size:var(--fs-700);font-weight:900;letter-spacing:-0.02em;margin-bottom:1.25rem;">{{ t('about.who') }}</h2>
+                <p style="color:var(--text-sec);line-height:1.7;margin-bottom:0.875rem;">{{ t('about.p1') }}</p>
+                <p style="color:var(--text-sec);line-height:1.7;margin-bottom:0.875rem;">{{ t('about.p2') | safe }}</p>
+                <p style="color:var(--text-sec);line-height:1.7;margin-bottom:2rem;">{{ t('about.p3') }}</p>
+                <div style="display:flex;gap:0.875rem;flex-wrap:wrap;margin-top:auto;">
+                    <a href="/leadership" class="btn btn-brand nav-link">
+                        {{ 'Meet the Leadership' if lang == 'en' else 'Про керівництво федерації' }}
+                    </a>
+                </div>
+            </div>
+            <!-- Right: photo collage -->
+            <div class="about-who-collage">
+                <div class="about-who-photo about-who-photo-tall"
+                     style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_9974.JPG') }}');"></div>
+                <div class="about-who-photo"
+                     style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_9969.JPG') }}');"></div>
+                <div class="about-who-photo"
+                     style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_9976.JPG') }}');"></div>
             </div>
         </div>
-        <div style="background:linear-gradient(135deg,var(--brand-bg),var(--accent-light));border-radius:var(--r-2xl);aspect-ratio:1;display:flex;align-items:center;justify-content:center;">
-            <svg style="width:55%;color:var(--brand);opacity:0.45;" viewBox="0 0 120 130" fill="none"><path d="M18 12 C24 22 52 50 72 112" stroke="currentColor" stroke-width="20" stroke-linecap="round"/><path d="M38 72 C52 64 78 82 88 110" stroke="currentColor" stroke-width="15" stroke-linecap="round"/><circle cx="62" cy="68" r="5" fill="currentColor" opacity="0.45"/><circle cx="72" cy="76" r="4.2" fill="currentColor" opacity="0.38"/></svg>
+    </div>
+</section>
+
+<!-- ══ STATS (dark photo bg) ═════════════════════════════════════════════════ -->
+<section class="about-stats-section">
+    <div class="about-stats-bg"></div>
+    <div class="container" style="position:relative;z-index:1;">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+            <div class="section-eyebrow" style="color:rgba(255,59,0,0.9);">{{ 'By the Numbers' if lang == 'en' else 'У цифрах' }}</div>
+            <h2 style="color:#fff;font-size:var(--fs-700);font-weight:900;letter-spacing:-0.02em;margin-top:0.5rem;">
+                {{ 'Federation in Numbers' if lang == 'en' else '10 років у боротьбі за розвиток спорту' }}
+            </h2>
+        </div>
+        <div class="about-stats-grid">
+            <div class="about-stat-card">
+                <div class="about-stat-num" style="color:var(--brand);">2015</div>
+                <div class="about-stat-label">{{ t('about.founded') }}</div>
+            </div>
+            <div class="about-stat-card">
+                <div class="about-stat-num">24</div>
+                <div class="about-stat-label">{{ t('about.regions') }}</div>
+            </div>
+            <div class="about-stat-card">
+                <div class="about-stat-num">500+</div>
+                <div class="about-stat-label">{{ t('about.athletes_count') }}</div>
+            </div>
+            <div class="about-stat-card">
+                <div class="about-stat-num">20+</div>
+                <div class="about-stat-label">{{ t('about.medals') }}</div>
+            </div>
         </div>
     </div>
-    <div class="stat-grid" style="margin-bottom:var(--section-gap);">
-        <div style="background:var(--brand);color:#fff;border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;">2015</div><div style="font-size:var(--fs-300);opacity:0.85;margin-top:0.25rem;">{{ t('about.founded') }}</div></div>
-        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;color:var(--brand);">24</div><div style="font-size:var(--fs-300);color:var(--muted);margin-top:0.25rem;">{{ t('about.regions') }}</div></div>
-        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;color:var(--brand);">500+</div><div style="font-size:var(--fs-300);color:var(--muted);margin-top:0.25rem;">{{ t('about.athletes_count') }}</div></div>
-        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;text-align:center;"><div style="font-size:2.25rem;font-weight:800;line-height:1;color:var(--brand);">20+</div><div style="font-size:var(--fs-300);color:var(--muted);margin-top:0.25rem;">{{ t('about.medals') }}</div></div>
+</section>
+
+<!-- ══ МІСІЯ ══════════════════════════════════════════════════════════════════ -->
+<section class="section">
+    <div class="container">
+        <div class="about-mission-grid">
+            <!-- Left: text -->
+            <div>
+                <div class="section-eyebrow" style="margin-bottom:0.75rem;">{{ 'Our Mission' if lang == 'en' else 'Наша місія' }}</div>
+                <h2 style="font-size:var(--fs-700);font-weight:900;letter-spacing:-0.02em;margin-bottom:1.25rem;">{{ t('about.mission_title') }}</h2>
+                <p style="font-size:var(--fs-500);color:var(--text-sec);line-height:1.75;">{{ t('about.mission_text') }}</p>
+            </div>
+            <!-- Right: logo -->
+            <div style="display:flex;align-items:center;justify-content:center;">
+                <img src="{{ url_for('static', filename='img/logo-main.svg') }}"
+                     alt="{{ t('site.name') }}"
+                     style="width:100%;max-width:320px;height:auto;display:block;">
+            </div>
+        </div>
     </div>
-    <div style="background:var(--brand);color:#fff;border-radius:var(--r-2xl);padding:clamp(2rem,5vw,3rem);">
-        <h2 style="color:#fff;font-size:var(--fs-700);margin-bottom:0.875rem;">{{ t('about.mission_title') }}</h2>
-        <p style="color:rgba(255,255,255,0.85);font-size:var(--fs-600);line-height:1.7;max-width:680px;">{{ t('about.mission_text') }}</p>
+</section>
+
+<!-- ══ ІСТОРІЯ ════════════════════════════════════════════════════════════════ -->
+<section class="section" id="history" style="background:#F6EFE3;border-top:none;">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+            <div class="section-eyebrow" style="margin-bottom:0.75rem;">{{ 'Since 2015' if lang == 'en' else 'З 2015 року' }}</div>
+            <h2 style="font-size:var(--fs-700);font-weight:900;letter-spacing:-0.02em;">
+                {{ 'History of the Federation' if lang == 'en' else 'Історія федерації' }}
+            </h2>
+        </div>
+        {% if history %}
+        <div class="tl2">
+            {% for item in history %}
+            <div class="tl2-item {% if loop.index is even %}tl2-item--right{% endif %}">
+                <div class="tl2-card-wrap">
+                    <div class="tl2-card">
+                        <div class="tl2-photo-slot">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            <span>{{ 'Photo coming soon' if lang == 'en' else 'Фото скоро' }}</span>
+                        </div>
+                        <div class="tl2-card-body">
+                            <span class="tl2-card-year">{{ item.year }}</span>
+                            <div class="tl2-card-title">{{ item | lf('title') }}</div>
+                            {% set desc = item | lf('description') %}
+                            {% if desc %}<div class="tl2-card-desc">{{ desc }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="tl2-dot-marker"><span></span></div>
+            </div>
+            {% endfor %}
+        </div>
+        <script>
+        (function () {
+            var tl = document.querySelector('.tl2');
+            if (!tl || !window.IntersectionObserver) return;
+            tl.classList.add('is-ready');
+            var items = tl.querySelectorAll('.tl2-item');
+            var obs = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+            items.forEach(function (el) { obs.observe(el); });
+        })();
+        </script>
+        {% else %}
+        <div class="empty-state">
+            <p>{{ 'History will be published soon.' if lang == 'en' else 'Історія федерації скоро буде додана.' }}</p>
+        </div>
+        {% endif %}
     </div>
-</div></section>
+</section>
+
+<!-- ══ CTA ════════════════════════════════════════════════════════════════════ -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-grid">
+            <div class="cta-content">
+                <div class="section-eyebrow">{{ 'Join us' if lang == 'en' else 'Приєднуйся' }}</div>
+                <h2 class="cta-title">{{ 'Become part of the Ukrainian beach wrestling family' if lang == 'en' else 'Стань частиною родини українського пляжного борця' }}</h2>
+                <p class="cta-desc">
+                    {% if lang == 'en' %}Find your region, join the federation and start your path to the national team and international podiums.
+                    {% else %}Знайди свій регіон, вступи до федерації та розпочни шлях до збірної і міжнародних п'єдесталів.{% endif %}
+                </p>
+                <div>
+                    <a href="/regions" class="btn btn-brand nav-link">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        {{ 'Choose a Regional Federation' if lang == 'en' else 'Обрати регіональну федерацію' }}
+                    </a>
+                </div>
+            </div>
+            <div class="cta-collage">
+                <div class="cta-photo cta-photo-tall" style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_8836.JPG') }}');"></div>
+                <div class="cta-photo" style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_9429.JPG') }}');"></div>
+                <div class="cta-photo" style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_9975.JPG') }}');"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}

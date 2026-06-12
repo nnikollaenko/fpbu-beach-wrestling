@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}{{ t('footer.privacy') }} — {{ t('site.name') }}{% endblock %}
+
+{% block content %}
+
+<section class="section" style="padding-top: clamp(3rem, 8vw, 5rem);">
+    <div class="container" style="max-width: 780px;">
+
+        <nav class="breadcrumb" style="margin-bottom: 2rem;">
+            <a href="/" class="nav-link">{{ t('nav.home') }}</a>
+            <span class="sep">›</span>
+            <span class="cur">{{ t('footer.privacy') }}</span>
+        </nav>
+
+        <h1 style="font-size: var(--fs-700); font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.5rem;">
+            {{ 'Privacy Policy' if lang == 'en' else 'Політика конфіденційності' }}
+        </h1>
+        <p style="color: var(--muted); font-size: var(--fs-300); margin-bottom: 3rem;">
+            {% if lang == 'en' %}Last updated: June 2026{% else %}Останнє оновлення: червень 2026{% endif %}
+        </p>
+
+        <div class="privacy-body">
+
+            <!-- 1 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}1. General Provisions{% else %}1. Загальні положення{% endif %}</h2>
+                <p>
+                    {% if lang == 'en' %}
+                    This Privacy Policy (hereinafter — the Policy) governs the collection, storage, use and protection of personal data by the Federation of Beach Wrestling of Ukraine (hereinafter — FBWU / ФПБУ), in accordance with the Law of Ukraine "On Personal Data Protection" No. 2297-VI dated June 1, 2010, and its amendments.
+                    {% else %}
+                    Ця Політика конфіденційності (далі — Політика) регулює порядок збору, зберігання, використання та захисту персональних даних Федерацією пляжної боротьби України (далі — ФПБУ) відповідно до Закону України «Про захист персональних даних» № 2297-VI від 1 червня 2010 року та змін до нього.
+                    {% endif %}
+                </p>
+                <p>
+                    {% if lang == 'en' %}
+                    By using this website (ubwf.com.ua), you confirm that you have read this Policy and agree to the processing of your personal data as described herein.
+                    {% else %}
+                    Використовуючи цей веб-сайт (ubwf.com.ua), ви підтверджуєте, що ознайомилися з цією Політикою та погоджуєтесь на обробку ваших персональних даних у порядку, описаному нижче.
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- 2 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}2. Data Controller{% else %}2. Оператор персональних даних{% endif %}</h2>
+                <div class="privacy-card">
+                    <div class="privacy-card-row">
+                        <span class="privacy-card-label">{% if lang == 'en' %}Organization{% else %}Організація{% endif %}</span>
+                        <span>{{ t('site.name') }}</span>
+                    </div>
+                    <div class="privacy-card-row">
+                        <span class="privacy-card-label">{% if lang == 'en' %}Location{% else %}Місцезнаходження{% endif %}</span>
+                        <span>{% if lang == 'en' %}Kyiv, Ukraine{% else %}Київ, Україна{% endif %}</span>
+                    </div>
+                    <div class="privacy-card-row">
+                        <span class="privacy-card-label">{% if lang == 'en' %}Contact{% else %}Контакт{% endif %}</span>
+                        <span>info@ubwf.com.ua</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}3. What Data We Collect{% else %}3. Які персональні дані ми збираємо{% endif %}</h2>
+                <p>{% if lang == 'en' %}We collect the following categories of data:{% else %}Ми збираємо такі категорії даних:{% endif %}</p>
+                <ul>
+                    <li>
+                        <strong>{% if lang == 'en' %}Contact form data{% else %}Дані з контактної форми{% endif %}</strong> —
+                        {% if lang == 'en' %}name, phone number, message text provided voluntarily by the user.
+                        {% else %}ім'я, номер телефону, текст повідомлення, надані користувачем добровільно.{% endif %}
+                    </li>
+                    <li>
+                        <strong>{% if lang == 'en' %}Official contact information{% else %}Офіційні контактні дані{% endif %}</strong> —
+                        {% if lang == 'en' %}names, positions, and contact details of federation officials, coaches, and regional representatives, published with their written consent.
+                        {% else %}імена, посади та контактні дані посадових осіб федерації, тренерів та регіональних представників, опубліковані за їхньою письмовою згодою.{% endif %}
+                    </li>
+                    <li>
+                        <strong>{% if lang == 'en' %}Athletes' data{% else %}Дані спортсменів{% endif %}</strong> —
+                        {% if lang == 'en' %}name, year of birth, weight class, sports achievements, photo, provided within the framework of official sports activity.
+                        {% else %}прізвище та ім'я, рік народження, вагова категорія, спортивні досягнення, фото, надані в рамках офіційної спортивної діяльності.{% endif %}
+                    </li>
+                    <li>
+                        <strong>{% if lang == 'en' %}Technical data{% else %}Технічні дані{% endif %}</strong> —
+                        {% if lang == 'en' %}IP address, browser type, pages visited, time of access (collected automatically by the server for security purposes).
+                        {% else %}IP-адреса, тип браузера, переглянуті сторінки, час відвідування (збираються автоматично сервером з метою забезпечення безпеки).{% endif %}
+                    </li>
+                </ul>
+                <p class="privacy-note">
+                    {% if lang == 'en' %}
+                    We do not collect sensitive data (health information, biometric data, political or religious views).
+                    {% else %}
+                    Ми не збираємо чутливі дані (стан здоров'я, біометричні дані, політичні або релігійні переконання).
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- 4 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}4. Purposes and Legal Basis of Processing{% else %}4. Мета та підстава обробки{% endif %}</h2>
+                <div class="privacy-table-wrap">
+                    <table class="privacy-table">
+                        <thead>
+                            <tr>
+                                <th>{% if lang == 'en' %}Purpose{% else %}Мета{% endif %}</th>
+                                <th>{% if lang == 'en' %}Legal Basis{% else %}Підстава{% endif %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{% if lang == 'en' %}Responding to inquiries via contact form{% else %}Відповідь на звернення через контактну форму{% endif %}</td>
+                                <td>{% if lang == 'en' %}Consent of the data subject (Art. 11 of the Law){% else %}Згода суб'єкта (ст. 11 Закону){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% if lang == 'en' %}Publishing official contact information of representatives{% else %}Публікація офіційних контактів представників{% endif %}</td>
+                                <td>{% if lang == 'en' %}Written consent / legitimate interest in the exercise of public functions{% else %}Письмова згода / законний інтерес у здійсненні публічних функцій{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% if lang == 'en' %}Publishing athletes' profiles and results{% else %}Публікація профілів спортсменів та результатів{% endif %}</td>
+                                <td>{% if lang == 'en' %}Legitimate interest (sports activity documentation); consent for photo{% else %}Законний інтерес (документування спортивної діяльності); згода на фото{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% if lang == 'en' %}Website security and stability{% else %}Безпека та стабільність роботи сайту{% endif %}</td>
+                                <td>{% if lang == 'en' %}Legitimate interest{% else %}Законний інтерес{% endif %}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}5. Data Retention Period{% else %}5. Термін зберігання{% endif %}</h2>
+                <ul>
+                    <li>{% if lang == 'en' %}Contact form messages — 2 years from the date of receipt, or until withdrawal of consent.{% else %}Повідомлення з контактної форми — 2 роки з дати надходження або до відкликання згоди.{% endif %}</li>
+                    <li>{% if lang == 'en' %}Officials' and coaches' contacts — for the duration of their official position; removed within 30 days of leaving.{% else %}Контакти посадових осіб і тренерів — протягом строку перебування на посаді; видаляються протягом 30 днів після завершення повноважень.{% endif %}</li>
+                    <li>{% if lang == 'en' %}Athletes' data — for the duration of active career, then archived as part of sporting history.{% else %}Дані спортсменів — протягом активної спортивної кар'єри; після її завершення зберігаються в архіві як частина спортивної історії.{% endif %}</li>
+                    <li>{% if lang == 'en' %}Technical logs — up to 90 days.{% else %}Технічні журнали — до 90 днів.{% endif %}</li>
+                </ul>
+            </div>
+
+            <!-- 6 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}6. Data Transfer to Third Parties{% else %}6. Передача даних третім особам{% endif %}</h2>
+                <p>
+                    {% if lang == 'en' %}
+                    We do not sell or transfer personal data to third parties for commercial purposes. Data may be disclosed to:
+                    {% else %}
+                    Ми не продаємо та не передаємо персональні дані третім особам у комерційних цілях. Дані можуть бути розкриті:
+                    {% endif %}
+                </p>
+                <ul>
+                    <li>{% if lang == 'en' %}<strong>Hosting provider</strong> — for technical website operations (data processed within Ukraine or the EU).{% else %}<strong>Хостинг-провайдеру</strong> — для технічного забезпечення роботи сайту (дані обробляються в Україні або ЄС).{% endif %}</li>
+                    <li>{% if lang == 'en' %}<strong>State authorities</strong> — if required by law (court order, law enforcement request).{% else %}<strong>Державним органам</strong> — у випадках, передбачених законодавством (рішення суду, запит правоохоронних органів).{% endif %}</li>
+                    <li>{% if lang == 'en' %}<strong>United World Wrestling (UWW)</strong> — athletes' sports results and federation reports as part of international obligations.{% else %}<strong>United World Wrestling (UWW)</strong> — спортивні результати спортсменів та звіти федерації в рамках міжнародних зобов'язань.{% endif %}</li>
+                </ul>
+            </div>
+
+            <!-- 7 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}7. Your Rights{% else %}7. Ваші права{% endif %}</h2>
+                <p>{% if lang == 'en' %}Under the Law of Ukraine "On Personal Data Protection", you have the right to:{% else %}Відповідно до Закону України «Про захист персональних даних», ви маєте право:{% endif %}</p>
+                <ul>
+                    <li>{% if lang == 'en' %}<strong>Access</strong> — to know what data about you we process;{% else %}<strong>Доступу</strong> — знати, які ваші дані ми обробляємо;{% endif %}</li>
+                    <li>{% if lang == 'en' %}<strong>Rectification</strong> — to correct inaccurate or incomplete data;{% else %}<strong>Виправлення</strong> — вимагати виправлення неточних або неповних даних;{% endif %}</li>
+                    <li>{% if lang == 'en' %}<strong>Erasure</strong> — to request deletion of data that is no longer needed for the stated purposes;{% else %}<strong>Видалення</strong> — вимагати видалення даних, що більше не потрібні для заявлених цілей;{% endif %}</li>
+                    <li>{% if lang == 'en' %}<strong>Withdrawal of consent</strong> — at any time without affecting the lawfulness of prior processing;{% else %}<strong>Відкликання згоди</strong> — у будь-який час без шкоди для правомірності попередньої обробки;{% endif %}</li>
+                    <li>{% if lang == 'en' %}<strong>Objection</strong> — to object to processing based on legitimate interest;{% else %}<strong>Заперечення</strong> — заперечувати проти обробки на підставі законного інтересу;{% endif %}</li>
+                    <li>{% if lang == 'en' %}<strong>Complaint</strong> — to file a complaint with the Ukrainian Parliament Commissioner for Human Rights.{% else %}<strong>Скарги</strong> — подати скаргу до Уповноваженого Верховної Ради України з прав людини.{% endif %}</li>
+                </ul>
+                <p>
+                    {% if lang == 'en' %}To exercise your rights, send a request to: <strong>info@ubwf.com.ua</strong>. We will respond within 30 days.
+                    {% else %}Для реалізації ваших прав надішліть запит на: <strong>info@ubwf.com.ua</strong>. Ми відповімо протягом 30 днів.{% endif %}
+                </p>
+            </div>
+
+            <!-- 8 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}8. Cookies{% else %}8. Файли cookie{% endif %}</h2>
+                <p>
+                    {% if lang == 'en' %}
+                    This website uses only a technical cookie to remember your language preference (<code>lang</code>). This cookie does not contain personal data, is not transmitted to third parties, and expires after 1 year. We do not use tracking or advertising cookies.
+                    {% else %}
+                    Цей сайт використовує лише технічний файл cookie для збереження вашого вибору мови інтерфейсу (<code>lang</code>). Цей файл не містить персональних даних, не передається третім особам та має термін дії 1 рік. Ми не використовуємо трекінгові або рекламні файли cookie.
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- 9 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}9. Policy Updates{% else %}9. Зміни до Політики{% endif %}</h2>
+                <p>
+                    {% if lang == 'en' %}
+                    We may update this Policy in response to changes in legislation or website functionality. The current version is always available at this page. Significant changes will be announced on the website's homepage.
+                    {% else %}
+                    Ми можемо оновлювати цю Політику у зв'язку зі змінами законодавства або функціоналу сайту. Актуальна версія завжди доступна на цій сторінці. Про суттєві зміни ми повідомимо на головній сторінці сайту.
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- 10 -->
+            <div class="privacy-section">
+                <h2>{% if lang == 'en' %}10. Contact{% else %}10. Контакти{% endif %}</h2>
+                <p>
+                    {% if lang == 'en' %}
+                    Questions, requests to exercise rights, or complaints regarding personal data processing:
+                    {% else %}
+                    Питання, запити на реалізацію прав або скарги щодо обробки персональних даних:
+                    {% endif %}
+                </p>
+                <div class="privacy-card">
+                    <div class="privacy-card-row">
+                        <span class="privacy-card-label">Email</span>
+                        <span>info@ubwf.com.ua</span>
+                    </div>
+                    <div class="privacy-card-row">
+                        <span class="privacy-card-label">{% if lang == 'en' %}Subject{% else %}Тема листа{% endif %}</span>
+                        <span>{% if lang == 'en' %}Personal Data — [your request type]{% else %}Персональні дані — [тип запиту]{% endif %}</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">
+                    {% if lang == 'en' %}
+                    If you believe your rights have been violated, you may also contact the <a href="https://www.ombudsman.gov.ua" target="_blank" rel="noopener" class="privacy-ext-link">Ukrainian Parliament Commissioner for Human Rights</a>.
+                    {% else %}
+                    Якщо ви вважаєте, що ваші права порушено, ви також можете звернутися до <a href="https://www.ombudsman.gov.ua" target="_blank" rel="noopener" class="privacy-ext-link">Уповноваженого Верховної Ради України з прав людини</a>.
+                    {% endif %}
+                </p>
+            </div>
+
+        </div><!-- /.privacy-body -->
+    </div>
+</section>
+
+{% endblock %}

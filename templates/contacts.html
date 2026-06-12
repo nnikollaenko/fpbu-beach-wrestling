@@ -2,16 +2,9 @@
 {% block title %}{{ t('contacts.title') }} — {{ t('site.name') }}{% endblock %}
 
 {% block content %}
-<div class="page-hero page-hero--dark">
+<div class="page-hero page-hero--dark page-hero--contacts">
     <div class="container">
         <nav class="breadcrumb"><a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a><span class="sep">›</span><span class="cur">{{ t('contacts.title') }}</span></nav>
-        <div class="page-hero-tag">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
-                <rect x="1.5" y="3.5" width="13" height="9" rx="1.5"/>
-                <path d="M1.5 4.5 8 9l6.5-4.5"/>
-            </svg>
-            {{ t('contacts.tag') }}
-        </div>
         <h1 class="page-hero-title">{{ t('contacts.title') }}</h1>
         <p class="page-hero-desc">{{ t('contacts.desc') }}</p>
     </div>
@@ -21,14 +14,15 @@
     <div class="container">
         <div class="two-col">
 
+            <!-- ── Left: contact info ──────────────────────────────────────── -->
             <div>
                 <h2 style="font-size:var(--fs-700);margin-bottom:1.75rem;">{{ t('contacts.requisites') }}</h2>
                 <div style="display:flex;flex-direction:column;gap:1.125rem;margin-bottom:2rem;">
 
-                    {% for icon_d, key, val in [
-                        ('M10 2a4.5 4.5 0 0 0-4.5 4.5C5.5 10.5 10 18 10 18S14.5 10.5 14.5 6.5A4.5 4.5 0 0 0 10 2Zm0 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z', 'contacts.address', 'Kyiv, Ukraine' if lang == 'en' else 'Київ, Україна'),
-                        ('M3 4h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1ZM2 5l8 7 8-7', 'contacts.email', 'info@ubwf.com.ua'),
-                        ('M5 3a2 2 0 0 0-2 2c0 7.18 5.82 13 13 13a2 2 0 0 0 2-2v-2.5a1 1 0 0 0-.75-.97l-3-1a1 1 0 0 0-1.08.4l-.75 1.12A10 10 0 0 1 7.95 7.58l1.12-.75A1 1 0 0 0 9.5 5.75l-1-3A1 1 0 0 0 7.5 2H5Z', 'contacts.phone', '+38 (044) 123-45-67')
+                    {% for icon_d, key, val, href in [
+                        ('M10 2a4.5 4.5 0 0 0-4.5 4.5C5.5 10.5 10 18 10 18S14.5 10.5 14.5 6.5A4.5 4.5 0 0 0 10 2Zm0 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z', 'contacts.address', 'Kyiv, Ukraine' if lang == 'en' else 'Київ, Україна', none),
+                        ('M3 4h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1ZM2 5l8 7 8-7', 'contacts.email', 'info@ubwf.com.ua', 'mailto:info@ubwf.com.ua'),
+                        ('M5 3a2 2 0 0 0-2 2c0 7.18 5.82 13 13 13a2 2 0 0 0 2-2v-2.5a1 1 0 0 0-.75-.97l-3-1a1 1 0 0 0-1.08.4l-.75 1.12A10 10 0 0 1 7.95 7.58l1.12-.75A1 1 0 0 0 9.5 5.75l-1-3A1 1 0 0 0 7.5 2H5Z', 'contacts.phone', '+380 44 123 45 67', 'tel:+380441234567')
                     ] %}
                     <div style="display:flex;gap:0.875rem;align-items:flex-start;">
                         <div style="width:42px;height:42px;background:var(--brand-bg);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--brand);">
@@ -36,7 +30,11 @@
                         </div>
                         <div>
                             <div style="font-size:var(--fs-200);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);margin-bottom:0.15rem;">{{ t(key) }}</div>
+                            {% if href %}
+                            <a href="{{ href }}" style="font-size:var(--fs-500);" class="contact-link">{{ val }}</a>
+                            {% else %}
                             <div style="font-size:var(--fs-500);color:var(--text);">{{ val }}</div>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -44,35 +42,330 @@
 
                 <h3 style="font-size:var(--fs-500);font-weight:700;margin-bottom:0.875rem;">{{ t('contacts.social') }}</h3>
                 <div style="display:flex;gap:0.625rem;flex-wrap:wrap;">
-                    {% for name, label in [('Facebook','Facebook'),('Instagram','Instagram'),('YouTube','YouTube'),('Telegram','Telegram')] %}
-                    <a href="#" style="display:flex;align-items:center;gap:7px;padding:0.45rem 0.875rem;border:1.5px solid var(--border);border-radius:var(--r-full);font-size:var(--fs-300);font-weight:600;color:var(--text-sec);transition:all var(--t-fast);" onmouseover="this.style.borderColor='var(--brand)';this.style.color='var(--brand)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-sec)'">
-                        {{ label }}
+                    <a href="#" class="social-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Facebook
                     </a>
-                    {% endfor %}
+                    <a href="#" class="social-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                        Instagram
+                    </a>
+                    <a href="#" class="social-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
+                        YouTube
+                    </a>
+                    <a href="#" class="social-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        Telegram
+                    </a>
                 </div>
             </div>
 
-            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2xl);padding:clamp(1.5rem,4vw,2.25rem);">
+            <!-- ── Right: form ──────────────────────────────────────────────── -->
+            <div class="contacts-right" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2xl);padding:clamp(1.5rem,4vw,2.25rem);">
                 <h2 style="font-size:var(--fs-600);margin-bottom:0.4rem;">{{ t('contacts.form.title') }}</h2>
                 <p style="font-size:var(--fs-400);color:var(--muted);margin-bottom:1.5rem;">{{ t('contacts.form.desc') }}</p>
-                <div style="display:flex;flex-direction:column;gap:1rem;">
-                    <div>
-                        <label class="form-label">{{ t('contacts.form.name') }}</label>
-                        <input class="form-input" type="text" placeholder="{{ t('contacts.form.name_ph') }}">
+
+                <!-- ── Contact form ──────────────────────────────────────── -->
+                <form id="contactForm" novalidate autocomplete="off"
+                      data-send="{{ t('contacts.form.send') }}"
+                      data-sending="{{ 'Sending…' if lang == 'en' else 'Надсилаємо…' }}">
+
+                    <!-- Honeypot: hidden from humans, bots fill it -->
+                    <input type="text" name="website" tabindex="-1" aria-hidden="true"
+                           style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" autocomplete="off">
+
+                    <div style="display:flex;flex-direction:column;gap:1.125rem;">
+
+                        <!-- Name -->
+                        <div class="cf-group" id="fg-name">
+                            <label class="form-label">
+                                {{ t('contacts.form.name') }}
+                                <span class="cf-req" aria-label="{{ 'required' if lang == 'en' else 'обов\'язково' }}">*</span>
+                            </label>
+                            <input class="form-input" type="text" name="name" id="cfName"
+                                   placeholder="{{ t('contacts.form.name_ph') }}"
+                                   autocomplete="name" maxlength="120">
+                            <div class="cf-err" id="err-name" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="cf-group" id="fg-phone">
+                            <label class="form-label" for="cfPhone">
+                                {{ t('contacts.phone') }}
+                                <span class="cf-req" aria-label="{{ 'required' if lang == 'en' else 'обов\'язково' }}">*</span>
+                            </label>
+                            <div class="phone-field" id="phoneWrap">
+                                <select class="phone-code-select" name="phone_code" id="cfPhoneCode"
+                                        aria-label="{{ 'Country code' if lang == 'en' else 'Код країни' }}">
+                                    <option value="+380" selected>🇺🇦 +380</option>
+                                    <option value="+49">🇩🇪 +49</option>
+                                    <option value="+48">🇵🇱 +48</option>
+                                    <option value="+420">🇨🇿 +420</option>
+                                    <option value="+421">🇸🇰 +421</option>
+                                    <option value="+36">🇭🇺 +36</option>
+                                    <option value="+40">🇷🇴 +40</option>
+                                    <option value="+373">🇲🇩 +373</option>
+                                    <option value="+375">🇧🇾 +375</option>
+                                    <option value="+7">🇷🇺 +7</option>
+                                    <option value="+995">🇬🇪 +995</option>
+                                    <option value="+994">🇦🇿 +994</option>
+                                    <option value="+374">🇦🇲 +374</option>
+                                    <option value="+90">🇹🇷 +90</option>
+                                    <option value="+30">🇬🇷 +30</option>
+                                    <option value="+359">🇧🇬 +359</option>
+                                    <option value="+33">🇫🇷 +33</option>
+                                    <option value="+39">🇮🇹 +39</option>
+                                    <option value="+34">🇪🇸 +34</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                </select>
+                                <input class="phone-num-input" type="tel" name="phone_number" id="cfPhone"
+                                       placeholder="50 123 45 67"
+                                       autocomplete="tel-national" maxlength="30">
+                            </div>
+                            <div class="cf-err" id="err-phone" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <!-- Message (optional) -->
+                        <div class="cf-group">
+                            <label class="form-label" for="cfMsg">{{ t('contacts.form.msg') }}</label>
+                            <textarea class="form-textarea" name="message" id="cfMsg"
+                                      rows="4" placeholder="{{ t('contacts.form.msg_ph') }}"
+                                      maxlength="2000"></textarea>
+                        </div>
+
+                        <!-- Consent checkbox -->
+                        <div class="cf-group" id="fg-consent">
+                            <label class="cf-consent-label">
+                                <input type="checkbox" name="consent" id="cfConsent">
+                                <span>
+                                    {% if lang == 'en' %}
+                                    I agree to the processing of my personal data in accordance with the
+                                    <a href="/privacy" class="nav-link cf-consent-link">Privacy Policy</a>
+                                    {% else %}
+                                    Погоджуюсь на обробку персональних даних відповідно до
+                                    <a href="/privacy" class="nav-link cf-consent-link">Політики конфіденційності</a>
+                                    {% endif %}
+                                    <span class="cf-req">*</span>
+                                </span>
+                            </label>
+                            <div class="cf-err" id="err-consent" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-brand" id="cfSubmit"
+                                style="justify-content:center;width:100%;">
+                            {{ t('contacts.form.send') }}
+                        </button>
+
+                        <!-- Global send error -->
+                        <div class="cf-send-error" id="cfGlobalErr" hidden>
+                            {% if lang == 'en' %}
+                            Something went wrong. Please try again or email us directly at <strong>info@ubwf.com.ua</strong>.
+                            {% else %}
+                            Помилка відправки. Спробуйте ще раз або напишіть нам на <strong>info@ubwf.com.ua</strong>.
+                            {% endif %}
+                        </div>
+
                     </div>
-                    <div>
-                        <label class="form-label">{{ t('contacts.email') }}</label>
-                        <input class="form-input" type="email" placeholder="{{ t('contacts.form.email_ph') }}">
+                </form>
+
+                <!-- ── Success state (shown after send) ──────────────────── -->
+                <div id="cfSuccess" hidden>
+                    <div class="cf-success-wrap">
+                        <div class="cf-success-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <h3 style="font-size:var(--fs-600);font-weight:800;margin:0;">
+                            {{ 'Message sent!' if lang == 'en' else 'Повідомлення надіслано!' }}
+                        </h3>
+                        <p style="color:var(--text-sec);font-size:var(--fs-400);margin:0;text-align:center;line-height:1.6;">
+                            {% if lang == 'en' %}We'll get back to you as soon as possible.
+                            {% else %}Ми зв'яжемося з вами найближчим часом.{% endif %}
+                        </p>
                     </div>
-                    <div>
-                        <label class="form-label">{{ t('contacts.form.msg') }}</label>
-                        <textarea class="form-textarea" rows="4" placeholder="{{ t('contacts.form.msg_ph') }}"></textarea>
-                    </div>
-                    <button class="btn btn-brand" style="justify-content:center;">{{ t('contacts.form.send') }}</button>
                 </div>
-            </div>
+
+            </div><!-- /.form card -->
 
         </div>
     </div>
 </section>
+
+<script>
+(function () {
+    var form       = document.getElementById('contactForm');
+    var success    = document.getElementById('cfSuccess');
+    var btn        = document.getElementById('cfSubmit');
+    var globalErr  = document.getElementById('cfGlobalErr');
+    var codeSelect = document.getElementById('cfPhoneCode');
+    var phoneInput = document.getElementById('cfPhone');
+    if (!form) return;
+
+    var attempted = false;
+    var lang = document.documentElement.lang || 'uk';
+
+    /* ── Phone masks per country ──────────────────────────────────────────── */
+    var phoneMasks = {
+        '+380': { min:9,  max:9,  ph:'50 123 45 67',    groups:[2,3,2,2]   },
+        '+49':  { min:10, max:11, ph:'151 1234 5678',   groups:[3,4,4]     },
+        '+48':  { min:9,  max:9,  ph:'501 234 567',     groups:[3,3,3]     },
+        '+420': { min:9,  max:9,  ph:'601 234 567',     groups:[3,3,3]     },
+        '+421': { min:9,  max:9,  ph:'901 234 567',     groups:[3,3,3]     },
+        '+36':  { min:9,  max:9,  ph:'30 123 4567',     groups:[2,3,4]     },
+        '+40':  { min:9,  max:9,  ph:'712 345 678',     groups:[3,3,3]     },
+        '+373': { min:8,  max:8,  ph:'6012 3456',       groups:[4,4]       },
+        '+375': { min:9,  max:9,  ph:'29 123 45 67',    groups:[2,3,2,2]   },
+        '+7':   { min:10, max:10, ph:'912 345 67 89',   groups:[3,3,2,2]   },
+        '+995': { min:9,  max:9,  ph:'555 123 456',     groups:[3,3,3]     },
+        '+994': { min:9,  max:9,  ph:'50 123 45 67',    groups:[2,3,2,2]   },
+        '+374': { min:8,  max:8,  ph:'77 123 456',      groups:[2,3,3]     },
+        '+90':  { min:10, max:10, ph:'532 123 45 67',   groups:[3,3,2,2]   },
+        '+30':  { min:10, max:10, ph:'693 123 4567',    groups:[3,3,4]     },
+        '+359': { min:9,  max:9,  ph:'876 123 456',     groups:[3,3,3]     },
+        '+33':  { min:9,  max:9,  ph:'6 12 34 56 78',   groups:[1,2,2,2,2] },
+        '+39':  { min:9,  max:10, ph:'312 345 6789',    groups:[3,3,4]     },
+        '+34':  { min:9,  max:9,  ph:'612 345 678',     groups:[3,3,3]     },
+        '+44':  { min:10, max:10, ph:'7911 123456',     groups:[4,6]       },
+        '+1':   { min:10, max:10, ph:'555 123 4567',    groups:[3,3,4]     },
+    };
+
+    function formatPhone(digits, groups) {
+        var result = '', pos = 0;
+        for (var i = 0; i < groups.length; i++) {
+            if (pos >= digits.length) break;
+            if (result) result += ' ';
+            result += digits.slice(pos, pos + groups[i]);
+            pos += groups[i];
+        }
+        return result;
+    }
+
+    function applyPhoneMask() {
+        var mask = phoneMasks[codeSelect.value] || { max: 15, groups: [15] };
+        var cursor = phoneInput.selectionStart;
+        var digitsBeforeCursor = phoneInput.value.slice(0, cursor).replace(/\D/g, '').length;
+        var digits = phoneInput.value.replace(/\D/g, '').slice(0, mask.max);
+        var formatted = formatPhone(digits, mask.groups);
+        phoneInput.value = formatted;
+        // Restore cursor to same logical digit position
+        var newCursor = formatted.length, dc = 0;
+        for (var i = 0; i < formatted.length; i++) {
+            if (/\d/.test(formatted[i]) && ++dc === digitsBeforeCursor) { newCursor = i + 1; break; }
+        }
+        phoneInput.setSelectionRange(newCursor, newCursor);
+        if (attempted) validatePhone();
+    }
+
+    codeSelect.addEventListener('change', function () {
+        var mask = phoneMasks[this.value];
+        if (mask) phoneInput.placeholder = mask.ph;
+        phoneInput.value = '';
+        phoneInput.focus();
+        if (attempted) validatePhone();
+    });
+
+    // Block non-digit keys (allow navigation & clipboard shortcuts)
+    phoneInput.addEventListener('keydown', function (e) {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        var passKeys = ['Backspace','Delete','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Tab','Home','End','Enter'];
+        if (passKeys.indexOf(e.key) !== -1) return;
+        if (!/^\d$/.test(e.key)) e.preventDefault();
+    });
+
+    phoneInput.addEventListener('input', applyPhoneMask);
+    phoneInput.addEventListener('blur',  function () { if (attempted) validatePhone(); });
+
+    /* ── Validation ───────────────────────────────────────────────────────── */
+    var msgs = {
+        nameReq:         lang === 'en' ? 'Please enter your name'             : "Вкажіть ваше ім'я",
+        nameShort:       lang === 'en' ? 'Name must be at least 2 characters' : 'Мінімум 2 символи',
+        phoneReq:        lang === 'en' ? 'Please enter your phone number'     : 'Вкажіть номер телефону',
+        phoneIncomplete: lang === 'en' ? 'Enter a complete phone number'      : 'Введіть повний номер телефону',
+        consentReq:      lang === 'en' ? 'Please accept to continue'          : 'Необхідна ваша згода',
+    };
+
+    function setError(fgId, errId, msg) {
+        var fg  = document.getElementById(fgId);
+        var err = document.getElementById(errId);
+        if (!fg || !err) return;
+        if (msg) {
+            err.textContent = msg;
+            fg.classList.add('cf-has-error');
+        } else {
+            err.textContent = '';
+            fg.classList.remove('cf-has-error');
+        }
+    }
+
+    function validateName() {
+        var v = form.elements.name.value.trim();
+        if (!v)           { setError('fg-name', 'err-name', msgs.nameReq);   return false; }
+        if (v.length < 2) { setError('fg-name', 'err-name', msgs.nameShort); return false; }
+        setError('fg-name', 'err-name', '');
+        return true;
+    }
+
+    function validatePhone() {
+        var v = phoneInput.value.trim();
+        if (!v) { setError('fg-phone', 'err-phone', msgs.phoneReq); return false; }
+        var mask = phoneMasks[codeSelect.value] || { min: 4 };
+        if (v.replace(/\D/g, '').length < mask.min) {
+            setError('fg-phone', 'err-phone', msgs.phoneIncomplete);
+            return false;
+        }
+        setError('fg-phone', 'err-phone', '');
+        return true;
+    }
+
+    function validateConsent() {
+        var ok = document.getElementById('cfConsent').checked;
+        setError('fg-consent', 'err-consent', ok ? '' : msgs.consentReq);
+        return ok;
+    }
+
+    form.elements.name.addEventListener('blur',  function () { if (attempted) validateName(); });
+    form.elements.name.addEventListener('input', function () { if (attempted) validateName(); });
+    document.getElementById('cfConsent').addEventListener('change', function () { if (attempted) validateConsent(); });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        attempted = true;
+        globalErr.hidden = true;
+
+        // Bitwise & runs all validators even if first fails (shows all errors at once)
+        var ok = (validateName() & validatePhone() & validateConsent()) === 1;
+        if (!ok) return;
+
+        btn.disabled = true;
+        btn.textContent = form.dataset.sending;
+
+        fetch('/contacts', {
+            method: 'POST',
+            body: new FormData(form),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            if (d.ok) {
+                form.hidden = true;
+                success.hidden = false;
+            } else {
+                globalErr.hidden = false;
+                btn.disabled = false;
+                btn.textContent = form.dataset.send;
+            }
+        })
+        .catch(function () {
+            globalErr.hidden = false;
+            btn.disabled = false;
+            btn.textContent = form.dataset.send;
+        });
+    });
+})();
+</script>
+
 {% endblock %}

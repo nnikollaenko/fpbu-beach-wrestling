@@ -1,0 +1,112 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.gallery }}{% endblock %}
+{% block page_title %}{{ L.gallery }}{% endblock %}
+
+{% block content %}
+<!-- Upload form -->
+<div class="a-card" style="margin-bottom:1.25rem;">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.upload_photos }}</div>
+  </div>
+  <div class="a-card-body">
+    <form method="post" action="/admin/gallery/upload" enctype="multipart/form-data">
+      <div class="a-form-grid cols-2" style="margin-bottom:1rem;">
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.album }} <span>*</span></label>
+          <input class="a-input" name="album" type="text" required
+                 list="albums-list"
+                 value="{{ album_filter or '' }}"
+                 placeholder="{{ 'Назва альбому' if admin_lang == 'uk' else 'Album name' }}">
+          <datalist id="albums-list">
+            {% for a in albums %}<option value="{{ a.album }}">{% endfor %}
+          </datalist>
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.taken_at }}</label>
+          <input class="a-input" name="taken_at" type="date">
+        </div>
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.caption }}</label>
+          <input class="a-input" name="caption" type="text"
+                 placeholder="{{ 'Підпис (необов\'язково)' if admin_lang == 'uk' else 'Caption (optional)' }}">
+        </div>
+      </div>
+
+      <div class="a-upload-zone" id="uploadZone" onclick="document.getElementById('photosInput').click()">
+        <input type="file" id="photosInput" name="photos" multiple accept="image/*"
+               onchange="updateZoneText(this)">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);margin:0 auto .5rem;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="a-upload-zone-text">
+          <strong>{{ 'Натисніть або перетягніть фото сюди' if admin_lang == 'uk' else 'Click or drag photos here' }}</strong><br>
+          <span id="uploadCount">{{ 'JPG, PNG, WebP — можна кілька файлів' if admin_lang == 'uk' else 'JPG, PNG, WebP — multiple files allowed' }}</span>
+        </div>
+      </div>
+
+      <div class="a-form-actions" style="border-top:none;padding-top:.75rem;">
+        <button class="btn btn-primary" type="submit">↑ {{ L.upload_photos }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Album tabs + photos -->
+{% if albums %}
+<div class="a-card">
+  <div class="a-card-header" style="flex-wrap:wrap;gap:.5rem;">
+    <div class="a-card-title">{{ 'Фото у галереї' if admin_lang == 'uk' else 'Gallery photos' }}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.375rem;">
+      <a class="btn btn-sm {{ 'btn-primary' if not album_filter else 'btn-ghost' }}" href="/admin/gallery">
+        {{ 'Усі' if admin_lang == 'uk' else 'All' }}
+      </a>
+      {% for a in albums %}
+      <a class="btn btn-sm {{ 'btn-primary' if album_filter == a.album else 'btn-ghost' }}"
+         href="/admin/gallery?album={{ a.album|urlencode }}">
+        {{ a.album }} ({{ a.cnt }})
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if photos %}
+  <div class="a-card-body">
+    <div class="a-gallery-grid">
+      {% for p in photos %}
+      <div class="a-gallery-item">
+        <img src="/static/uploads/{{ p.filename }}" alt="{{ p.caption or '' }}" loading="lazy">
+        <div class="a-gallery-del">
+          <form method="post" action="/admin/gallery/{{ p.id }}/delete"
+                onsubmit="return confirm('{{ L.confirm_delete }}')">
+            <button type="submit" title="{{ L.delete }}">✕</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if not album_filter %}
+    <div class="muted" style="font-size:12px;margin-top:1rem;text-align:center;">
+      {{ 'Показано останні 60 фото. Оберіть альбом, щоб побачити всі.' if admin_lang == 'uk' else 'Showing last 60 photos. Select an album to see all.' }}
+    </div>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="a-empty">{{ 'Фото ще немає' if admin_lang == 'uk' else 'No photos yet' }}</div>
+  {% endif %}
+</div>
+{% endif %}
+
+<script>
+function updateZoneText(input) {
+  var el = document.getElementById('uploadCount');
+  el.textContent = input.files.length + ' {{ 'фото обрано' if admin_lang == 'uk' else 'photos selected' }}';
+}
+var zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', function(){ zone.classList.remove('drag'); });
+zone.addEventListener('drop', function(e){
+  e.preventDefault(); zone.classList.remove('drag');
+  var input = document.getElementById('photosInput');
+  input.files = e.dataTransfer.files;
+  updateZoneText(input);
+});
+</script>
+{% endblock %}

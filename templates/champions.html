@@ -2,28 +2,26 @@
 {% block title %}{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }} — {{ t('site.name') }}{% endblock %}
 
 {% block content %}
-<div class="champs-section" style="padding-bottom:0;">
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<div class="page-hero page-hero--dark page-hero--champions">
     <div class="container">
-        <nav class="breadcrumb" style="color:rgba(255,255,255,0.4);">
-            <a href="/" class="nav-link" style="color:rgba(255,255,255,0.4);">{{ t('nav.home') }}</a>
-            <span class="sep">›</span><span class="cur" style="color:rgba(255,255,255,0.7);">{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}</span>
+        <nav class="breadcrumb">
+            <a href="/" class="nav-link">{{ t('nav.home') }}</a>
+            <span class="sep">›</span>
+            <span class="cur">{{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}</span>
         </nav>
-        <div style="padding-top:1rem;padding-bottom:3rem;">
-            <div class="champs-eyebrow">🏆 {{ 'Hall of Champions' if lang == 'en' else 'Зала чемпіонів' }}</div>
-            <h1 class="champs-title" style="font-size:var(--fs-900);">
-                {{ 'Kings &amp; Queens' if lang == 'en' else 'Королі та Королеви' }}<br>
-                <span>{{ 'of the Sand' if lang == 'en' else 'піску' }}</span>
-            </h1>
-            <p class="champs-sub">{{ 'All World and European Champions from Ukraine' if lang == 'en' else 'Всі чемпіони та призери чемпіонатів світу й Європи від України' }}</p>
-        </div>
+        <h1 class="page-hero-title">{{ 'Kings and Queens of the Sand' if lang == 'en' else 'Королі та Королеви піску' }}</h1>
+        <p class="page-hero-desc">{{ 'All World and European Champions from Ukraine' if lang == 'en' else 'Всі чемпіони та призери чемпіонатів світу й Європи від України' }}</p>
     </div>
 </div>
 
-<section class="section" style="background:#111;">
+<!-- ── Champions grid ─────────────────────────────────────────────────────── -->
+<section class="section champs-page" style="background:#111;">
     <div class="container">
         <!-- Year filter -->
         {% if years %}
-        <div class="year-filter">
+        <div class="year-filter" id="champions-filter">
             <a href="/champions" class="year-pill nav-link {% if not selected_year %}active{% endif %}">
                 {{ 'All years' if lang == 'en' else 'Всі роки' }}
             </a>
@@ -32,6 +30,25 @@
             {% endfor %}
         </div>
         {% endif %}
+        <script>
+        (function () {
+            function scrollToFilter() {
+                var el = document.getElementById('champions-filter');
+                if (!el) return;
+                if (new URLSearchParams(location.search).has('year')) {
+                    var hdr = document.getElementById('site-header');
+                    var offset = (hdr ? hdr.offsetHeight : 68) + 16;
+                    var top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top: Math.max(0, top), behavior: 'instant' });
+                }
+            }
+            scrollToFilter();
+            if (!window._champScrollBound) {
+                window._champScrollBound = true;
+                window.addEventListener('navigationComplete', scrollToFilter);
+            }
+        })();
+        </script>
 
         {% if champions %}
         <div class="grid-4">
@@ -42,18 +59,26 @@
                     {% else %}
                     <svg viewBox="0 0 80 100" fill="none"><circle cx="40" cy="28" r="18" stroke="currentColor" stroke-width="4"/><path d="M10 90 C10 65 70 65 70 90" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
                     {% endif %}
-                    <div class="champion-medal medal-{{ c.medal }}">
-                        {{ '🥇' if c.medal == 'gold' else ('🥈' if c.medal == 'silver' else '🥉') }}
-                    </div>
                 </div>
                 <div class="champion-body">
-                    <div class="champion-name">{{ c.name }}</div>
-                    <div class="champion-comp">{{ c.competition }}</div>
-                    <div class="champion-year">
-                        {{ c.year }}{% if c.weight_class %} · {{ c.weight_class }}{% endif %}
-                        {% if c.age_group and c.age_group != 'Senior' %} · {{ c.age_group }}{% endif %}
+                    <div class="champion-text">
+                        <div class="champion-name">{{ c | lf('name') }}</div>
+                        <div class="champion-comp">{{ c | lf('competition') }}</div>
+                        <div class="champion-year">
+                            {{ c.year }}{% if c.weight_class %} · {{ c.weight_class | wt }}{% endif %}
+                            {% if c.age_group and c.age_group != 'Senior' %} · {{ c.age_group }}{% endif %}
+                        </div>
+                        {% if c.total_medals %}<div class="champion-medals">{{ c.total_medals | tmedals }}</div>{% endif %}
                     </div>
-                    {% if c.total_medals %}<div class="champion-medals">{{ c.total_medals }}</div>{% endif %}
+                    {% if c.gold_count or c.silver_count or c.bronze_count %}
+                    <div class="champion-medals-group">
+                        {% if c.gold_count %}<div class="champion-medal medal-gold">{{ c.gold_count }}</div>{% endif %}
+                        {% if c.silver_count %}<div class="champion-medal medal-silver">{{ c.silver_count }}</div>{% endif %}
+                        {% if c.bronze_count %}<div class="champion-medal medal-bronze">{{ c.bronze_count }}</div>{% endif %}
+                    </div>
+                    {% else %}
+                    <div class="champion-medal medal-{{ c.medal }}">{{ '1' if c.medal == 'gold' else ('2' if c.medal == 'silver' else '3') }}</div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -65,4 +90,32 @@
         {% endif %}
     </div>
 </section>
+
+<!-- ── CTA ────────────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-grid">
+            <div class="cta-content">
+                <div class="section-eyebrow">{{ 'Join us' if lang == 'en' else 'Приєднуйся' }}</div>
+                <h2 class="cta-title">{{ 'Become part of the Ukrainian beach wrestling family' if lang == 'en' else 'Стань частиною родини українського пляжного борця' }}</h2>
+                <p class="cta-desc">
+                    {% if lang == 'en' %}Find your region, join the federation and start your path to the national team and international podiums.
+                    {% else %}Знайди свій регіон, вступи до федерації та розпочни шлях до збірної і міжнародних п'єдесталів.{% endif %}
+                </p>
+                <div>
+                    <a href="/regions" class="btn btn-brand nav-link">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        {{ 'Choose a Regional Federation' if lang == 'en' else 'Обрати регіональну федерацію' }}
+                    </a>
+                </div>
+            </div>
+            <div class="cta-collage">
+                <div class="cta-photo cta-photo-tall" style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_8836.JPG') }}');"></div>
+                <div class="cta-photo" style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_9429.JPG') }}');"></div>
+                <div class="cta-photo" style="background-image:url('{{ url_for('static', filename='uploads/gallery/IMG_9975.JPG') }}');"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}

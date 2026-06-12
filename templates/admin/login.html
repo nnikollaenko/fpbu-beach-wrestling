@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="{{ admin_lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>{{ L.login_title }} — ФПБУ</title>
+<link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+<div class="a-login-page">
+  <div class="a-login-box">
+    <div class="a-login-logo">
+      <div class="a-login-logo-icon">Ф</div>
+      <div class="a-login-logo-text">{{ L.admin_panel }}</div>
+    </div>
+
+    {% if error %}
+      <div class="a-login-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" autocomplete="on">
+      <div class="a-form-group" style="margin-bottom:.875rem;">
+        <label class="a-form-label" for="username">{{ L.username }}</label>
+        <input class="a-input" id="username" name="username" type="text"
+               autocomplete="username" required autofocus>
+      </div>
+      <div class="a-form-group" style="margin-bottom:1.25rem;">
+        <label class="a-form-label" for="password">{{ L.password }}</label>
+        <input class="a-input" id="password" name="password" type="password"
+               autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+        {{ L.sign_in }}
+      </button>
+    </form>
+
+    <div style="margin-top:1.25rem;text-align:right;">
+      <div class="a-lang" style="display:inline-flex;">
+        <a href="/admin/login?lang=uk" onclick="document.cookie='admin_lang=uk';return true;" class="{{ 'active' if admin_lang == 'uk' }}">УКР</a>
+        <a href="/admin/login?lang=en" onclick="document.cookie='admin_lang=en';return true;" class="{{ 'active' if admin_lang == 'en' }}">EN</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

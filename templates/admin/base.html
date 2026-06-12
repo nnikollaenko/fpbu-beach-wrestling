@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="{{ admin_lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>{% block title %}{{ L.admin_panel }}{% endblock %} — ФПБУ</title>
+<link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+<div class="a-layout">
+
+  <!-- Sidebar -->
+  <nav class="a-sidebar">
+    <a href="/admin/" class="a-brand">
+      <div class="a-brand-icon">Ф</div>
+      <div class="a-brand-text">{{ L.admin_panel }}</div>
+    </a>
+
+    <div class="a-nav">
+      <div class="a-nav-section">{{ 'Контент' if admin_lang == 'uk' else 'Content' }}</div>
+      <a href="/admin/" class="{{ 'active' if req_endpoint == 'admin.dashboard' }}">
+        <span class="a-nav-dot"></span>{{ L.dashboard }}
+      </a>
+      <a href="/admin/news" class="{{ 'active' if 'admin.news' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.news }}
+      </a>
+      <a href="/admin/events" class="{{ 'active' if 'admin.event' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.events }}
+      </a>
+      <a href="/admin/athletes" class="{{ 'active' if 'admin.athlete' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.athletes }}
+      </a>
+      <a href="/admin/champions" class="{{ 'active' if 'admin.champion' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.champions }}
+      </a>
+      <a href="/admin/documents" class="{{ 'active' if 'admin.document' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.documents }}
+      </a>
+      <a href="/admin/gallery" class="{{ 'active' if 'admin.gallery' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.gallery }}
+      </a>
+
+      <div class="a-nav-section">{{ 'Федерація' if admin_lang == 'uk' else 'Federation' }}</div>
+      <a href="/admin/leadership" class="{{ 'active' if 'admin.leadership' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.leadership }}
+      </a>
+      <a href="/admin/committees" class="{{ 'active' if 'admin.committee' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.committees }}
+      </a>
+      <a href="/admin/secretariat" class="{{ 'active' if 'admin.secretariat' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.secretariat }}
+      </a>
+      <a href="/admin/regions" class="{{ 'active' if 'admin.region' in req_endpoint }}">
+        <span class="a-nav-dot"></span>{{ L.regions }}
+      </a>
+    </div>
+
+    <div class="a-sidebar-footer">
+      <div class="a-sidebar-user">{{ admin_user }}</div>
+      <div class="a-sidebar-actions">
+        <a href="/" target="_blank">{{ L.view_site }}</a>
+        <a href="/admin/logout" class="danger">{{ L.logout }}</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="a-main">
+    <header class="a-topbar">
+      <div class="a-topbar-title">{% block page_title %}{% endblock %}</div>
+      <div class="a-topbar-actions">
+        <div class="a-lang">
+          <a href="/admin/set-lang/uk" class="{{ 'active' if admin_lang == 'uk' }}">УКР</a>
+          <a href="/admin/set-lang/en" class="{{ 'active' if admin_lang == 'en' }}">EN</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="a-content">
+      <div class="a-content-inner">
+        {% with messages = get_flashed_messages() %}
+          {% for msg in messages %}
+            <div class="a-flash {{ 'error' if 'помилка' in msg.lower() or 'error' in msg.lower() else 'success' }}">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

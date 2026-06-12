@@ -1,6 +1,7 @@
 import sqlite3
 import os
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'data', 'wrestling.db')
 
@@ -21,12 +22,25 @@ def migrate_db():
         ("news",     "content_en",      "TEXT"),
         ("events",   "title_en",        "TEXT"),
         ("events",   "description_en",  "TEXT"),
+        ("events",   "location_en",     "TEXT"),
+        ("events",   "category_en",     "TEXT"),
         ("events",   "year",            "INTEGER"),
         ("events",   "pdf_regulations", "TEXT"),
         ("events",   "pdf_program",     "TEXT"),
         ("events",   "pdf_protocols",   "TEXT"),
         ("athletes", "achievements_en", "TEXT"),
-        ("documents","title_en",        "TEXT"),
+        ("athletes", "name_en",         "TEXT"),
+        ("athletes", "weight_class_en", "TEXT"),
+        ("athletes", "region_en",       "TEXT"),
+        ("documents",   "title_en",   "TEXT"),
+        ("committees",  "phone",      "TEXT"),
+        ("committees",  "email",      "TEXT"),
+        ("secretariat", "phone",      "TEXT"),
+        ("regions",     "city_en",       "TEXT"),
+        ("regions",     "president_en",  "TEXT"),
+        ("regions",     "contact_phone", "TEXT"),
+        ("secretariat", "name_en",       "TEXT"),
+        ("leadership",  "name_en",       "TEXT"),
     ]
     for table, col, typ in additions:
         try:
@@ -49,6 +63,9 @@ def migrate_db():
         gender TEXT DEFAULT 'M',
         photo TEXT,
         total_medals TEXT,
+        gold_count INTEGER DEFAULT 0,
+        silver_count INTEGER DEFAULT 0,
+        bronze_count INTEGER DEFAULT 0,
         sort_order INTEGER DEFAULT 0
     );
 
@@ -131,6 +148,147 @@ def migrate_db():
     if cur.execute("SELECT COUNT(*) FROM history_items").fetchone()[0] == 0:
         _seed_history(cur)
 
+    # ── Fill EN translations for all seeded data ─────────────────────────────
+    # Events
+    ev_en = [
+        ("Відкритий Кубок Одеси",              "Odesa Open Cup",                      "Odesa",                "Tournament",   "Opening rating start of the season"),
+        ("Кубок України з пляжної боротьби",   "Ukrainian Beach Wrestling Cup",        "Odesa",                "Cup",          "The main domestic competition of the season"),
+        ("Першість України серед юніорів",     "Ukrainian Junior Championships",       "Kherson",              "Tournament",   "Age groups 15–17 and 18–20 years"),
+        ("Чемпіонат Європи з пляжної боротьби","European Beach Wrestling Championship","Rome, Italy",          "International","Official European Championship under UWW auspices"),
+        ("Чемпіонат України",                  "Ukrainian Championship",               "Kyiv",                 "Championship", "Main national championship"),
+        ("Чемпіонат світу з пляжної боротьби", "World Beach Wrestling Championship",   "Tashkent, Uzbekistan", "International","Main international competition of the year"),
+        ("Кубок України — фінал",              "Ukrainian Cup — Final",                "Dnipro",               "Cup",          "Final stage of the Ukrainian Cup"),
+        ("Першість України",                   "Ukrainian Championships",              "Kyiv",                 "Championship", "Determining the strongest wrestlers in the country"),
+    ]
+    for title_uk, title_en, loc_en, cat_en, desc_en in ev_en:
+        try:
+            conn.execute(
+                "UPDATE events SET title_en=?, location_en=?, category_en=?, description_en=? WHERE title=? AND title_en IS NULL",
+                (title_en, loc_en, cat_en, desc_en, title_uk)
+            )
+        except Exception:
+            pass
+
+    # Athletes
+    ath_en = [
+        ("Андрій Гаврилюк",  "Andriy Havryliuk",    "Up to 90 kg",      "Kherson region",   "World Champion 2025, European Champion 2024"),
+        ("Іван Мельник",      "Ivan Melnyk",          "Up to 80 kg",      "Kyiv region",      "Ukrainian Champion 2023–2024, World Championship Medalist"),
+        ("Олексій Ковальчук", "Oleksiy Kovalchuk",   "Up to 65 kg",      "Odesa region",     "Ukrainian Champion 2024, European Championship Medalist 2023"),
+        ("Максим Сидоренко",  "Maksym Sydorenko",    "Over 90 kg",       "Odesa region",     "Ukrainian Champion 2022–2024"),
+        ("Олена Кравченко",   "Olena Kravchenko",    "Up to 55 kg (W)",  "Odesa region",     "Ukrainian Champion 2023–2025"),
+        ("Наталія Шевченко",  "Nataliia Shevchenko", "Up to 65 kg (W)",  "Mykolaiv region",  "European Championship Silver Medalist 2024, Ukrainian Champion"),
+        ("Тетяна Василенко",  "Tetiana Vasylenko",   "Up to 72 kg (W)",  "Kherson region",   "Ukrainian Champion 2024"),
+        ("Дмитро Луценко",    "Dmytro Lutsenko",     "Up to 70 kg",      "Kyiv region",      "Ukrainian Youth Champion 2025"),
+    ]
+    for name_uk, name_en, wc_en, reg_en, ach_en in ath_en:
+        try:
+            conn.execute(
+                "UPDATE athletes SET name_en=?, weight_class_en=?, region_en=?, achievements_en=? WHERE name=? AND name_en IS NULL",
+                (name_en, wc_en, reg_en, ach_en, name_uk)
+            )
+        except Exception:
+            pass
+
+    # Champions — names and competitions
+    for name_uk, name_en in [
+        ("Андрій Гаврилюк",  "Andriy Havryliuk"),
+        ("Наталія Шевченко", "Nataliia Shevchenko"),
+        ("Іван Мельник",     "Ivan Melnyk"),
+        ("Олексій Ковальчук","Oleksiy Kovalchuk"),
+        ("Олена Кравченко",  "Olena Kravchenko"),
+        ("Тетяна Василенко", "Tetiana Vasylenko"),
+    ]:
+        try:
+            conn.execute("UPDATE champions SET name_en=? WHERE name=? AND name_en IS NULL", (name_en, name_uk))
+        except Exception:
+            pass
+    for comp_uk, comp_en in [
+        ("Чемпіонат світу",   "World Championship"),
+        ("Чемпіонат Європи",  "European Championship"),
+        ("Чемпіонат України", "Ukrainian Championship"),
+    ]:
+        try:
+            conn.execute("UPDATE champions SET competition_en=? WHERE competition=? AND competition_en IS NULL", (comp_en, comp_uk))
+        except Exception:
+            pass
+
+    # Leadership bio_en
+    for name, bio_en in [
+        ("Іван Іванченко",    "Founder and President of UBWF since 2015. Master of Sports of International Class, champion of the Soviet Union."),
+        ("Петро Коваленко",   "Honored worker of physical culture and sports of Ukraine. Was at the origins of beach wrestling development in Ukraine."),
+        ("Олег Василенко",    "Responsible for the development of regional federations and work with athletes."),
+        ("Марина Кирієнко",   "Coordinates international activities and interaction with UWW."),
+        ("Андрій Бондаренко", "Manages the administrative work of the Federation, responsible for document management and reporting."),
+    ]:
+        try:
+            conn.execute("UPDATE leadership SET bio_en=? WHERE name=? AND bio_en IS NULL", (bio_en, name))
+        except Exception:
+            pass
+
+    # Committees description_en
+    for name_uk, desc_en in [
+        ("Тренерська рада",             "Develops methodology for training athletes, approves training programs, reviews issues of coach qualification improvement."),
+        ("Суддівський комітет",         "Training of judges, maintaining the register and certification of the UBWF officiating corps."),
+        ("Медична комісія",             "Control of medical support for competitions, admission of athletes, interaction with WADA and NADA."),
+        ("Антидопінгова комісія",       "Implementation of anti-doping rules, organization of testing, education of athletes and coaches."),
+        ("Комісія зі спортивного права","Legal support of the Federation's activities, resolution of sports disputes."),
+    ]:
+        try:
+            conn.execute("UPDATE committees SET description_en=? WHERE name=? AND description_en IS NULL", (desc_en, name_uk))
+        except Exception:
+            pass
+
+    # Secretariat name_en
+    for name_uk, name_en in [
+        ("Наталія Поліщук",   "Nataliia Polishchuk"),
+        ("Дмитро Мартиненко", "Dmytro Martynenko"),
+        ("Анна Романенко",    "Anna Romanenko"),
+        ("Олег Кравчук",      "Oleh Kravchuk"),
+    ]:
+        try:
+            conn.execute("UPDATE secretariat SET name_en=? WHERE name=? AND name_en IS NULL", (name_en, name_uk))
+        except Exception:
+            pass
+
+    # Regions
+    for city_uk, city_en, pres_uk, pres_en in [
+        ("Одеса",     "Odesa",        "Петро Мороз",     "Petro Moroz"),
+        ("Херсон",    "Kherson",      "Іван Степаненко", "Ivan Stepanenko"),
+        ("Київ",      "Kyiv",         "Олена Ткаченко",  "Olena Tkachenko"),
+        ("Миколаїв",  "Mykolaiv",     "Андрій Харченко", "Andriy Kharchenko"),
+        ("Дніпро",    "Dnipro",       "Василь Коломієць","Vasyl Kolomiiets"),
+        ("Запоріжжя", "Zaporizhzhia", "Михайло Яценко",  "Mykhailo Yatsenko"),
+    ]:
+        try:
+            conn.execute(
+                "UPDATE regions SET city_en=?, president_en=? WHERE city=? AND president=? AND city_en IS NULL",
+                (city_en, pres_en, city_uk, pres_uk)
+            )
+        except Exception:
+            pass
+
+    # History
+    for year, title_en, desc_en in [
+        (2015, "Federation Founded",               "In 2015, the Ukrainian Beach Wrestling Federation was established. First President — Ivan Ivanchenko."),
+        (2016, "Joined UWW",                       "UBWF officially became a member of United World Wrestling — the international wrestling federation."),
+        (2017, "First Ukrainian Championship",     "The first official Ukrainian Beach Wrestling Championship was held with 8 regional teams."),
+        (2018, "First European Championship Medals","Andriy Havryliuk won bronze at the European Junior Championships — the first international medal in UBWF history."),
+        (2019, "Expanded to 20 Regions",           "Regional federations were established in 20 Ukrainian regions."),
+        (2020, "Online Competition Format",        "Despite the pandemic, UBWF held a series of online tournaments and kept the sport developing."),
+        (2021, "First European Championship Gold", "Andriy Havryliuk became Ukraine's first European Champion in beach wrestling history."),
+        (2022, "Continuing Through War",           "Even during the full-scale invasion, UBWF continued its work, bringing athletes to international competitions."),
+        (2023, "5 International Medals",           "A record season: 5 medals at World and European Championships. Andriy Havryliuk — European Champion for the second consecutive year."),
+        (2024, "Best Season in History",           "Over 20 medals at international competitions. Nataliia Shevchenko — silver medalist at the European Championship."),
+        (2025, "World Champion!",                  "Andriy Havryliuk became World Champion — the pinnacle of 10 years of the Federation's work."),
+    ]:
+        try:
+            conn.execute(
+                "UPDATE history_items SET title_en=?, description_en=? WHERE year=? AND title_en IS NULL",
+                (title_en, desc_en, year)
+            )
+        except Exception:
+            pass
+
     conn.commit()
     conn.close()
 
@@ -200,6 +358,19 @@ def init_db():
         album TEXT DEFAULT 'Загальний',
         taken_at TEXT
     );
+    CREATE TABLE IF NOT EXISTS gallery_albums (
+        name TEXT PRIMARY KEY,
+        name_en TEXT
+    );
+    """)
+
+    cur.executescript("""
+    CREATE TABLE IF NOT EXISTS admin_users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    );
     """)
 
     if cur.execute("SELECT COUNT(*) FROM news").fetchone()[0] == 0:
@@ -210,6 +381,17 @@ def init_db():
         _seed_athletes(cur)
     if cur.execute("SELECT COUNT(*) FROM documents").fetchone()[0] == 0:
         _seed_documents(cur)
+
+    # Seed admin user from env vars on first run
+    if cur.execute("SELECT COUNT(*) FROM admin_users").fetchone()[0] == 0:
+        _seed_admin_users(cur)
+
+    # Migrations: add columns that may be missing in existing DBs
+    for col in ['gold_count', 'silver_count', 'bronze_count']:
+        try:
+            cur.execute(f"ALTER TABLE champions ADD COLUMN {col} INTEGER DEFAULT 0")
+        except Exception:
+            pass
 
     conn.commit()
     conn.close()
@@ -443,6 +625,23 @@ def get_events_by_year(year):
     return rows
 
 
+def get_events_by_year_paginated(year, page=1, per_page=10, category=None):
+    conn = get_db()
+    base = "WHERE (year = ? OR strftime('%Y', start_date) = ?)"
+    params = [year, str(year)]
+    if category:
+        base += " AND category = ?"
+        params.append(category)
+    total = conn.execute(f"SELECT COUNT(*) FROM events {base}", params).fetchone()[0]
+    offset = (page - 1) * per_page
+    rows = conn.execute(
+        f"SELECT * FROM events {base} ORDER BY start_date LIMIT ? OFFSET ?",
+        params + [per_page, offset]
+    ).fetchall()
+    conn.close()
+    return rows, total
+
+
 def get_all_events():
     conn = get_db()
     rows = conn.execute("SELECT * FROM events ORDER BY start_date DESC").fetchall()
@@ -547,6 +746,48 @@ def get_gallery(album=None):
     return rows
 
 
+def _seed_admin_users(cur):
+    """Seed admin users from ADMIN_USERS env var (format: user1:pass1,user2:pass2)."""
+    raw = os.environ.get('ADMIN_USERS', '')
+    pairs = []
+    if raw:
+        for item in raw.split(','):
+            item = item.strip()
+            if ':' in item:
+                u, p = item.split(':', 1)
+                pairs.append((u.strip(), p.strip()))
+    if not pairs:
+        # Default dev credentials — override ADMIN_USERS in production
+        pairs = [('admin', 'admin')]
+    now = datetime.now().isoformat()
+    for username, password in pairs:
+        cur.execute(
+            "INSERT OR IGNORE INTO admin_users (username, password_hash, created_at) VALUES (?, ?, ?)",
+            (username, generate_password_hash(password, method='pbkdf2:sha256'), now)
+        )
+
+
+def get_admin_by_username(username):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM admin_users WHERE username = ?", (username,)).fetchone()
+    conn.close()
+    return row
+
+
+def verify_admin(username, password):
+    user = get_admin_by_username(username)
+    if user and check_password_hash(user['password_hash'], password):
+        return user
+    return None
+
+
+def list_admin_users():
+    conn = get_db()
+    rows = conn.execute("SELECT id, username, created_at FROM admin_users ORDER BY id").fetchall()
+    conn.close()
+    return rows
+
+
 def get_albums():
     conn = get_db()
     rows = conn.execute("SELECT DISTINCT album FROM gallery ORDER BY album").fetchall()
@@ -554,16 +795,20 @@ def get_albums():
     return [r['album'] for r in rows]
 
 
-def get_album_info():
-    """Returns list of dicts: album name, cover filename, photo count."""
+def get_album_info(sort='date'):
+    """Returns list of dicts: album name, name_en, cover filename, photo count, event_date."""
     conn = get_db()
-    rows = conn.execute("""
-        SELECT album,
-               MIN(filename) AS cover,
-               COUNT(*) AS cnt
-          FROM gallery
-         GROUP BY album
-         ORDER BY album
+    order = "MAX(g.taken_at) DESC, g.album ASC" if sort != 'alpha' else "g.album ASC"
+    rows = conn.execute(f"""
+        SELECT g.album,
+               ga.name_en,
+               MIN(g.filename) AS cover,
+               COUNT(*) AS cnt,
+               MAX(g.taken_at) AS event_date
+          FROM gallery g
+          LEFT JOIN gallery_albums ga ON ga.name = g.album
+         GROUP BY g.album
+         ORDER BY {order}
     """).fetchall()
     conn.close()
-    return [{'name': r['album'], 'cover': r['cover'], 'count': r['cnt']} for r in rows]
+    return [{'name': r['album'], 'name_en': r['name_en'] or '', 'cover': r['cover'], 'count': r['cnt'], 'event_date': r['event_date']} for r in rows]

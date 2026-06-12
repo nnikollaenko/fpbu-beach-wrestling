@@ -1,0 +1,110 @@
+{% extends "admin/base.html" %}
+{% set is_edit = item is not none %}
+{% block title %}{{ L.edit_news if is_edit else L.new_news }}{% endblock %}
+{% block page_title %}{{ L.edit_news if is_edit else L.new_news }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a class="btn btn-ghost btn-sm" href="/admin/news">{{ L.back }}</a>
+</div>
+
+<div class="a-card">
+  <div class="a-card-body">
+    <form method="post" enctype="multipart/form-data">
+      <div class="a-form-grid cols-2">
+
+        <!-- Ukrainian title -->
+        <div class="a-form-group">
+          <label class="a-form-label" for="title">{{ L.title_uk }} <span>*</span></label>
+          <input class="a-input" id="title" name="title" type="text" required
+                 value="{{ item.title if is_edit else '' }}"
+                 oninput="autoSlug(this)">
+        </div>
+
+        <!-- English title -->
+        <div class="a-form-group">
+          <label class="a-form-label" for="title_en">{{ L.title_en }} <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" id="title_en" name="title_en" type="text"
+                 value="{{ item.title_en if is_edit else '' }}">
+        </div>
+
+        <!-- Slug -->
+        <div class="a-form-group">
+          <label class="a-form-label" for="slug">{{ L.slug }}</label>
+          <input class="a-input" id="slug" name="slug" type="text"
+                 value="{{ item.slug if is_edit else '' }}"
+                 placeholder="{{ 'auto-generate-from-title' if not is_edit else '' }}">
+        </div>
+
+        <!-- Published at + featured -->
+        <div class="a-form-group">
+          <label class="a-form-label" for="published_at">{{ L.published_at }}</label>
+          <input class="a-input" id="published_at" name="published_at" type="date"
+                 value="{{ (item.published_at[:10]) if is_edit else '' }}">
+        </div>
+
+        <!-- Cover image -->
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.cover }}</label>
+          {% if is_edit and item.cover %}
+          <div class="a-photo-preview">
+            <img src="/static/uploads/{{ item.cover }}" alt="">
+            <span>{{ L.keep_current_file }}</span>
+          </div>
+          {% endif %}
+          <input class="a-input" name="cover" type="file" accept="image/*" style="margin-top:.375rem;">
+          <div class="a-file-hint">JPG, PNG, WebP — до 5 МБ</div>
+        </div>
+
+        <!-- Featured checkbox -->
+        <div class="a-form-group" style="justify-content:flex-end;padding-bottom:.25rem;">
+          <label class="a-check-row">
+            <input type="checkbox" name="is_featured" value="1" {{ 'checked' if is_edit and item.is_featured }}>
+            {{ L.featured }}
+          </label>
+        </div>
+
+        <!-- Ukrainian content -->
+        <div class="a-form-group full">
+          <label class="a-form-label" for="content">{{ L.content_uk }} <span>*</span></label>
+          <textarea class="a-textarea tall" id="content" name="content" required
+                    placeholder="<p>Текст новини...</p>">{{ item.content if is_edit else '' }}</textarea>
+        </div>
+
+        <!-- English content -->
+        <div class="a-form-group full">
+          <label class="a-form-label" for="content_en">{{ L.content_en }}</label>
+          <textarea class="a-textarea tall" id="content_en" name="content_en"
+                    placeholder="<p>News content...</p>">{{ item.content_en if is_edit else '' }}</textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          <a class="btn btn-ghost" href="/admin/news">{{ L.cancel }}</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function transliterate(t) {
+  var m = {'а':'a','б':'b','в':'v','г':'h','ґ':'g','д':'d','е':'e','є':'ie',
+    'ж':'zh','з':'z','и':'y','і':'i','ї':'i','й':'i','к':'k','л':'l',
+    'м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u',
+    'ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ь':'','ю':'iu','я':'ia'};
+  return t.toLowerCase().split('').map(function(c){ return m[c]||c; }).join('')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
+}
+function autoSlug(titleInput) {
+  var slugInput = document.getElementById('slug');
+  if (!slugInput._edited) {
+    slugInput.value = transliterate(titleInput.value);
+  }
+}
+document.getElementById('slug').addEventListener('input', function() {
+  this._edited = true;
+});
+</script>
+{% endblock %}

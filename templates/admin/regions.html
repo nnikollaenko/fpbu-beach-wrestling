@@ -1,0 +1,114 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.regions }}{% endblock %}
+{% block page_title %}{{ L.regions }}{% endblock %}
+
+{% block content %}
+{% set editing = edit_item is defined and edit_item %}
+
+<div class="a-card" style="margin-bottom:1.25rem;">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.edit_region if editing else L.new_region }}</div>
+  </div>
+  <div class="a-card-body">
+    <form method="post"
+          action="{{ '/admin/regions/' ~ edit_item.id ~ '/edit' if editing else '/admin/regions/new' }}">
+      <div class="a-form-grid cols-2">
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_uk }} <span>*</span></label>
+          <input class="a-input" name="name" type="text" required
+                 value="{{ edit_item.name if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_en }}</label>
+          <input class="a-input" name="name_en" type="text"
+                 value="{{ edit_item.name_en if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.city }}</label>
+          <input class="a-input" name="city" type="text"
+                 value="{{ edit_item.city if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.city }} (EN) <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="city_en" type="text" placeholder="Odesa"
+                 value="{{ edit_item.city_en if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.president }}</label>
+          <input class="a-input" name="president" type="text"
+                 value="{{ edit_item.president if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.president }} (EN) <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="president_en" type="text"
+                 value="{{ edit_item.president_en if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.contact_email }}</label>
+          <input class="a-input" name="contact_email" type="email"
+                 value="{{ edit_item.contact_email if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.athletes_count }}</label>
+          <input class="a-input" name="athletes_count" type="number" min="0"
+                 value="{{ edit_item.athletes_count if editing else 0 }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.sort_order }}</label>
+          <input class="a-input" name="sort_order" type="number" min="0"
+                 value="{{ edit_item.sort_order if editing else 0 }}">
+        </div>
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          {% if editing %}<a class="btn btn-ghost" href="/admin/regions">{{ L.cancel }}</a>{% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.regions }} ({{ items|length }})</div>
+  </div>
+  {% if items %}
+  <table class="a-table">
+    <thead>
+      <tr>
+        <th>{{ L.name_uk }}</th>
+        <th>{{ L.city }}</th>
+        <th>{{ L.president }}</th>
+        <th>{{ L.athletes_count }}</th>
+        <th>{{ L.sort_order }}</th>
+        <th>{{ L.actions }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>
+          <strong>{{ item.name }}</strong>
+          {% if item.name_en %}<div class="muted" style="font-size:11px;">{{ item.name_en }}</div>{% endif %}
+        </td>
+        <td class="muted">{{ item.city or '—' }}</td>
+        <td class="muted">{{ item.president or '—' }}</td>
+        <td><span class="badge badge-blue">{{ item.athletes_count }}</span></td>
+        <td class="muted">{{ item.sort_order }}</td>
+        <td>
+          <div class="a-actions">
+            <a class="btn btn-ghost btn-sm" href="/admin/regions/{{ item.id }}/edit">{{ L.edit }}</a>
+            <form method="post" action="/admin/regions/{{ item.id }}/delete" style="display:inline;"
+                  onsubmit="return confirm('{{ L.confirm_delete }}')">
+              <button class="btn btn-sm" style="color:var(--danger);border-color:currentColor;background:transparent;" type="submit">{{ L.delete }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="a-empty">{{ 'Записів ще немає' if admin_lang == 'uk' else 'No records yet' }}</div>
+  {% endif %}
+</div>
+{% endblock %}

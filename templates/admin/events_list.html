@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.events }}{% endblock %}
+{% block page_title %}{{ L.events }}{% endblock %}
+
+{% block content %}
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.events }} ({{ items|length }})</div>
+    <a class="btn btn-primary btn-sm" href="/admin/events/new">+ {{ L.add }}</a>
+  </div>
+
+  {% if items %}
+  <table class="a-table">
+    <thead>
+      <tr>
+        <th>{{ L.id }}</th>
+        <th>{{ L.title_uk }}</th>
+        <th>{{ L.start_date }}</th>
+        <th>{{ L.category }}</th>
+        <th>{{ L.status }}</th>
+        <th>{{ L.actions }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td class="muted">{{ item.id }}</td>
+        <td>
+          <strong>{{ item.title }}</strong>
+          {% if item.location %}<div class="muted" style="font-size:11px;">{{ item.location }}</div>{% endif %}
+        </td>
+        <td class="muted">{{ item.start_date[:10] }}{% if item.end_date and item.end_date != item.start_date %} – {{ item.end_date[:10] }}{% endif %}</td>
+        <td><span class="badge badge-blue">{{ item.category }}</span></td>
+        <td>
+          {% if item.status == 'upcoming' %}
+            <span class="badge badge-green">{{ 'Майбутній' if admin_lang == 'uk' else 'Upcoming' }}</span>
+          {% else %}
+            <span class="badge badge-gray">{{ 'Минулий' if admin_lang == 'uk' else 'Past' }}</span>
+          {% endif %}
+        </td>
+        <td>
+          <div class="a-actions">
+            <a class="btn btn-ghost btn-sm" href="/admin/events/{{ item.id }}/edit">{{ L.edit }}</a>
+            <form method="post" action="/admin/events/{{ item.id }}/delete" style="display:inline;"
+                  onsubmit="return confirm('{{ L.confirm_delete }}')">
+              <button class="btn btn-sm" style="color:var(--danger);border-color:currentColor;background:transparent;" type="submit">{{ L.delete }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="a-empty">{{ 'Заходів ще немає' if admin_lang == 'uk' else 'No events yet' }}</div>
+  {% endif %}
+</div>
+{% endblock %}

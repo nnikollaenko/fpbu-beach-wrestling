@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.dashboard }}{% endblock %}
+{% block page_title %}{{ L.dashboard }}{% endblock %}
+
+{% block content %}
+<div class="a-stats">
+  <a class="a-stat" href="/admin/news">
+    <div class="a-stat-num">{{ stats.news }}</div>
+    <div class="a-stat-label">{{ L.total_news }}</div>
+  </a>
+  <a class="a-stat" href="/admin/events">
+    <div class="a-stat-num">{{ stats.events }}</div>
+    <div class="a-stat-label">{{ L.total_events }}</div>
+  </a>
+  <a class="a-stat" href="/admin/athletes">
+    <div class="a-stat-num">{{ stats.athletes }}</div>
+    <div class="a-stat-label">{{ L.total_athletes }}</div>
+  </a>
+  <a class="a-stat" href="/admin/champions">
+    <div class="a-stat-num">{{ stats.champions }}</div>
+    <div class="a-stat-label">{{ L.total_champions }}</div>
+  </a>
+  <a class="a-stat" href="/admin/documents">
+    <div class="a-stat-num">{{ stats.documents }}</div>
+    <div class="a-stat-label">{{ L.total_documents }}</div>
+  </a>
+  <a class="a-stat" href="/admin/gallery">
+    <div class="a-stat-num">{{ stats.gallery }}</div>
+    <div class="a-stat-label">{{ L.total_gallery }}</div>
+  </a>
+</div>
+
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ 'Швидкі дії' if admin_lang == 'uk' else 'Quick actions' }}</div>
+  </div>
+  <div class="a-card-body">
+    <div style="display:flex;flex-wrap:wrap;gap:.625rem;">
+      <a class="btn btn-primary" href="/admin/news/new">+ {{ L.new_news }}</a>
+      <a class="btn btn-ghost" href="/admin/events/new">+ {{ L.new_event }}</a>
+      <a class="btn btn-ghost" href="/admin/athletes/new">+ {{ L.new_athlete }}</a>
+      <a class="btn btn-ghost" href="/admin/champions/new">+ {{ L.new_champion }}</a>
+      <a class="btn btn-ghost" href="/admin/documents/new">+ {{ L.new_document }}</a>
+      <a class="btn btn-ghost" href="/admin/gallery">↑ {{ L.upload_photos }}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

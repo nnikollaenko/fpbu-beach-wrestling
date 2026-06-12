@@ -13,8 +13,10 @@ UK = {
     'nav.docs.official': 'Офіційні документи', 'nav.docs.antidoping': 'Анти-допінг',
 
     'footer.desc': "Офіційна організація, що розвиває пляжну боротьбу в Україні. Член United World Wrestling.",
-    'footer.nav': 'Навігація', 'footer.federation': 'Федерація', 'footer.contacts': 'Контакти',
+    'footer.federation': 'Федерація', 'footer.national_team': 'Збірна та спорт',
+    'footer.materials': 'Медіа та документи', 'footer.contacts': 'Контакти',
     'footer.rights': 'Усі права захищено.', 'footer.official': 'Офіційний сайт ФПБУ',
+    'footer.privacy': 'Політика конфіденційності',
 
     'home.hero.tag': 'Офіційний сайт ФПБУ',
     'home.hero.title1': 'Федерація', 'home.hero.title2': 'Пляжної', 'home.hero.title3': 'Боротьби України',
@@ -53,6 +55,7 @@ UK = {
 
     'docs.tag': 'Офіційні документи', 'docs.title': 'Документи',
     'docs.desc': 'Статути, правила, положення та регламенти Федерації',
+    'docs.antidoping.desc': 'Антидопінгові правила, кодекс ВАДА та навчальні матеріали для спортсменів',
     'docs.download': 'Завантажити', 'docs.empty': 'Документи скоро буде додано.',
 
     'about.tag': 'ФПБУ', 'about.title': 'Про федерацію',
@@ -61,8 +64,8 @@ UK = {
     'about.p1': 'Федерація пляжної боротьби України (ФПБУ) — офіційна організація, що керує розвитком пляжної боротьби в Україні.',
     'about.p2': 'Ми є членом <strong>United World Wrestling (UWW)</strong> — міжнародної федерації боротьби, і підтримуємо розвиток цього виду спорту на всіх рівнях: від дитячих секцій до збірної команди.',
     'about.p3': 'ФПБУ організовує офіційні змагання, присвоює спортивні звання, забезпечує участь збірної на міжнародних турнірах та популяризує пляжну боротьбу в Україні.',
-    'about.founded': 'Рік заснування', 'about.regions': 'Регіони України',
-    'about.athletes_count': 'Зареєстрованих спортсменів', 'about.medals': 'Медалей на міжнародних',
+    'about.founded': 'Рік заснування федерації в Україні', 'about.regions': 'Регіони України у складі федерації',
+    'about.athletes_count': 'Зареєстрованих спортсменів', 'about.medals': 'Медалей на міжнародних змаганнях',
     'about.mission_title': 'Наша місія',
     'about.mission_text': "Розвивати пляжну боротьбу як доступний, захоплюючий та масовий вид спорту в Україні — від дитячих секцій до вищих спортивних досягнень на міжнародній арені.",
     'about.contact_us': "Зв'язатися з нами", 'about.docs_link': 'Статут та документи',
@@ -70,7 +73,7 @@ UK = {
 
     'contacts.tag': "Зв'язок", 'contacts.title': 'Контакти',
     'contacts.desc': "Зв'яжіться з нами з будь-яких питань",
-    'contacts.requisites': 'Реквізити федерації', 'contacts.address': 'Адреса',
+    'contacts.requisites': 'Оберіть зручний спосіб зв\'язку', 'contacts.address': 'Адреса',
     'contacts.email': 'Email', 'contacts.phone': 'Телефон', 'contacts.social': 'Ми в соцмережах',
     'contacts.form.title': 'Написати нам',
     'contacts.form.desc': 'Відповідаємо впродовж 1–2 робочих днів',
@@ -104,8 +107,10 @@ EN = {
     'nav.docs.official': 'Official Documents', 'nav.docs.antidoping': 'Anti-Doping',
 
     'footer.desc': "Official organization developing beach wrestling in Ukraine. Member of United World Wrestling.",
-    'footer.nav': 'Navigation', 'footer.federation': 'Federation', 'footer.contacts': 'Contacts',
+    'footer.federation': 'Federation', 'footer.national_team': 'Team & Sport',
+    'footer.materials': 'Media & Documents', 'footer.contacts': 'Contacts',
     'footer.rights': 'All rights reserved.', 'footer.official': 'Official UBWF Website',
+    'footer.privacy': 'Privacy Policy',
 
     'home.hero.tag': 'Official UBWF Website',
     'home.hero.title1': 'Ukrainian', 'home.hero.title2': 'Beach', 'home.hero.title3': 'Wrestling Federation',
@@ -144,6 +149,7 @@ EN = {
 
     'docs.tag': 'Official Documents', 'docs.title': 'Documents',
     'docs.desc': 'Statutes, rules, regulations and official documents of the Federation',
+    'docs.antidoping.desc': 'Anti-doping rules, WADA code and educational materials for athletes',
     'docs.download': 'Download', 'docs.empty': 'Documents will be added soon.',
 
     'about.tag': 'UBWF', 'about.title': 'About the Federation',
@@ -161,7 +167,7 @@ EN = {
 
     'contacts.tag': 'Get in Touch', 'contacts.title': 'Contacts',
     'contacts.desc': 'Contact us with any questions about beach wrestling in Ukraine',
-    'contacts.requisites': 'Federation Details', 'contacts.address': 'Address',
+    'contacts.requisites': 'Choose a convenient way to contact us', 'contacts.address': 'Address',
     'contacts.email': 'Email', 'contacts.phone': 'Phone', 'contacts.social': 'Follow us',
     'contacts.form.title': 'Send us a message',
     'contacts.form.desc': 'We respond within 1–2 business days',

@@ -1,0 +1,105 @@
+{% extends "admin/base.html" %}
+{% set is_edit = item is not none %}
+{% block title %}{{ L.edit_champion if is_edit else L.new_champion }}{% endblock %}
+{% block page_title %}{{ L.edit_champion if is_edit else L.new_champion }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a class="btn btn-ghost btn-sm" href="/admin/champions">{{ L.back }}</a>
+</div>
+
+<div class="a-card">
+  <div class="a-card-body">
+    <form method="post" enctype="multipart/form-data">
+      <div class="a-form-grid cols-2">
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_uk }} <span>*</span></label>
+          <input class="a-input" name="name" type="text" required value="{{ item.name if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_en }}</label>
+          <input class="a-input" name="name_en" type="text" value="{{ item.name_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.competition_uk }} <span>*</span></label>
+          <input class="a-input" name="competition" type="text" required
+                 placeholder="{{ 'Чемпіонат світу' if admin_lang == 'uk' else 'World Championship' }}"
+                 value="{{ item.competition if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.competition_en }}</label>
+          <input class="a-input" name="competition_en" type="text"
+                 placeholder="World Championship"
+                 value="{{ item.competition_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.year }} <span>*</span></label>
+          <input class="a-input" name="year" type="number" required min="2015" max="2099"
+                 value="{{ item.year if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.medal }}</label>
+          <select class="a-select" name="medal">
+            <option value="gold"   {{ 'selected' if is_edit and item.medal == 'gold' }}>🥇 {{ 'Золото' if admin_lang == 'uk' else 'Gold' }}</option>
+            <option value="silver" {{ 'selected' if is_edit and item.medal == 'silver' }}>🥈 {{ 'Срібло' if admin_lang == 'uk' else 'Silver' }}</option>
+            <option value="bronze" {{ 'selected' if is_edit and item.medal == 'bronze' }}>🥉 {{ 'Бронза' if admin_lang == 'uk' else 'Bronze' }}</option>
+          </select>
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.gender }}</label>
+          <select class="a-select" name="gender">
+            <option value="M" {{ 'selected' if not is_edit or item.gender == 'M' }}>{{ 'Чоловіки (M)' if admin_lang == 'uk' else 'Male (M)' }}</option>
+            <option value="F" {{ 'selected' if is_edit and item.gender == 'F' }}>{{ 'Жінки (F)' if admin_lang == 'uk' else 'Female (F)' }}</option>
+          </select>
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.age_group }}</label>
+          <select class="a-select" name="age_group">
+            {% for ag in ['Senior', 'Junior', 'Youth', 'U17'] %}
+            <option value="{{ ag }}" {{ 'selected' if is_edit and item.age_group == ag }}>{{ ag }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.weight_class }}</label>
+          <input class="a-input" name="weight_class" type="text"
+                 value="{{ item.weight_class if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.sort_order }}</label>
+          <input class="a-input" name="sort_order" type="number" min="0"
+                 value="{{ item.sort_order if is_edit else 0 }}">
+        </div>
+
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.total_medals }}</label>
+          <input class="a-input" name="total_medals" type="text"
+                 placeholder="{{ '2 золота ЧС, 3 золота ЧЄ' if admin_lang == 'uk' else '2 WC gold, 3 EC gold' }}"
+                 value="{{ item.total_medals if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.photo }}</label>
+          {% if is_edit and item.photo %}
+          <div class="a-photo-preview">
+            <img src="/static/uploads/{{ item.photo }}" alt="">
+            <span>{{ L.keep_current_file }}</span>
+          </div>
+          {% endif %}
+          <input class="a-input" name="photo" type="file" accept="image/*" style="margin-top:.375rem;">
+        </div>
+
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          <a class="btn btn-ghost" href="/admin/champions">{{ L.cancel }}</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

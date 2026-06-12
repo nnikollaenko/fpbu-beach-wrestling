@@ -1,0 +1,110 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.committees }}{% endblock %}
+{% block page_title %}{{ L.committees }}{% endblock %}
+
+{% block content %}
+{% set editing = edit_item is defined and edit_item %}
+
+<div class="a-card" style="margin-bottom:1.25rem;">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.edit_committee if editing else L.new_committee }}</div>
+  </div>
+  <div class="a-card-body">
+    <form method="post"
+          action="{{ '/admin/committees/' ~ edit_item.id ~ '/edit' if editing else '/admin/committees/new' }}">
+      <div class="a-form-grid cols-2">
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_uk }} <span>*</span></label>
+          <input class="a-input" name="name" type="text" required
+                 value="{{ edit_item.name if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_en }}</label>
+          <input class="a-input" name="name_en" type="text"
+                 value="{{ edit_item.name_en if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.head_name }}</label>
+          <input class="a-input" name="head_name" type="text"
+                 value="{{ edit_item.head_name if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.head_name }} EN <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="head_name_en" type="text"
+                 value="{{ edit_item.head_name_en if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.sort_order }}</label>
+          <input class="a-input" name="sort_order" type="number" min="0"
+                 value="{{ edit_item.sort_order if editing else 0 }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.phone }}</label>
+          <input class="a-input" name="phone" type="tel"
+                 value="{{ edit_item.phone if editing else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.email }}</label>
+          <input class="a-input" name="email" type="email"
+                 value="{{ edit_item.email if editing else '' }}">
+        </div>
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.description_uk }}</label>
+          <textarea class="a-textarea" name="description">{{ edit_item.description if editing else '' }}</textarea>
+        </div>
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.description_en }}</label>
+          <textarea class="a-textarea" name="description_en">{{ edit_item.description_en if editing else '' }}</textarea>
+        </div>
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          {% if editing %}<a class="btn btn-ghost" href="/admin/committees">{{ L.cancel }}</a>{% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.committees }} ({{ items|length }})</div>
+  </div>
+  {% if items %}
+  <table class="a-table">
+    <thead>
+      <tr>
+        <th>{{ L.name_uk }}</th>
+        <th>{{ L.head_name }}</th>
+        <th>{{ L.email }}</th>
+        <th>{{ L.sort_order }}</th>
+        <th>{{ L.actions }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>
+          <strong>{{ item.name }}</strong>
+          {% if item.name_en %}<div class="muted" style="font-size:11px;">{{ item.name_en }}</div>{% endif %}
+        </td>
+        <td class="muted">{{ item.head_name or '—' }}</td>
+        <td class="muted">{{ item.email or '—' }}</td>
+        <td class="muted">{{ item.sort_order }}</td>
+        <td>
+          <div class="a-actions">
+            <a class="btn btn-ghost btn-sm" href="/admin/committees/{{ item.id }}/edit">{{ L.edit }}</a>
+            <form method="post" action="/admin/committees/{{ item.id }}/delete" style="display:inline;"
+                  onsubmit="return confirm('{{ L.confirm_delete }}')">
+              <button class="btn btn-sm" style="color:var(--danger);border-color:currentColor;background:transparent;" type="submit">{{ L.delete }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="a-empty">{{ 'Записів ще немає' if admin_lang == 'uk' else 'No records yet' }}</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,13 +1,42 @@
 import os
+import re
 import math
+import html as _html
+import time
+import smtplib
+from collections import defaultdict
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from datetime import datetime
-from flask import Flask, render_template, abort, request, send_from_directory, redirect, make_response, g
+from flask import Flask, render_template, abort, request, send_from_directory, redirect, make_response, g, jsonify
 import db
 from translations import make_t
+from icons import icon as _icon
+import mail_config
+from admin import admin_bp
+
+# ── Simple in-memory rate limiter (per IP, resets on restart) ─────────────────
+_rl_store: dict = defaultdict(list)
+def _rate_ok(ip: str, limit: int = 3, window: int = 600) -> bool:
+    now = time.time()
+    hits = [t for t in _rl_store[ip] if now - t < window]
+    _rl_store[ip] = hits
+    if len(hits) >= limit:
+        return False
+    _rl_store[ip].append(now)
+    return True
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-only-change-in-production')
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+app.register_blueprint(admin_bp)
+
+# Init DB on first import (works both under gunicorn and dev server)
+with app.app_context():
+    db.init_db()
+    db.migrate_db()
 
 SUPPORTED_LANGS = ('uk', 'en')
 
@@ -74,7 +103,7 @@ def date_short(date_str):
 def month_full(date_str):
     try:
         d = datetime.strptime(date_str[:10], '%Y-%m-%d')
-        return MONTHS_EN[d.month] if g.lang == 'en' else MONTHS_UK[d.month]
+        return MONTHS_EN_SHORT[d.month] if g.lang == 'en' else MONTHS_UK_SHORT[d.month]
     except Exception:
         return ''
 
@@ -87,13 +116,104 @@ def year_f(date_str):
         return ''
 
 
+CAT_EN = {
+    'Відкритий турнір':       'Open Tournament',
+    'Міжнародний турнір':     'International Tournament',
+    'Міжнародні змагання':    'International Competition',
+    'Міжнародні':             'International',
+    'Чемпіонат України':      'Ukrainian Championship',
+    'Першість України':       'Ukrainian League',
+    'Першість':               'League',
+    'Кубок України':          'Ukrainian Cup',
+    'Кубок':                  'Cup',
+    'Чемпіонат Європи':       'European Championship',
+    'Чемпіонат світу':        'World Championship',
+    'Чемпіонат Світу':        'World Championship',
+    'Чемпіонат':              'Championship',
+}
+
+@app.template_filter('tcat')
+def translate_category(cat):
+    if not cat:
+        return cat
+    if g.lang == 'en':
+        return CAT_EN.get(cat, cat)
+    return cat
+
+_WT_UK = {'До': 'Up to', 'до': 'up to', 'Від': 'From', 'від': 'from', 'кг': 'kg'}
+@app.template_filter('wt')
+def translate_weight(wc):
+    if not wc or g.lang != 'en':
+        return wc or ''
+    result = wc
+    for uk, en in _WT_UK.items():
+        result = result.replace(uk, en)
+    return result
+
+_MEDAL_UK = [
+    ('золотих', 'gold'), ('золоті', 'gold'), ('золота', 'gold'), ('золото', 'gold'),
+    ('срібних', 'silver'), ('срібні', 'silver'), ('срібло', 'silver'),
+    ('бронзових', 'bronze'), ('бронзові', 'bronze'), ('бронза', 'bronze'),
+    ('медалей', 'medals'), ('медалі', 'medals'), ('медаль', 'medal'),
+    ('ЧС', 'WC'), ('ЧЄ', 'EC'), ('ЧУ', 'UA'),
+]
+@app.template_filter('tmedals')
+def translate_medals(text):
+    if not text or g.lang != 'en':
+        return text or ''
+    result = text
+    for uk, en in _MEDAL_UK:
+        result = result.replace(uk, en)
+    return result
+
 @app.context_processor
 def inject_globals():
     return {
         'current_year': datetime.today().year,
         'lang': g.lang,
         't': g.t,
+        'icon': _icon,
     }
+
+
+# ── Typography: non-breaking spaces after prepositions ───────────────────────
+
+_PREP_RE = re.compile(
+    r'\b(з|в|у|і|й|та|на|до|по|за|від|під|над|між|без|про|при|чи|не|де|як|бо|або|але)\s+',
+    re.IGNORECASE | re.UNICODE,
+)
+_YEAR_RE = re.compile(r'(\d{4})\s+(року|рік)', re.UNICODE)
+
+def _fix_text_node(text):
+    text = _PREP_RE.sub(lambda m: m.group(1) + ' ', text)
+    text = _YEAR_RE.sub(r'\1 \2', text)
+    return text
+
+@app.after_request
+def fix_typography(response):
+    if 'text/html' not in response.content_type:
+        return response
+    html = response.get_data(as_text=True)
+    # Process only text nodes (content between > and <), skip scripts/styles
+    in_script = False
+    result = []
+    pos = 0
+    for m in re.finditer(r'(<(?:script|style)[^>]*>)|</(?:script|style)>|>([^<]+)<', html, re.IGNORECASE | re.DOTALL):
+        if m.group(1):          # opening <script> or <style>
+            in_script = True
+            result.append(html[pos:m.end()])
+            pos = m.end()
+        elif in_script and m.group(0).startswith('</'):  # closing tag
+            in_script = False
+            result.append(html[pos:m.end()])
+            pos = m.end()
+        elif not in_script and m.group(2) is not None:  # text node
+            result.append(html[pos:m.start(2)])
+            result.append(_fix_text_node(m.group(2)))
+            pos = m.end(2)
+    result.append(html[pos:])
+    response.set_data(''.join(result).encode('utf-8'))
+    return response
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -111,13 +231,14 @@ def index():
     return render_template('index.html',
                            news=news, events=events,
                            champions=champions, partners=partners,
-                           gallery_photos=gallery_photos)
+                           gallery_photos=gallery_photos,
+                           now_date=datetime.today().strftime('%Y-%m-%d'))
 
 
 @app.route('/news')
 def news_list():
     page     = request.args.get('page', 1, type=int)
-    per_page = 12
+    per_page = 9
     news, total = db.get_news_paginated(page=page, per_page=per_page)
     total_pages = math.ceil(total / per_page) if total else 1
     return render_template('news/list.html', news=news, page=page,
@@ -139,20 +260,40 @@ def calendar():
         years = list(range(datetime.today().year, 2016, -1))
     sel_year     = request.args.get('year', years[0] if years else datetime.today().year, type=int)
     sel_category = request.args.get('category', '')
+    page         = request.args.get('page', 1, type=int)
+    per_page     = 10
+    # Collect distinct categories from all events for this year (unfiltered)
     all_events   = db.get_events_by_year(sel_year)
-    # Collect distinct categories for filter bar
     categories   = sorted({ev['category'] for ev in all_events if ev['category']})
-    events       = [e for e in all_events if not sel_category or e['category'] == sel_category]
+    # Build UK→EN category map (DB value → fallback CAT_EN dict → original)
+    categories_en = {}
+    for ev in all_events:
+        cat = ev['category']
+        if cat and cat not in categories_en:
+            en = (ev['category_en'] or '').strip()
+            if not en or en == cat:
+                en = CAT_EN.get(cat, cat)
+            categories_en[cat] = en
+    # Paginated, filtered events
+    events, total = db.get_events_by_year_paginated(sel_year, page=page, per_page=per_page, category=sel_category or None)
+    total_pages  = math.ceil(total / per_page) if total else 1
     return render_template('calendar.html', events=events, years=years, selected_year=sel_year,
-                           categories=categories, sel_category=sel_category,
+                           categories=categories, categories_en=categories_en,
+                           sel_category=sel_category,
+                           page=page, total_pages=total_pages, total=total,
                            now_date=datetime.today().strftime('%Y-%m-%d'))
 
 
 @app.route('/athletes')
 def athletes():
     import sqlite3 as _sq
-    weight = request.args.get('weight')
-    gender = request.args.get('gender')
+    weight   = request.args.get('weight')
+    gender   = request.args.get('gender', 'M')
+    if gender not in ('M', 'F'):
+        gender = 'M'
+    sort     = request.args.get('sort', 'alpha')
+    page     = request.args.get('page', 1, type=int)
+    PER_PAGE = 12
 
     conn = _sq.connect(os.path.join(os.path.dirname(__file__), 'data', 'wrestling.db'))
     conn.row_factory = _sq.Row
@@ -168,32 +309,70 @@ def athletes():
     ''').fetchall()
     medal_map = {r['name']: dict(r) for r in medal_rows}
 
-    # Filter athletes (gender filtered in Python from medals/achievements text since no gender column)
-    q, params = "SELECT * FROM athletes WHERE is_active=1", []
-    if weight: q += " AND weight_class=?"; params.append(weight)
-    q += " ORDER BY sort_order, name"
-    all_team = conn.execute(q, params).fetchall()
-    # Gender filter: cross-reference with champions table gender
-    if gender:
-        gendered = {r['name'] for r in conn.execute(
-            "SELECT DISTINCT name FROM champions WHERE gender=?", (gender,)).fetchall()}
-        # Also include athletes not in champions if gender filter is applied (show all for now)
-        if gendered:
-            team = [a for a in all_team if a['name'] in gendered]
-        else:
-            team = list(all_team)
-    else:
-        team = list(all_team)
+    # Fetch all active athletes
+    all_athletes = list(conn.execute("SELECT * FROM athletes WHERE is_active=1 ORDER BY name").fetchall())
 
-    # Weight classes for filter bar
-    weights = [r[0] for r in conn.execute(
-        "SELECT DISTINCT weight_class FROM athletes WHERE is_active=1 AND weight_class IS NOT NULL ORDER BY weight_class"
-    ).fetchall()]
+    # Filter by gender via champions table
+    gendered_names = {r['name'] for r in conn.execute(
+        "SELECT DISTINCT name FROM champions WHERE gender=?", (gender,)).fetchall()}
+    gender_team = [a for a in all_athletes if a['name'] in gendered_names]
+    if not gender_team:
+        gender_team = all_athletes  # fallback if no champion records for this gender
+
+    # Weight classes for this gender only
+    weights = sorted({a['weight_class'] for a in gender_team if a['weight_class']})
+
+    # Apply weight filter (ignore if not valid for current gender)
+    if weight and weight in weights:
+        team = [a for a in gender_team if a['weight_class'] == weight]
+    else:
+        weight = None
+        team = gender_team
+
+    # Sort
+    now_year = datetime.today().year
+    if sort == 'medals':
+        def medal_key(a):
+            m = medal_map.get(a['name'], {})
+            return (-m.get('total', 0), -m.get('gold', 0), -m.get('silver', 0), a['name'])
+        team.sort(key=medal_key)
+    elif sort in ('age_young', 'age'):
+        team.sort(key=lambda a: (-(a['birth_year'] or 0), a['name']))
+    elif sort == 'age_old':
+        team.sort(key=lambda a: ((a['birth_year'] or 9999), a['name']))
+    elif sort in ('cat_senior', 'category'):
+        def cat_key_s(a):
+            if not a['birth_year']:
+                return (3, a['name'])
+            age = now_year - a['birth_year']
+            rank = 0 if age >= 23 else (1 if age >= 20 else 2)
+            return (rank, a['name'])
+        team.sort(key=cat_key_s)
+    elif sort == 'cat_junior':
+        def cat_key_j(a):
+            if not a['birth_year']:
+                return (3, a['name'])
+            age = now_year - a['birth_year']
+            rank = 2 if age >= 23 else (1 if age >= 20 else 0)
+            return (rank, a['name'])
+        team.sort(key=cat_key_j)
+    # else 'alpha': already sorted by name (A-Z)
+
+    # Pagination
+    total       = len(team)
+    total_pages = max(1, (total + PER_PAGE - 1) // PER_PAGE)
+    page        = max(1, min(page, total_pages))
+    start       = (page - 1) * PER_PAGE
+    team_page   = team[start:start + PER_PAGE]
+
     conn.close()
 
-    return render_template('athletes.html', athletes=team, champions=db.get_champions()[:4],
+    return render_template('athletes.html',
+                           athletes=team_page,
                            medal_map=medal_map, weights=weights,
-                           sel_weight=weight, sel_gender=gender)
+                           sel_weight=weight, sel_gender=gender, sel_sort=sort,
+                           page=page, total_pages=total_pages, total=total,
+                           per_page=PER_PAGE)
 
 
 @app.route('/champions')
@@ -206,39 +385,49 @@ def champions():
                            selected_year=sel_year, selected_age=age_group)
 
 
-@app.route('/federation/about')
+@app.route('/about')
 def fed_about():
-    return render_template('federation/about.html')
-
-
-@app.route('/federation/history')
-def fed_history():
     history = db.get_history()
-    return render_template('federation/history.html', history=history)
+    return render_template('federation/about.html', history=history)
 
 
-@app.route('/federation/leadership')
+@app.route('/leadership')
 def fed_leadership():
     leaders = db.get_leadership()
     return render_template('federation/leadership.html', leaders=leaders)
 
 
-@app.route('/federation/committees')
+@app.route('/committees')
 def fed_committees():
     committees = db.get_committees()
     return render_template('federation/committees.html', committees=committees)
 
 
-@app.route('/federation/secretariat')
+@app.route('/secretariat')
 def fed_secretariat():
     secretariat = db.get_secretariat()
     return render_template('federation/secretariat.html', secretariat=secretariat)
 
 
-@app.route('/federation/regions')
+@app.route('/regions')
 def fed_regions():
     regions = db.get_regions()
     return render_template('federation/regions.html', regions=regions)
+
+
+# Legacy redirects — keep old /federation/... URLs working
+@app.route('/federation/about')
+def _redir_fed_about():    return redirect('/about', 301)
+@app.route('/federation/leadership')
+def _redir_fed_leadership(): return redirect('/leadership', 301)
+@app.route('/federation/committees')
+def _redir_fed_committees(): return redirect('/committees', 301)
+@app.route('/federation/secretariat')
+def _redir_fed_secretariat(): return redirect('/secretariat', 301)
+@app.route('/federation/regions')
+def _redir_fed_regions():  return redirect('/regions', 301)
+@app.route('/federation/history')
+def _redir_fed_history():  return redirect('/about#history', 301)
 
 
 @app.route('/documents')
@@ -262,41 +451,148 @@ def download_document(filename):
 @app.route('/gallery')
 def gallery():
     album      = request.args.get('album')
-    album_info = db.get_album_info()
+    sel_sort   = request.args.get('sort', 'date')
+    album_info = db.get_album_info(sort=sel_sort)
     if album:
         photos = db.get_gallery(album=album)
     else:
         photos = []
     return render_template('gallery.html', photos=photos, album_info=album_info,
-                           current_album=album)
+                           current_album=album, sel_sort=sel_sort)
 
 
 @app.route('/gallery/download/<album>')
 def gallery_download(album):
     import zipfile, io as _io
+    from urllib.parse import quote as _quote
     photos = db.get_gallery(album=album)
-    gallery_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'gallery')
     buf = _io.BytesIO()
-    with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(buf, 'w', zipfile.ZIP_STORED) as zf:
         for p in photos:
-            filepath = os.path.join(gallery_dir, p['filename'])
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], p['filename'])
             if os.path.exists(filepath):
                 zf.write(filepath, os.path.basename(p['filename']))
     buf.seek(0)
-    safe_name = album.replace(' ', '_').replace('/', '-')
-    return send_from_directory(
-        os.path.dirname(buf.name) if hasattr(buf, 'name') else '/',
-        safe_name,
-        as_attachment=True
-    ) if False else (buf.getvalue(), 200, {
+    safe_name = album.replace(' ', '_').replace('/', '-') + '.zip'
+    encoded_name = _quote(safe_name, safe='')
+    return buf.getvalue(), 200, {
         'Content-Type': 'application/zip',
-        'Content-Disposition': f'attachment; filename="{safe_name}.zip"'
-    })
+        'Content-Disposition': f"attachment; filename*=UTF-8''{encoded_name}",
+    }
 
 
-@app.route('/contacts')
+def _send_contact_email(name, phone, message):
+    now = datetime.now().strftime('%d.%m.%Y %H:%M')
+    esc_name    = _html.escape(name)
+    esc_phone   = _html.escape(phone)
+    esc_message = _html.escape(message)
+    html = f"""<!DOCTYPE html>
+<html lang="uk">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f0ede8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px;">
+  <tr><td align="center">
+    <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08);">
+
+      <!-- Header -->
+      <tr><td style="background:#FF3B00;padding:30px 36px 26px;">
+        <div style="color:#fff;font-size:26px;font-weight:900;letter-spacing:-0.03em;line-height:1;">ФПБУ</div>
+        <div style="color:rgba(255,255,255,0.72);font-size:12px;margin-top:5px;letter-spacing:0.03em;text-transform:uppercase;">Федерація пляжної боротьби України</div>
+      </td></tr>
+
+      <!-- Title row -->
+      <tr><td style="padding:32px 36px 0;">
+        <div style="font-size:11px;font-weight:700;color:#FF3B00;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Нова заявка з сайту</div>
+        <h1 style="margin:0;font-size:22px;font-weight:800;color:#111;letter-spacing:-0.02em;">Запит від відвідувача</h1>
+      </td></tr>
+
+      <!-- Info cards -->
+      <tr><td style="padding:24px 36px 0;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="padding-bottom:14px;">
+              <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Ім'я</div>
+              <div style="font-size:16px;font-weight:600;color:#111;">{esc_name}</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-bottom:14px;border-top:1px solid #f0ede8;padding-top:14px;">
+              <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Телефон</div>
+              <div style="font-size:16px;font-weight:600;color:#111;">{esc_phone}</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="border-top:1px solid #f0ede8;padding-top:14px;">
+              <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Повідомлення</div>
+              <div style="font-size:15px;color:#333;line-height:1.65;white-space:pre-wrap;background:#f8f6f3;border-radius:8px;padding:14px 16px;">{esc_message}</div>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+
+      <!-- CTA -->
+      <tr><td style="padding:28px 36px;">
+        <a href="tel:{phone.replace(' ','').replace('-','')}" style="display:inline-block;background:#FF3B00;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 24px;border-radius:50px;letter-spacing:0.01em;">
+          Зателефонувати
+        </a>
+      </td></tr>
+
+      <!-- Footer -->
+      <tr><td style="background:#f8f6f3;padding:18px 36px;border-top:1px solid #ede9e3;">
+        <div style="font-size:11px;color:#aaa;">Отримано: {now} &nbsp;·&nbsp; fpbu.com.ua</div>
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>"""
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = f'Заявка з сайту ФПБУ — {name}'
+    msg['From']    = mail_config.MAIL_SENDER
+    msg['To']      = mail_config.MAIL_RECIPIENT
+    msg.attach(MIMEText(f"Ім'я: {name}\nТелефон: {phone}\n\nПовідомлення:\n{message}\n\nОтримано: {now}", 'plain', 'utf-8'))
+    msg.attach(MIMEText(html, 'html', 'utf-8'))
+
+    with smtplib.SMTP(mail_config.MAIL_SMTP_HOST, mail_config.MAIL_SMTP_PORT) as server:
+        server.starttls()
+        server.login(mail_config.MAIL_SENDER, mail_config.MAIL_PASSWORD)
+        server.sendmail(mail_config.MAIL_SENDER, mail_config.MAIL_RECIPIENT, msg.as_string())
+
+
+@app.route('/contacts', methods=['GET', 'POST'])
 def contacts():
+    if request.method == 'POST':
+        # Honeypot — bots fill hidden fields, humans don't
+        if request.form.get('website', ''):
+            return jsonify({'ok': True})  # silently succeed to fool bots
+
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr or '').split(',')[0].strip()
+        if not _rate_ok(ip):
+            return jsonify({'ok': False, 'error': 'rate_limit'}), 429
+
+        name    = (request.form.get('name', '') or '').strip()[:120]
+        code    = (request.form.get('phone_code', '+380') or '+380').strip()
+        number  = re.sub(r'[^\d\s\-\(\)\+]', '', (request.form.get('phone_number', '') or '')).strip()[:30]
+        message = (request.form.get('message', '') or '').strip()[:2000]
+        phone   = f'{code} {number}'.strip()
+
+        if len(name) < 2 or not number:
+            return jsonify({'ok': False, 'error': 'required'}), 400
+
+        try:
+            _send_contact_email(name, phone, message)
+            return jsonify({'ok': True})
+        except Exception as exc:
+            app.logger.error('Mail error: %s', exc)
+            return jsonify({'ok': False, 'error': 'smtp'}), 500
     return render_template('contacts.html')
+
+
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
 
 
 @app.route('/health')
@@ -315,6 +611,4 @@ def server_error(e):
 
 
 if __name__ == '__main__':
-    db.init_db()
-    db.migrate_db()
     app.run(debug=True, host='0.0.0.0', port=5001)

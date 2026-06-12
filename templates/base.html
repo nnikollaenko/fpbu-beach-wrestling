@@ -19,10 +19,35 @@
 
     <meta name="theme-color" content="#FF3B00">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v=66">
     {% block extra_css %}{% endblock %}
+    <style>
+    #preloader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0a0a0a;transition:opacity .8s cubic-bezier(.4,0,.2,1)}
+    .pre-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem;user-select:none;transition:opacity .35s ease}
+    .pre-logo-wrap{position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center}
+    .pre-logo{width:158px;height:158px;position:relative;z-index:1}
+    .pre-ring{position:absolute;inset:0;width:100%;height:100%;animation:preSpin 1.6s linear infinite;will-change:transform}
+    @keyframes preSpin{to{transform:rotate(360deg)}}
+    .pre-ring-track{fill:none;stroke:rgba(255,59,0,.12);stroke-width:2}
+    .pre-ring-arc{fill:none;stroke:#FF3B00;stroke-width:2;stroke-linecap:round;stroke-dasharray:70 207}
+    .pre-title{color:rgba(255,255,255,.8);font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;letter-spacing:.1em;text-align:center;text-transform:uppercase;line-height:1.7;margin:0}
+    </style>
 </head>
 <body>
+
+<!-- ── Preloader ───────────────────────────────────────────────────────── -->
+<div id="preloader" aria-hidden="true">
+    <div class="pre-inner">
+        <div class="pre-logo-wrap">
+            <img class="pre-logo" src="{{ url_for('static', filename='img/logo-badge.svg') }}" alt="" draggable="false">
+            <svg class="pre-ring" viewBox="0 0 100 100" aria-hidden="true">
+                <circle class="pre-ring-track" cx="50" cy="50" r="44"/>
+                <circle class="pre-ring-arc"   cx="50" cy="50" r="44"/>
+            </svg>
+        </div>
+        <p class="pre-title">{% if lang == 'en' %}Ukrainian<br>Beach Wrestling<br>Federation{% else %}Федерація<br>пляжної боротьби України{% endif %}</p>
+    </div>
+</div>
 
 <!-- ── Header ─────────────────────────────────────────────────────────── -->
 <header class="site-header" id="site-header">
@@ -32,7 +57,7 @@
             <a href="/" class="hdr-logo nav-link" data-nav-page="" aria-label="{{ t('site.name') }}">
                 <img class="hdr-logo-mark" src="{{ url_for('static', filename='img/logo-badge.svg') }}" alt="" aria-hidden="true">
                 <div class="hdr-logo-text">
-                    <span class="ln1">{{ t('nav.about') if lang == 'en' else 'Федерація' }}</span>
+                    <span class="ln1">{{ 'Federation' if lang == 'en' else 'Федерація' }}</span>
                     <span class="ln2">{{ 'Beach Wrestling' if lang == 'en' else 'Пляжної Боротьби' }}</span>
                 </div>
             </a>
@@ -43,44 +68,49 @@
                 <a href="/calendar" class="hdr-pill nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
 
                 <div class="hdr-dropdown">
-                    <a href="/federation/about" class="hdr-pill nav-link" data-nav-page="federation">
+                    <a href="/about" class="hdr-pill nav-link" data-nav-page="about,leadership,committees,secretariat,regions,contacts">
                         {{ t('nav.federation') }}
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2.5 4L5.5 7L8.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        {{ icon('chevron-down', size=11) }}
                     </a>
                     <div class="hdr-dropdown-menu">
-                        <a href="/federation/about"       class="hdr-dropdown-link nav-link">{{ t('nav.fed.about') }}</a>
-                        <a href="/federation/history"     class="hdr-dropdown-link nav-link">{{ t('nav.fed.history') }}</a>
-                        <a href="/federation/leadership"  class="hdr-dropdown-link nav-link">{{ t('nav.fed.leadership') }}</a>
-                        <a href="/federation/committees"  class="hdr-dropdown-link nav-link">{{ t('nav.fed.committees') }}</a>
-                        <a href="/federation/secretariat" class="hdr-dropdown-link nav-link">{{ t('nav.fed.secretariat') }}</a>
-                        <a href="/federation/regions"     class="hdr-dropdown-link nav-link">{{ t('nav.fed.regions') }}</a>
+                        <div class="hdr-dropdown-menu-inner">
+                        <a href="/about"       class="hdr-dropdown-link nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
+                        <a href="/leadership"  class="hdr-dropdown-link nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
+                        <a href="/committees"  class="hdr-dropdown-link nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
+                        <a href="/secretariat" class="hdr-dropdown-link nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
+                        <a href="/regions"     class="hdr-dropdown-link nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
+                        <a href="/contacts"    class="hdr-dropdown-link nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
+                        </div>
                     </div>
                 </div>
 
                 <div class="hdr-dropdown">
-                    <a href="/athletes" class="hdr-pill nav-link" data-nav-page="athletes">
+                    <a href="/athletes" class="hdr-pill nav-link" data-nav-page="athletes,champions">
                         {{ t('nav.athletes') }}
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2.5 4L5.5 7L8.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        {{ icon('chevron-down', size=11) }}
                     </a>
                     <div class="hdr-dropdown-menu">
-                        <a href="/athletes"  class="hdr-dropdown-link nav-link">{{ t('nav.athletes') }}</a>
-                        <a href="/champions" class="hdr-dropdown-link nav-link">{{ t('nav.champions') }}</a>
+                        <div class="hdr-dropdown-menu-inner">
+                        <a href="/athletes"  class="hdr-dropdown-link nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
+                        <a href="/champions" class="hdr-dropdown-link nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
+                        </div>
                     </div>
                 </div>
 
                 <div class="hdr-dropdown">
                     <button type="button" class="hdr-pill">
                         {{ 'Materials' if lang == 'en' else 'Матеріали' }}
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2.5 4L5.5 7L8.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        {{ icon('chevron-down', size=11) }}
                     </button>
                     <div class="hdr-dropdown-menu">
-                        <a href="/gallery"              class="hdr-dropdown-link nav-link">{{ t('nav.gallery') }}</a>
-                        <a href="/documents"            class="hdr-dropdown-link nav-link">{{ t('nav.docs.official') }}</a>
-                        <a href="/documents/antidoping" class="hdr-dropdown-link nav-link">{{ t('nav.docs.antidoping') }}</a>
+                        <div class="hdr-dropdown-menu-inner">
+                        <a href="/gallery"              class="hdr-dropdown-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
+                        <a href="/documents"            class="hdr-dropdown-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
+                        <a href="/documents/antidoping" class="hdr-dropdown-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                        </div>
                     </div>
                 </div>
 
-                <a href="/contacts"  class="hdr-pill nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
             </nav>
 
             <!-- Language switcher -->
@@ -91,9 +121,8 @@
 
             <!-- Mobile menu button -->
             <button class="mob-menu-btn" id="mobMenuBtn" aria-label="{{ t('nav.home') }}" aria-expanded="false" aria-controls="mobNav">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <span class="mob-icon-open">{{ icon('bars-3', size=20) }}</span>
+                <span class="mob-icon-close">{{ icon('x-mark', size=20) }}</span>
             </button>
 
         </div>
@@ -102,38 +131,54 @@
 
 <!-- ── Mobile nav ──────────────────────────────────────────────────────── -->
 <nav class="mob-nav" id="mobNav" aria-label="Mobile navigation" aria-hidden="true">
-    <div class="mob-nav-head">
-        <a href="/" class="hdr-logo nav-link" style="color:var(--brand)">
-            <img style="width:30px;height:30px;" src="{{ url_for('static', filename='img/logo-badge.svg') }}" alt="">
-            <div class="hdr-logo-text">
-                <span class="ln1">{{ t('site.short') }}</span>
-                <span class="ln2">{{ 'Beach Wrestling' if lang == 'en' else 'Пляжна Боротьба' }}</span>
+
+    <div class="mob-nav-body">
+        <a href="/"        class="mob-nav-link nav-link" data-nav-page="">{{ t('nav.home') }}</a>
+        <a href="/news"    class="mob-nav-link nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
+        <a href="/calendar" class="mob-nav-link nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
+
+        <div class="mob-acc">
+            <button class="mob-acc-btn" type="button" aria-expanded="false" data-nav-page="about,leadership,committees,secretariat,regions,contacts">
+                <span>{{ t('nav.federation') }}</span>
+                <svg class="mob-acc-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mob-acc-panel">
+                <a href="/about"       class="mob-nav-sub nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
+                <a href="/leadership"  class="mob-nav-sub nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
+                <a href="/committees"  class="mob-nav-sub nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
+                <a href="/secretariat" class="mob-nav-sub nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
+                <a href="/regions"     class="mob-nav-sub nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
+                <a href="/contacts"    class="mob-nav-sub nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
             </div>
-        </a>
-        <button class="mob-nav-close" id="mobMenuClose" aria-label="Close menu">✕</button>
+        </div>
+
+        <div class="mob-acc">
+            <button class="mob-acc-btn" type="button" aria-expanded="false" data-nav-page="athletes,champions">
+                <span>{{ t('nav.athletes') }}</span>
+                <svg class="mob-acc-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mob-acc-panel">
+                <a href="/athletes"  class="mob-nav-sub nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
+                <a href="/champions" class="mob-nav-sub nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
+            </div>
+        </div>
+
+        <div class="mob-acc">
+            <button class="mob-acc-btn" type="button" aria-expanded="false" data-nav-page="gallery,documents">
+                <span>{{ 'Materials' if lang == 'en' else 'Матеріали' }}</span>
+                <svg class="mob-acc-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mob-acc-panel">
+                <a href="/gallery"               class="mob-nav-sub nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
+                <a href="/documents"             class="mob-nav-sub nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
+                <a href="/documents/antidoping"  class="mob-nav-sub nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+            </div>
+        </div>
     </div>
 
-    <a href="/"                      class="mob-nav-link nav-link">{{ t('nav.home') }}</a>
-    <a href="/news"                  class="mob-nav-link nav-link">{{ t('nav.news') }}</a>
-    <a href="/calendar"              class="mob-nav-link nav-link">{{ t('nav.calendar') }}</a>
-    <a href="/federation/about"      class="mob-nav-link nav-link">{{ t('nav.federation') }}</a>
-    <a href="/federation/about"      class="mob-nav-sub nav-link">{{ t('nav.fed.about') }}</a>
-    <a href="/federation/history"    class="mob-nav-sub nav-link">{{ t('nav.fed.history') }}</a>
-    <a href="/federation/leadership" class="mob-nav-sub nav-link">{{ t('nav.fed.leadership') }}</a>
-    <a href="/federation/committees" class="mob-nav-sub nav-link">{{ t('nav.fed.committees') }}</a>
-    <a href="/federation/regions"    class="mob-nav-sub nav-link">{{ t('nav.fed.regions') }}</a>
-    <div class="mob-nav-link" style="color:var(--muted);font-size:var(--fs-300);padding-bottom:0.25rem;">{{ t('nav.athletes') }}</div>
-    <a href="/athletes"              class="mob-nav-sub nav-link">{{ t('nav.athletes') }}</a>
-    <a href="/champions"             class="mob-nav-sub nav-link">{{ t('nav.champions') }}</a>
-    <div class="mob-nav-link" style="color:var(--muted);font-size:var(--fs-300);padding-bottom:0.25rem;">{{ 'Materials' if lang == 'en' else 'Матеріали' }}</div>
-    <a href="/gallery"               class="mob-nav-sub nav-link">{{ t('nav.gallery') }}</a>
-    <a href="/documents"             class="mob-nav-sub nav-link">{{ t('nav.docs.official') }}</a>
-    <a href="/documents/antidoping"  class="mob-nav-sub nav-link">{{ t('nav.docs.antidoping') }}</a>
-    <a href="/contacts"              class="mob-nav-link nav-link">{{ t('nav.contacts') }}</a>
-
     <div class="mob-lang">
-        <a href="/set-lang/uk" class="{% if lang == 'uk' %}active{% endif %}"><span class="mob-lang-flag">UA</span> Українська</a>
-        <a href="/set-lang/en" class="{% if lang == 'en' %}active{% endif %}"><span class="mob-lang-flag">EN</span> English</a>
+        <a href="/set-lang/uk" class="{% if lang == 'uk' %}active{% endif %}">Українська</a>
+        <a href="/set-lang/en" class="{% if lang == 'en' %}active{% endif %}">English</a>
     </div>
 </nav>
 
@@ -148,35 +193,15 @@
         <div class="footer-grid">
 
             <div>
-                <img class="footer-logo-mark" src="{{ url_for('static', filename='img/logo-badge.svg') }}" alt="" aria-hidden="true">
-                <div class="footer-org-name">{{ t('site.name') }}</div>
-                <p class="footer-desc">{{ t('footer.desc') }}</p>
-            </div>
-
-            <div>
-                <div class="footer-col-title">{{ t('footer.nav') }}</div>
-                <a href="/news"      class="footer-link nav-link">{{ t('nav.news') }}</a>
-                <a href="/calendar"  class="footer-link nav-link">{{ t('nav.calendar') }}</a>
-                <a href="/athletes"  class="footer-link nav-link">{{ t('nav.athletes') }}</a>
-                <a href="/champions" class="footer-link nav-link">{{ t('nav.champions') }}</a>
-                <a href="/gallery"   class="footer-link nav-link">{{ t('nav.gallery') }}</a>
-                <a href="/documents" class="footer-link nav-link">{{ t('nav.documents') }}</a>
-            </div>
-
-            <div>
-                <div class="footer-col-title">{{ t('footer.federation') }}</div>
-                <a href="/about"    class="footer-link nav-link">{{ t('nav.about') }}</a>
-                <a href="/contacts" class="footer-link nav-link">{{ t('nav.contacts') }}</a>
-            </div>
-
-            <div>
-                <div class="footer-col-title">{{ t('footer.contacts') }}</div>
-                <div class="footer-contact-item">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5A4.5 4.5 0 0 0 3.5 6c0 3.75 4.5 8.5 4.5 8.5S12.5 9.75 12.5 6A4.5 4.5 0 0 0 8 1.5Zm0 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" stroke="currentColor" stroke-width="1.2"/></svg>
+                <img class="footer-logo-round"
+                     src="{{ url_for('static', filename='img/' + ('logo-main-2.svg' if lang == 'en' else 'logo-main.svg')) }}"
+                     alt="{{ t('site.name') }}">
+                <div class="footer-contact-item" style="margin-top:1.25rem;">
+                    {{ icon('map-pin') }}
                     <span>{{ 'Kyiv, Ukraine' if lang == 'en' else 'Київ, Україна' }}</span>
                 </div>
                 <div class="footer-contact-item">
-                    <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4h11a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 4.5 8 9.5l6.5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                    {{ icon('envelope') }}
                     <span>info@ubwf.com.ua</span>
                 </div>
                 <div class="social-links">
@@ -195,6 +220,32 @@
                 </div>
             </div>
 
+            <div>
+                <div class="footer-col-title">{{ t('footer.federation') }}</div>
+                <a href="/about"       class="footer-link nav-link" data-nav-page="about">{{ t('nav.fed.about') }}</a>
+                <a href="/leadership"  class="footer-link nav-link" data-nav-page="leadership">{{ t('nav.fed.leadership') }}</a>
+                <a href="/committees"  class="footer-link nav-link" data-nav-page="committees">{{ t('nav.fed.committees') }}</a>
+                <a href="/secretariat" class="footer-link nav-link" data-nav-page="secretariat">{{ t('nav.fed.secretariat') }}</a>
+                <a href="/regions"     class="footer-link nav-link" data-nav-page="regions">{{ t('nav.fed.regions') }}</a>
+                <a href="/contacts"    class="footer-link nav-link" data-nav-page="contacts">{{ t('nav.contacts') }}</a>
+            </div>
+
+            <div>
+                <div class="footer-col-title">{{ t('footer.national_team') }}</div>
+                <a href="/athletes"  class="footer-link nav-link" data-nav-page="athletes">{{ t('nav.athletes') }}</a>
+                <a href="/champions" class="footer-link nav-link" data-nav-page="champions">{{ t('nav.champions') }}</a>
+                <a href="/calendar"  class="footer-link nav-link" data-nav-page="calendar">{{ t('nav.calendar') }}</a>
+            </div>
+
+            <div>
+                <div class="footer-col-title">{{ t('footer.materials') }}</div>
+                <a href="/news"                 class="footer-link nav-link" data-nav-page="news">{{ t('nav.news') }}</a>
+                <a href="/gallery"              class="footer-link nav-link" data-nav-page="gallery">{{ t('nav.gallery') }}</a>
+                <a href="/documents"            class="footer-link nav-link" data-nav-page="documents">{{ t('nav.docs.official') }}</a>
+                <a href="/documents/antidoping" class="footer-link nav-link" data-nav-page="documents/antidoping">{{ t('nav.docs.antidoping') }}</a>
+                <a href="/privacy"              class="footer-link nav-link" data-nav-page="privacy">{{ t('footer.privacy') }}</a>
+            </div>
+
         </div>
         <div class="footer-bottom">
             <span>© {{ current_year }} {{ t('site.name') }}. {{ t('footer.rights') }}</span>
@@ -205,5 +256,27 @@
 
 <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
 {% block extra_js %}{% endblock %}
+<script>
+(function(){
+    var pre=document.getElementById('preloader');
+    if(!pre)return;
+    var startTime=Date.now();
+    function hide(){
+        pre.style.pointerEvents='none';
+        var inner=pre.querySelector('.pre-inner');
+        if(inner)inner.style.opacity='0';
+        setTimeout(function(){
+            pre.style.opacity='0';
+            setTimeout(function(){if(pre.parentNode)pre.parentNode.removeChild(pre);},850);
+        },350);
+    }
+    function finish(){
+        var wait=Math.max(0,1000-(Date.now()-startTime));
+        setTimeout(hide,wait);
+    }
+    if(document.readyState==='complete'){finish();return;}
+    window.addEventListener('load',finish,{once:true});
+})();
+</script>
 </body>
 </html>

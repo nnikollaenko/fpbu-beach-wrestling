@@ -1,0 +1,93 @@
+{% extends "admin/base.html" %}
+{% set is_edit = item is not none %}
+{% block title %}{{ L.edit_athlete if is_edit else L.new_athlete }}{% endblock %}
+{% block page_title %}{{ L.edit_athlete if is_edit else L.new_athlete }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a class="btn btn-ghost btn-sm" href="/admin/athletes">{{ L.back }}</a>
+</div>
+
+<div class="a-card">
+  <div class="a-card-body">
+    <form method="post" enctype="multipart/form-data">
+      <div class="a-form-grid cols-2">
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_uk }} <span>*</span></label>
+          <input class="a-input" name="name" type="text" required value="{{ item.name if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.name_en }} <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="name_en" type="text" placeholder="Andriy Havryliuk" value="{{ item.name_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.weight_class }}</label>
+          <input class="a-input" name="weight_class" type="text"
+                 placeholder="{{ 'До 90 кг' if admin_lang == 'uk' else 'Up to 90 kg' }}"
+                 value="{{ item.weight_class if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.weight_class }} (EN) <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="weight_class_en" type="text" placeholder="Up to 90 kg" value="{{ item.weight_class_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.birth_year }}</label>
+          <input class="a-input" name="birth_year" type="number" min="1940" max="2015"
+                 value="{{ item.birth_year if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.region }}</label>
+          <input class="a-input" name="region" type="text"
+                 placeholder="{{ 'Одеська обл.' if admin_lang == 'uk' else 'Odesa region' }}"
+                 value="{{ item.region if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.region }} (EN) <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="region_en" type="text" placeholder="Odesa region" value="{{ item.region_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.achievements_uk }}</label>
+          <textarea class="a-textarea" name="achievements"
+                    placeholder="{{ 'Чемпіон України 2024...' if admin_lang == 'uk' else 'Ukraine Champion 2024...' }}">{{ item.achievements if is_edit else '' }}</textarea>
+        </div>
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.achievements_en }}</label>
+          <textarea class="a-textarea" name="achievements_en"
+                    placeholder="Ukraine Champion 2024...">{{ item.achievements_en if is_edit else '' }}</textarea>
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.photo }}</label>
+          {% if is_edit and item.photo %}
+          <div class="a-photo-preview">
+            <img src="/static/uploads/{{ item.photo }}" alt="">
+            <span>{{ L.keep_current_file }}</span>
+          </div>
+          {% endif %}
+          <input class="a-input" name="photo" type="file" accept="image/*" style="margin-top:.375rem;">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.sort_order }}</label>
+          <input class="a-input" name="sort_order" type="number" min="0"
+                 value="{{ item.sort_order if is_edit else 0 }}">
+          <div style="margin-top:.75rem;">
+            <label class="a-check-row">
+              <input type="checkbox" name="is_active" value="1" {{ 'checked' if not is_edit or item.is_active }}>
+              {{ L.active }}
+            </label>
+          </div>
+        </div>
+
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          <a class="btn btn-ghost" href="/admin/athletes">{{ L.cancel }}</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

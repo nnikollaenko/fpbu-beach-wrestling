@@ -38,8 +38,12 @@
         }
 
         bindPopState() {
+            let lastPath = location.pathname + location.search;
             window.addEventListener('popstate', () => {
-                this.navigate(location.pathname + location.search, false);
+                const newPath = location.pathname + location.search;
+                if (newPath === lastPath) return; // only hash changed
+                lastPath = newPath;
+                this.navigate(newPath, false);
             });
         }
 
@@ -111,8 +115,10 @@
 
         updateActiveNav(path) {
             document.querySelectorAll('[data-nav-page]').forEach(el => {
-                const page = el.dataset.navPage;
-                const match = path === '/' ? page === '' : path.startsWith('/' + page);
+                const pages = el.dataset.navPage.split(',').map(p => p.trim());
+                const match = pages.some(page =>
+                    path === '/' ? page === '' : path.startsWith('/' + page)
+                );
                 el.classList.toggle('active', match);
             });
         }
@@ -121,26 +127,77 @@
     // Mobile menu
     function initMobileMenu() {
         const btn = document.getElementById('mobMenuBtn');
-        const close = document.getElementById('mobMenuClose');
         const nav = document.getElementById('mobNav');
         if (!btn || !nav) return;
 
-        function open() {
+        let closeTimer = null;
+
+        // iOS-safe body scroll lock: position:fixed is the only reliable
+        // way to prevent rubber-band scrolling on Safari.
+        function lockScroll() {
+            const y = window.scrollY;
+            document.body.dataset.scrollY = y;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${y}px`;
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+        }
+
+        function unlockScroll() {
+            const y = parseInt(document.body.dataset.scrollY || '0', 10);
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            window.scrollTo(0, y);
+        }
+
+        function openMenu() {
+            clearTimeout(closeTimer);
+            nav.classList.remove('is-closing');
             nav.classList.add('open');
-            document.body.style.overflow = 'hidden';
+            btn.classList.add('is-open');
+            btn.setAttribute('aria-expanded', 'true');
+            lockScroll();
         }
 
         function closeMenu() {
-            nav.classList.remove('open');
-            document.body.style.overflow = '';
+            if (!nav.classList.contains('open')) return;
+            nav.classList.add('is-closing');
+            btn.classList.remove('is-open');
+            btn.setAttribute('aria-expanded', 'false');
+            unlockScroll();
+            closeTimer = setTimeout(() => {
+                nav.classList.remove('open');
+                nav.classList.remove('is-closing');
+            }, 240);
         }
 
-        btn.addEventListener('click', open);
-        close?.addEventListener('click', closeMenu);
+        btn.addEventListener('click', () => {
+            if (nav.classList.contains('open')) closeMenu();
+            else openMenu();
+        });
 
         // Close on nav-link click
         nav.querySelectorAll('a').forEach(a => {
             a.addEventListener('click', closeMenu);
+        });
+
+        // Accordion
+        const accs = nav.querySelectorAll('.mob-acc');
+        accs.forEach(acc => {
+            const trigger = acc.querySelector('.mob-acc-btn');
+            trigger.addEventListener('click', () => {
+                const isOpen = acc.classList.contains('open');
+                accs.forEach(a => {
+                    a.classList.remove('open');
+                    a.querySelector('.mob-acc-btn').setAttribute('aria-expanded', 'false');
+                });
+                if (!isOpen) {
+                    acc.classList.add('open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                }
+            });
         });
     }
 
@@ -158,10 +215,79 @@
         obs.observe(sentinel);
     }
 
+    // Smart header: hide on scroll-down, reveal on scroll-up (mobile/tablet only)
+    function initSmartHeader() {
+        const hdr = document.querySelector('.site-header');
+        if (!hdr) return;
+
+        let lastY = window.scrollY;
+        let ticking = false;
+        const THRESHOLD = 80; // px from top before hiding kicks in
+
+        function update() {
+            const y = window.scrollY;
+            const isMobile = window.innerWidth <= 960;
+            const menuOpen = document.getElementById('mobNav')?.classList.contains('open');
+
+            if (!isMobile || menuOpen) {
+                hdr.classList.remove('hdr-hidden');
+                lastY = y;
+                ticking = false;
+                return;
+            }
+
+            if (y < THRESHOLD) {
+                hdr.classList.remove('hdr-hidden');
+            } else if (y > lastY + 4) {
+                hdr.classList.add('hdr-hidden');
+            } else if (y < lastY - 4) {
+                hdr.classList.remove('hdr-hidden');
+            }
+
+            lastY = y;
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(update);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        // Always show header after navigation
+        window.addEventListener('navigationComplete', () => {
+            lastY = 0;
+            hdr.classList.remove('hdr-hidden');
+        });
+    }
+
+    // Dropdown: delay close so mouse can travel from trigger to menu
+    function initDropdowns() {
+        const dropdowns = document.querySelectorAll('.hdr-dropdown');
+        dropdowns.forEach(el => {
+            let timer = null;
+            const open = () => {
+                clearTimeout(timer);
+                dropdowns.forEach(other => { if (other !== el) other.classList.remove('open'); });
+                el.classList.add('open');
+            };
+            const close = () => { timer = setTimeout(() => el.classList.remove('open'), 120); };
+            el.addEventListener('mouseenter', open);
+            el.addEventListener('mouseleave', close);
+        });
+
+        window.addEventListener('navigationComplete', () => {
+            dropdowns.forEach(d => d.classList.remove('open'));
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         window._navManager = new NavigationManager();
         initMobileMenu();
         initHeaderScroll();
+        initSmartHeader();
+        initDropdowns();
     });
 
 })();

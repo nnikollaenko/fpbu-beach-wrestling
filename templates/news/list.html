@@ -2,7 +2,7 @@
 {% block title %}{{ t('news.title') }} — {{ t('site.name') }}{% endblock %}
 
 {% block content %}
-<div class="page-hero">
+<div class="page-hero page-hero--dark page-hero--news">
     <div class="container">
         <nav class="breadcrumb">
             <a href="/" class="nav-link">{{ t('breadcrumb.home') }}</a>
@@ -48,13 +48,41 @@
         </div>
 
         {% if total_pages > 1 %}
-        <div class="pagination">
-            {% if page > 1 %}<a href="/news?page={{ page-1 }}" class="page-btn nav-link">‹</a>{% endif %}
+        <nav class="pagination" aria-label="{{ 'Pagination' if lang == 'en' else 'Навігація сторінками' }}">
+            {% if page > 1 %}
+            <a href="/news?page={{ page-1 }}" class="pag-btn pag-arrow nav-link" aria-label="{{ 'Previous' if lang == 'en' else 'Попередня' }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </a>
+            {% else %}
+            <span class="pag-btn pag-arrow pag-disabled">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </span>
+            {% endif %}
+
             {% for p in range(1, total_pages + 1) %}
-            <a href="/news?page={{ p }}" class="page-btn nav-link {% if p == page %}active{% endif %}">{{ p }}</a>
+                {% if p == page %}
+                <span class="pag-btn pag-current" aria-current="page">{{ p }}</span>
+                {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                <a href="/news?page={{ p }}" class="pag-btn nav-link">{{ p }}</a>
+                {% elif p == page - 3 or p == page + 3 %}
+                <span class="pag-dots">…</span>
+                {% endif %}
             {% endfor %}
-            {% if page < total_pages %}<a href="/news?page={{ page+1 }}" class="page-btn nav-link">›</a>{% endif %}
-        </div>
+
+            {% if page < total_pages %}
+            <a href="/news?page={{ page+1 }}" class="pag-btn pag-arrow nav-link" aria-label="{{ 'Next' if lang == 'en' else 'Наступна' }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            {% else %}
+            <span class="pag-btn pag-arrow pag-disabled">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </span>
+            {% endif %}
+        </nav>
+        <p class="pagination-meta">
+            {% if lang == 'en' %}Showing {{ (page-1)*9 + 1 }}–{{ [page*9, total] | min }} of {{ total }}
+            {% else %}Показано {{ (page-1)*9 + 1 }}–{{ [page*9, total] | min }} з {{ total }}{% endif %}
+        </p>
         {% endif %}
 
         {% else %}

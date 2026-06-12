@@ -1,0 +1,57 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.champions }}{% endblock %}
+{% block page_title %}{{ L.champions }}{% endblock %}
+
+{% block content %}
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.champions }} ({{ items|length }})</div>
+    <a class="btn btn-primary btn-sm" href="/admin/champions/new">+ {{ L.add }}</a>
+  </div>
+
+  {% if items %}
+  <table class="a-table">
+    <thead>
+      <tr>
+        <th>{{ L.id }}</th>
+        <th>{{ L.name_uk }}</th>
+        <th>{{ L.year }}</th>
+        <th>{{ L.competition_uk }}</th>
+        <th>{{ L.medal }}</th>
+        <th>{{ L.gender }}</th>
+        <th>{{ L.weight_class }}</th>
+        <th>{{ L.actions }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td class="muted">{{ item.id }}</td>
+        <td><strong>{{ item.name }}</strong></td>
+        <td class="muted">{{ item.year }}</td>
+        <td>{{ item.competition }}</td>
+        <td>
+          {% if item.medal == 'gold' %}<span class="badge badge-gold">🥇 {{ 'Золото' if admin_lang == 'uk' else 'Gold' }}</span>
+          {% elif item.medal == 'silver' %}<span class="badge badge-silver">🥈 {{ 'Срібло' if admin_lang == 'uk' else 'Silver' }}</span>
+          {% else %}<span class="badge badge-bronze">🥉 {{ 'Бронза' if admin_lang == 'uk' else 'Bronze' }}</span>{% endif %}
+        </td>
+        <td class="muted">{{ item.gender }}</td>
+        <td class="muted">{{ item.weight_class or '—' }}</td>
+        <td>
+          <div class="a-actions">
+            <a class="btn btn-ghost btn-sm" href="/admin/champions/{{ item.id }}/edit">{{ L.edit }}</a>
+            <form method="post" action="/admin/champions/{{ item.id }}/delete" style="display:inline;"
+                  onsubmit="return confirm('{{ L.confirm_delete }}')">
+              <button class="btn btn-sm" style="color:var(--danger);border-color:currentColor;background:transparent;" type="submit">{{ L.delete }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="a-empty">{{ 'Записів ще немає' if admin_lang == 'uk' else 'No records yet' }}</div>
+  {% endif %}
+</div>
+{% endblock %}

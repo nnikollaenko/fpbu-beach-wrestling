@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.documents }}{% endblock %}
+{% block page_title %}{{ L.documents }}{% endblock %}
+
+{% block content %}
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.documents }} ({{ items|length }})</div>
+    <a class="btn btn-primary btn-sm" href="/admin/documents/new">+ {{ L.add }}</a>
+  </div>
+
+  {% if items %}
+  <table class="a-table">
+    <thead>
+      <tr>
+        <th>{{ L.id }}</th>
+        <th>{{ L.title_uk }}</th>
+        <th>{{ L.filename }}</th>
+        <th>{{ L.category }}</th>
+        <th>{{ L.file_size }}</th>
+        <th>{{ L.uploaded_at }}</th>
+        <th>{{ L.actions }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td class="muted">{{ item.id }}</td>
+        <td>
+          <strong>{{ item.title }}</strong>
+          {% if item.title_en %}<div class="muted" style="font-size:11px;">{{ item.title_en }}</div>{% endif %}
+        </td>
+        <td class="muted" style="font-size:12px;">{{ item.filename }}</td>
+        <td><span class="badge badge-blue">{{ item.category }}</span></td>
+        <td class="muted">{{ item.file_size or '—' }}</td>
+        <td class="muted">{{ item.uploaded_at[:10] if item.uploaded_at else '—' }}</td>
+        <td>
+          <div class="a-actions">
+            <a class="btn btn-ghost btn-sm" href="/admin/documents/{{ item.id }}/edit">{{ L.edit }}</a>
+            <form method="post" action="/admin/documents/{{ item.id }}/delete" style="display:inline;"
+                  onsubmit="return confirm('{{ L.confirm_delete }}')">
+              <button class="btn btn-sm" style="color:var(--danger);border-color:currentColor;background:transparent;" type="submit">{{ L.delete }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="a-empty">{{ 'Документів ще немає' if admin_lang == 'uk' else 'No documents yet' }}</div>
+  {% endif %}
+</div>
+{% endblock %}

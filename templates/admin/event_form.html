@@ -1,0 +1,106 @@
+{% extends "admin/base.html" %}
+{% set is_edit = item is not none %}
+{% block title %}{{ L.edit_event if is_edit else L.new_event }}{% endblock %}
+{% block page_title %}{{ L.edit_event if is_edit else L.new_event }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a class="btn btn-ghost btn-sm" href="/admin/events">{{ L.back }}</a>
+</div>
+
+<div class="a-card">
+  <div class="a-card-body">
+    <form method="post" enctype="multipart/form-data">
+      <div class="a-form-grid cols-2">
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.title_uk }} <span>*</span></label>
+          <input class="a-input" name="title" type="text" required value="{{ item.title if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.title_en }}</label>
+          <input class="a-input" name="title_en" type="text" value="{{ item.title_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.location }}</label>
+          <input class="a-input" name="location" type="text" value="{{ item.location if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.location }} (EN) <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="location_en" type="text" placeholder="Odesa" value="{{ item.location_en if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.year }}</label>
+          <input class="a-input" name="year" type="number" min="2015" max="2099"
+                 value="{{ item.year if is_edit else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.start_date }} <span>*</span></label>
+          <input class="a-input" name="start_date" type="date" required
+                 value="{{ item.start_date[:10] if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.end_date }}</label>
+          <input class="a-input" name="end_date" type="date"
+                 value="{{ item.end_date[:10] if is_edit and item.end_date else '' }}">
+        </div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.category }}</label>
+          <select class="a-select" name="category">
+            {% for cat in ['Змагання','Чемпіонат','Першість','Кубок','Міжнародні','Інше'] %}
+            <option value="{{ cat }}" {{ 'selected' if is_edit and item.category == cat }}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.category }} (EN) <small class="muted">{{ 'авто' if admin_lang == 'uk' else 'auto' }}</small></label>
+          <input class="a-input" name="category_en" type="text" placeholder="Tournament" value="{{ item.category_en if is_edit else '' }}">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.status }}</label>
+          <select class="a-select" name="status">
+            <option value="upcoming" {{ 'selected' if not is_edit or item.status == 'upcoming' }}>{{ 'Майбутній' if admin_lang == 'uk' else 'Upcoming' }}</option>
+            <option value="past" {{ 'selected' if is_edit and item.status == 'past' }}>{{ 'Минулий' if admin_lang == 'uk' else 'Past' }}</option>
+          </select>
+        </div>
+
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.description_uk }}</label>
+          <textarea class="a-textarea" name="description">{{ item.description if is_edit else '' }}</textarea>
+        </div>
+        <div class="a-form-group full">
+          <label class="a-form-label">{{ L.description_en }}</label>
+          <textarea class="a-textarea" name="description_en">{{ item.description_en if is_edit else '' }}</textarea>
+        </div>
+
+        <div class="a-form-section-label">PDF {{ 'документи' if admin_lang == 'uk' else 'documents' }}</div>
+
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.pdf_regulations }}</label>
+          {% if is_edit and item.pdf_regulations %}<div class="muted" style="font-size:11px;margin-bottom:.25rem;">{{ item.pdf_regulations.split('/')[-1] }} ({{ L.keep_current_file }})</div>{% endif %}
+          <input class="a-input" name="pdf_regulations" type="file" accept=".pdf">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.pdf_program }}</label>
+          {% if is_edit and item.pdf_program %}<div class="muted" style="font-size:11px;margin-bottom:.25rem;">{{ item.pdf_program.split('/')[-1] }} ({{ L.keep_current_file }})</div>{% endif %}
+          <input class="a-input" name="pdf_program" type="file" accept=".pdf">
+        </div>
+        <div class="a-form-group">
+          <label class="a-form-label">{{ L.pdf_protocols }}</label>
+          {% if is_edit and item.pdf_protocols %}<div class="muted" style="font-size:11px;margin-bottom:.25rem;">{{ item.pdf_protocols.split('/')[-1] }} ({{ L.keep_current_file }})</div>{% endif %}
+          <input class="a-input" name="pdf_protocols" type="file" accept=".pdf">
+        </div>
+
+        <div class="a-form-actions full">
+          <button class="btn btn-primary" type="submit">{{ L.save }}</button>
+          <a class="btn btn-ghost" href="/admin/events">{{ L.cancel }}</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

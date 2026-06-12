@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ L.athletes }}{% endblock %}
+{% block page_title %}{{ L.athletes }}{% endblock %}
+
+{% block content %}
+<div class="a-card">
+  <div class="a-card-header">
+    <div class="a-card-title">{{ L.athletes }} ({{ items|length }})</div>
+    <a class="btn btn-primary btn-sm" href="/admin/athletes/new">+ {{ L.add }}</a>
+  </div>
+
+  {% if items %}
+  <table class="a-table">
+    <thead>
+      <tr>
+        <th>{{ L.id }}</th>
+        <th>{{ L.photo }}</th>
+        <th>{{ L.name_uk }}</th>
+        <th>{{ L.weight_class }}</th>
+        <th>{{ L.region }}</th>
+        <th>{{ L.active }}</th>
+        <th>{{ L.sort_order }}</th>
+        <th>{{ L.actions }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td class="muted">{{ item.id }}</td>
+        <td>
+          {% if item.photo %}
+          <img class="a-thumb" src="/static/uploads/{{ item.photo }}" alt="">
+          {% else %}
+          <div style="width:40px;height:40px;background:var(--bg);border-radius:6px;border:1px solid var(--border);"></div>
+          {% endif %}
+        </td>
+        <td><strong>{{ item.name }}</strong></td>
+        <td class="muted">{{ item.weight_class or '—' }}</td>
+        <td class="muted">{{ item.region or '—' }}</td>
+        <td>
+          {% if item.is_active %}<span class="badge badge-green">{{ L.yes }}</span>
+          {% else %}<span class="badge badge-gray">{{ L.no }}</span>{% endif %}
+        </td>
+        <td class="muted">{{ item.sort_order }}</td>
+        <td>
+          <div class="a-actions">
+            <a class="btn btn-ghost btn-sm" href="/admin/athletes/{{ item.id }}/edit">{{ L.edit }}</a>
+            <form method="post" action="/admin/athletes/{{ item.id }}/delete" style="display:inline;"
+                  onsubmit="return confirm('{{ L.confirm_delete }}')">
+              <button class="btn btn-sm" style="color:var(--danger);border-color:currentColor;background:transparent;" type="submit">{{ L.delete }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="a-empty">{{ 'Спортсменів ще немає' if admin_lang == 'uk' else 'No athletes yet' }}</div>
+  {% endif %}
+</div>
+{% endblock %}
